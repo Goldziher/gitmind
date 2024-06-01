@@ -1,0 +1,14 @@
+*$py.class
+*.log
+*.py[cod]
+.coverage
+.mypy_cache/
+.pdm-build/
+.pdm-python
+.pdm.toml
+.venv
+__pycache__/
+__pypackages__/
+coverage.xml
+cython_debug/
+node_modules/

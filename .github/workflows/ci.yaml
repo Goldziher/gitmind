@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+    - main
+  push:
+    branches:
+    - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: pdm-project/setup-pdm@v4
+      with:
+        python-version: '3.11'
+        cache: true
+        cache-dependency-path: |
+          ./pdm.lock
+    - name: Install Dependencies
+      run: pdm install
+    - name: Load Cached Pre-Commit Dependencies
+      id: cached-pre-commit-dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pre-commit/
+        key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
+    - name: Execute Pre-Commit
+      run: pdm run pre-commit run --show-diff-on-failure --color=always --all-files
+#  test:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#      - uses: pdm-project/setup-pdm@v4
+#        with:
+#          python-version: "3.11"
+#          cache: true
+#          cache-dependency-path: |
+#            ./pdm.lock
+#      - name: Install Dependencies
+#        run: pdm install
+#      - name: Run Tests
+#        run: pdm run coverage || true
+#      - name: Upload Coverage Artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: coverage
+#          path: ./coverage.xml
+#  coverage:
+#    runs-on: ubuntu-latest
+#    needs: test
+#    steps:
+#      - name: Download Coverage Artifact
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: coverage
+#          path: .
+#      - name: Report test coverage to DeepSource
+#        uses: deepsourcelabs/test-coverage-action@master
+#        with:
+#          key: python
+#          coverage-file: coverage.xml
+#          dsn: ${{ vars.DEEPSOURCE_DSN }}
