@@ -3,5 +3,7 @@
   <component name="RuffConfigService">
     <option name="globalRuffExecutablePath" value="/opt/homebrew/bin/ruff" />
     <option name="projectRuffExecutablePath" value="$PROJECT_DIR$/.venv/bin/ruff" />
+    <option name="runRuffOnSave" value="true" />
+    <option name="useRuffFormat" value="true" />
   </component>
 </project>
