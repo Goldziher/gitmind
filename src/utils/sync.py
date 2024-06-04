@@ -2,12 +2,15 @@
 
 from collections.abc import Callable
 from functools import partial
-from typing import cast
+from typing import ParamSpec, TypeVar, cast
 
 from anyio.to_thread import run_sync as anyio_run_sync
 
+P = ParamSpec("P")
+T = TypeVar("T")
 
-async def run_sync[**P, T](fn: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
+
+async def run_sync(fn: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
     """Run a synchronous function in an asynchronous context.
 
     Notes:

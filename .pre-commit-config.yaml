@@ -41,6 +41,8 @@ repos:
   hooks:
   - id: mypy
     name: mypy
+    #currently awaiting mypy 3.11 release
+    # entry: pdm run mypy --enable-incomplete-feature=NewGenericSyntax
     entry: pdm run mypy
     require_serial: true
     language: system

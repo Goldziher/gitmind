@@ -1,11 +1,13 @@
 """Serialization related utils."""
 
-from typing import Any
+from typing import Any, TypeVar
 
 from msgspec.json import decode, encode
 
+T = TypeVar("T")
 
-def deserialize[T](value: str | bytes, target_type: type[T]) -> T:
+
+def deserialize(value: str | bytes, target_type: type[T]) -> T:
     """Decode a JSON string/bytes into an object.
 
     Args:

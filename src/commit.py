@@ -1,12 +1,14 @@
 from collections import defaultdict
 from typing import TYPE_CHECKING
 
-from git import Commit
+from git import Blob, Commit
 from magic import Magic
 
-from src.models import AIModel
-from src.prompts import describe_commit_contents, grade_commit
 from src.types import CommitDataDTO, ParsedCommitDTO
+
+if TYPE_CHECKING:
+    from src.client import OpenAIClient
+
 
 text_mime_types = {"text", "application/json", "application/xml", "application/javascript"}
 mime = Magic(mime=True)
@@ -38,11 +40,11 @@ def extract_files_from_commit(commit: Commit) -> dict[str, str]:
     """
     files = {}
     for item in commit.tree.traverse():
-        if item.type == "blob":
+        if isinstance(item, Blob):
             file_content = item.data_stream.read()
             mime_type = mime.from_buffer(file_content)
             if is_supported_mime_type(mime_type):
-                files[item.path] = file_content.decode(errors="ignore")
+                files[str(item.path)] = file_content.decode(errors="ignore")
     return files
 
 
@@ -87,22 +89,24 @@ def extract_commit_data(commit: Commit) -> CommitDataDTO:
     )
 
 
-async def parse_commit_contents(commit: Commit, model: AIModel) -> ParsedCommitDTO:
+async def parse_commit_contents(commit: Commit, client: "OpenAIClient") -> ParsedCommitDTO:
     """Describe the contents of a commit.
 
     Args:
         commit: A GitPython commit object.
-        model: The AI model to use for description.
+        client: The OpenAI client singleton.
 
     Returns:
-        The description of the commit contents.
+        ParsedCommitDTO: Parsed commit data ready for storage and consumption.
     """
     commit_data = extract_commit_data(commit=commit)
-    commit_description = await describe_commit_contents(commit_data=commit_data, model=model)
-    commit_grading = await grade_commit(
-        commit_description=commit_description, commit_data=commit_data, model=model, grading_rules=None
+    commit_description = await client.describe_commit_contents(commit_data=commit_data)
+    commit_grading = await client.grade_commit(
+        commit_description=commit_description, commit_data=commit_data, grading_rules=None
     )
     return ParsedCommitDTO(
-        **commit_data,
+        commit_data=commit_data,
         commit_description=commit_description,
+        commit_grading=commit_grading,
+        commit_hash=commit.hexsha,
     )

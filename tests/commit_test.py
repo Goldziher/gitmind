@@ -14,5 +14,5 @@ from src.commit import is_supported_mime_type
         ("image/jpeg", False),
     ),
 )
-def test_is_supported_mime_type(mime_type: str, expected: str) -> None:
+def test_is_supported_mime_type(mime_type: str, expected: bool) -> None:
     assert is_supported_mime_type(mime_type) == expected

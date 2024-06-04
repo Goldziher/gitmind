@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from anyio import Lock
 
-from caching.base import CacheBase
+from src.caching.base import CacheBase
 
 
 class InMemoryCache(CacheBase):

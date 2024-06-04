@@ -70,5 +70,7 @@ class ParsedCommitDTO(TypedDict):
     """The hash of the commit."""
     commit_data: CommitDataDTO
     """The data of the commit."""
-    grading_results: list[CommitGradingResult]
+    commit_description: str
+    """The description of the commit."""
+    commit_grading: list[CommitGradingResult]
     """The grading results for the commit."""
