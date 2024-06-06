@@ -1,21 +1,21 @@
-from git import Commit, Repo
+from git import Commit, PathLike, Repo
 
 
-def clone_repository(repo_url: str, branch_name: str, repo_path: str) -> Repo:
+def clone_repository(repo_path: PathLike, branch_name: str, target_path: PathLike) -> Repo:
     """Clone a Git repository.
 
     Args:
-        repo_url: The URL of the Git repository.
+        repo_path: The URL or path of the Git repository.
         branch_name: The name of the branch to clone.
-        repo_path: The path to clone the repository to.
+        target_path: The path to clone the repository to.
 
     Returns:
         The cloned Git repository.
     """
-    return Repo.clone_from(repo_url, repo_path, branch=branch_name)
+    return Repo.clone_from(url=repo_path, to_path=target_path, branch=branch_name)
 
 
-def get_commits(repo_path: str) -> list[Commit]:
+def get_commits(repo_path: PathLike) -> list[Commit]:
     """Get the commits of a Git repository.
 
     Args:

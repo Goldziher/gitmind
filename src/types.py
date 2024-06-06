@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING, TypedDict
 
+from git.types import PathLike
+
 if TYPE_CHECKING:
     from git.types import Files_TD
 
@@ -28,7 +30,7 @@ class CommitDataDTO(TypedDict):
     """The total number of files changed in the commit."""
     total_lines_changed: int
     """The total number of lines changed in the commit."""
-    per_files_changes: dict[str, "Files_TD"]
+    per_files_changes: dict[str | PathLike, "Files_TD"]
     """The changes per file in the commit."""
     author_email: str | None
     """The email of the author of the commit."""

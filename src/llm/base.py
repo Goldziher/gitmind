@@ -19,7 +19,7 @@ class LLMClient(ABC, Generic[ClientConfig]):
     """Base class for LLM clients."""
 
     @abstractmethod
-    async def init(self, *, config: ClientConfig) -> None:  # pragma: no cover
+    def __init__(self, *, config: ClientConfig) -> None:  # pragma: no cover
         """Initialize the client.
 
         Args:

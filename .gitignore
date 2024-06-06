@@ -2,6 +2,7 @@
 *.log
 *.py[cod]
 .coverage
+.env
 .mypy_cache/
 .pdm-build/
 .pdm-python

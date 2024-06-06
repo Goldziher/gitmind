@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from git import Blob, Commit
 from magic import Magic
 
-from prompts import describe_commit_contents, grade_commit
+from src.prompts import describe_commit_contents, grade_commit
 from src.types import CommitDataDTO, ParsedCommitDTO
 
 if TYPE_CHECKING:
@@ -76,7 +76,7 @@ def extract_commit_data(commit: Commit) -> CommitDataDTO:
     return CommitDataDTO(
         total_files_changed=len(diff_list),
         total_lines_changed=sum(len(diff.splitlines()) for diff in diff_list),
-        per_files_changes={change.a_path: change for change in changes},
+        per_files_changes=dict(commit.stats.files),
         author_email=commit.author.email,
         author_name=commit.author.name,
         diff_contents="".join(diff_list),

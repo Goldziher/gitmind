@@ -35,4 +35,4 @@ def serialize(value: Any) -> bytes:
     Raises:
         EncodeError: If error encoding ``value``.
     """
-    return encode(value, order="sorted")
+    return encode(value)

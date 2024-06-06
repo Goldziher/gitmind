@@ -3,12 +3,12 @@ from typing import TYPE_CHECKING, Any
 
 from msgspec import DecodeError
 
-from exceptions import CriticError, LLMClientError
-from llm.base import LLMClient, Message
+from src.exceptions import CriticError, LLMClientError
+from src.llm.base import LLMClient, Message
 from src.rules import DEFAULT_GRADING_RULES
 from src.types import CommitDataDTO, CommitGradingResult, Rule
+from src.utils.logger import get_logger
 from src.utils.serialization import deserialize, serialize
-from utils.logger import get_logger
 
 logger = get_logger(__name__)
 
