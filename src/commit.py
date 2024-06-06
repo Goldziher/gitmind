@@ -4,10 +4,11 @@ from typing import TYPE_CHECKING
 from git import Blob, Commit
 from magic import Magic
 
+from prompts import describe_commit_contents, grade_commit
 from src.types import CommitDataDTO, ParsedCommitDTO
 
 if TYPE_CHECKING:
-    from src.client import OpenAIClient
+    from src.llm.base import LLMClient
 
 
 text_mime_types = {"text", "application/json", "application/xml", "application/javascript"}
@@ -89,20 +90,20 @@ def extract_commit_data(commit: Commit) -> CommitDataDTO:
     )
 
 
-async def parse_commit_contents(commit: Commit, client: "OpenAIClient") -> ParsedCommitDTO:
+async def parse_commit_contents(commit: Commit, client: "LLMClient") -> ParsedCommitDTO:
     """Describe the contents of a commit.
 
     Args:
         commit: A GitPython commit object.
-        client: The OpenAI client singleton.
+        client: An LLMClient subclass instance to use.
 
     Returns:
         ParsedCommitDTO: Parsed commit data ready for storage and consumption.
     """
     commit_data = extract_commit_data(commit=commit)
-    commit_description = await client.describe_commit_contents(commit_data=commit_data)
-    commit_grading = await client.grade_commit(
-        commit_description=commit_description, commit_data=commit_data, grading_rules=None
+    commit_description = await describe_commit_contents(commit_data=commit_data, client=client)
+    commit_grading = await grade_commit(
+        commit_description=commit_description, commit_data=commit_data, grading_rules=None, client=client
     )
     return ParsedCommitDTO(
         commit_data=commit_data,
