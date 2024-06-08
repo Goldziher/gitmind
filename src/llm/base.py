@@ -1,7 +1,7 @@
 """Base classes for LLM clients."""
 
 from abc import ABC, abstractmethod
-from typing import Generic, TypedDict, TypeVar
+from typing import Any, Generic, NotRequired, TypedDict, TypeVar
 
 ClientConfig = TypeVar("ClientConfig")
 
@@ -13,6 +13,17 @@ class Message(TypedDict):
     """The role of the message."""
     content: str
     """The content of the message."""
+
+
+class Tool(TypedDict):
+    """A tool that can be used by the LLM client to generate completions."""
+
+    name: str
+    """The name of the tool."""
+    description: NotRequired[str]
+    """A description of the tool."""
+    parameters: dict[str, Any]
+    """The parameters the tool accepts."""
 
 
 class LLMClient(ABC, Generic[ClientConfig]):
@@ -29,13 +40,15 @@ class LLMClient(ABC, Generic[ClientConfig]):
 
     @abstractmethod
     async def create_completions(
-        self, *, messages: list[Message], json_response: bool = False
+        self, *, messages: list[Message], json_response: bool = False, tool: Tool | None = None, **kwargs: Any
     ) -> str:  # pragma: no cover
         """Create completions.
 
         Args:
             messages: The messages to generate completions for.
             json_response: Whether to return the response as a JSON object.
+            tool: An optional tool call.
+            **kwargs: Additional completion options.
 
         Raises:
             LLMClientError: If an error occurs while creating completions.

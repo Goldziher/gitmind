@@ -4,7 +4,7 @@ from msgspec import DecodeError
 
 from src.data_types import CommitDataDTO, CommitGradingResult, Rule
 from src.exceptions import CriticError, LLMClientError
-from src.llm.base import LLMClient, Message
+from src.llm.base import LLMClient, Message, Tool
 from src.rules import DEFAULT_GRADING_RULES
 from src.utils.logger import get_logger
 from src.utils.serialization import deserialize, serialize
@@ -26,52 +26,56 @@ async def describe_commit_contents(
     Returns:
         The description of the commit contents.
     """
-    prompt = f"""
-        Here are the totals for the commit:
+    try:
+        prompt = f"""
+            Here are the totals for the commit:
 
-        - Total files changed: {commit_data["total_files_changed"]}
-        - Total lines changed: {commit_data["total_lines_changed"]}
+            - Total files changed: {commit_data["total_files_changed"]}
+            - Total lines changed: {commit_data["total_lines_changed"]}
 
-        Here are the overall statistics for the commit:
+            Here are the overall statistics for the commit:
 
-        - Additions: {commit_data["num_additions"]}
-        - Deletions: {commit_data["num_deletions"]}
-        - Copies: {commit_data["num_copies"]}
-        - Modifications: {commit_data["num_modifications"]}
-        - Renames: {commit_data["num_renames"]}
-        - Type changes: {commit_data["num_type_changes"]}
+            - Additions: {commit_data["num_additions"]}
+            - Deletions: {commit_data["num_deletions"]}
+            - Copies: {commit_data["num_copies"]}
+            - Modifications: {commit_data["num_modifications"]}
+            - Renames: {commit_data["num_renames"]}
+            - Type changes: {commit_data["num_type_changes"]}
 
-        Here is a file by file breakdown: {serialize(commit_data["per_files_changes"]).decode()}
+            Here is a file by file breakdown: {serialize(commit_data["per_files_changes"]).decode()}
 
-        Here are the contents of the diff: {commit_data["diff_contents"]}
+            Here are the contents of the diff: {commit_data["diff_contents"]}
+            """
+
+        logger.debug("Sending describe commit contents request with the following prompt:\n\n%s", prompt)
+
+        system_message = """
+            You are a helpful assistant that describes the content of git commits.  Upon receiving a user message evaluate
+            the commit provided factoring in all context and provide a detailed description of the changes made in the
+            commit. The description is meant to be used by an LLM rather than a human and your response should optimize
+            for this.
+            Be precise and concise. Do not include code unless the code is necessary to describe the commit. Even in
+            this case, the code should be minimal and only used to explain a point. Any statistics provided should be
+            accurate and and comprehensive.
         """
 
-    logger.debug("Sending describe commit contents request with the following prompt:\n\n%s", prompt)
-
-    system_message = """
-        You are a helpful assistant that describes the content of git commits.  Upon receiving a user message evaluate
-        the commit provided factoring in all context and provide a detailed description of the changes made in the
-        commit. The description is meant to be used by an LLM rather than a human and your response should optimize
-        for this.
-        Be precise and concise. Do not include code unless the code is necessary to describe the commit. Even in
-        this case, the code should be minimal and only used to explain a point. Any statistics provided should be
-        accurate and and comprehensive.
-    """
-
-    completion = await client.create_completions(
-        messages=[
-            Message(
-                role="system",
-                content=system_message,
-            ),
-            Message(role="user", content=prompt),
-        ],
-    )
-    logger.debug(
-        "Received content from OpenAI for describe commit contents request with the following content: %s",
-        completion,
-    )
-    return completion
+        completion = await client.create_completions(
+            messages=[
+                Message(
+                    role="system",
+                    content=system_message,
+                ),
+                Message(role="user", content=prompt),
+            ],
+        )
+        logger.debug(
+            "Received content from OpenAI for describe commit contents request with the following content: %s",
+            completion,
+        )
+        return completion
+    except LLMClientError as e:
+        logger.error("Error occurred while describing commit: %s.", e)
+        raise CriticError("Error occurred while describing commit.", context=str(e)) from e
 
 
 async def grade_commit(
@@ -112,10 +116,6 @@ async def grade_commit(
 
         ####Additional Evaluation Conditions####
         {additional_conditions or "None"}
-
-        ###Grade Descriptions###
-        **Minimum grade description**: {grading_rule["min_grade_description"]}
-        **Maximum grade description**: {grading_rule["max_grade_description"]}
         """
 
         evaluation_instructions += f"**{grading_rule['title']}**\n"
@@ -147,24 +147,15 @@ async def grade_commit(
             },
         }
 
-    json_schema = {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "title": "Commit Evaluation Result",
-        "type": "object",
-        "properties": properties,
-    }
-
     prompt = f"""Your task is to evaluate and grade a git commit based on the following criteria:
 
     {evaluation_instructions}
 
-    The return value for this function should be a JSON object that adheres to the following schema JSON schema:
-
-    {serialize(json_schema).decode()}
-
     Here is the description of the commit: {commit_description}
 
     And here is the data extracted from the commit: {serialize(commit_data).decode()}
+
+    Respond by calling the provided tool 'grading_results' with an object adhering to its parameter definitions.
     """
 
     logger.debug("Sending grade commit request with the following prompt:\n\n%s", prompt)
@@ -176,18 +167,27 @@ async def grade_commit(
                 Message(role="user", content=prompt),
             ],
             json_response=True,
+            tool=Tool(
+                name="grading_results",
+                description="Returns the grading results for a git commit.",
+                parameters={
+                    "type": "object",
+                    "properties": properties,
+                },
+            ),
+            max_tokens=4096,
         )
 
         logger.debug(
             "Received content from OpenAI for grade commit request with the following content: %s",
             result,
         )
-        result_dict = deserialize(result, dict)
+
         return [
             CommitGradingResult(rule_name=key, grade=value["grade"], reason=value["reasoning"])
-            for (key, value) in result_dict.items()
-            if key in properties
+            for (key, value) in deserialize(result, dict).items()
+            if key in properties and "grade" in value and "reasoning" in value
         ]
     except (DecodeError, LLMClientError) as e:
         logger.error("Error occurred while grading commit: %s.", e)
-        raise CriticError("Error occurred while grading commit.") from e
+        raise CriticError("Error occurred while grading commit.", context=str(e)) from e

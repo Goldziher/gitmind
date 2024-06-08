@@ -58,7 +58,7 @@ async def test_describe_commit(logger: Logger) -> None:
         logger.info("Description for commit %s: %s", commit.hexsha, description)
 
         Path(__file__).parent.joinpath(
-            f"./results/{provider}_{model}_describe_{commit.hexsha}_{datetime.now(UTC)}.md"
+            f".results/{provider}_{model}_describe_{commit.hexsha}_{datetime.now(UTC)}.md"
         ).write_text(description)
 
 

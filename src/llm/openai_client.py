@@ -1,6 +1,6 @@
 import logging
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Any, Union
 
 from httpx import URL
 from openai import DEFAULT_MAX_RETRIES, NOT_GIVEN, NotGiven, OpenAIError
@@ -9,13 +9,15 @@ from openai.types import ChatModel
 from openai.types.chat import (
     ChatCompletionMessageParam,
     ChatCompletionSystemMessageParam,
+    ChatCompletionToolParam,
     ChatCompletionUserMessageParam,
 )
 from openai.types.chat.completion_create_params import ResponseFormat
+from openai.types.shared_params import FunctionDefinition
 from pydantic import BaseModel, ConfigDict
 
 from src.exceptions import LLMClientError
-from src.llm.base import LLMClient, Message
+from src.llm.base import LLMClient, Message, Tool
 
 if TYPE_CHECKING:
     from openai import AsyncClient
@@ -113,16 +115,15 @@ class OpenAIClient(LLMClient[AzureOpenAIOptions | OpenAIOptions]):
             self._model = options.model
 
     async def create_completions(
-        self,
-        *,
-        messages: list[Message],
-        json_response: bool = False,
+        self, *, messages: list[Message], json_response: bool = False, tool: Tool | None = None, **kwargs: Any
     ) -> str:
         """Create completions.
 
         Args:
             messages: The messages to generate completions for.
             json_response: Whether to return the response as a JSON object.
+            tool: An optional tool call.
+            **kwargs: Additional completion options.
 
         Raises:
             LLMClientError: If an error occurs while creating completions.
@@ -135,20 +136,36 @@ class OpenAIClient(LLMClient[AzureOpenAIOptions | OpenAIOptions]):
                 model=self._model,
                 messages=self._map_messages_to_openai_message_types(messages),
                 response_format=ResponseFormat(type="json_object" if json_response else "text"),
-                stream=True,
+                stream=not tool,
+                tools=[
+                    ChatCompletionToolParam(
+                        type="function",
+                        function=FunctionDefinition(
+                            name=tool["name"],
+                            parameters=tool["parameters"],
+                            description=tool["description"],
+                        ),
+                    )
+                ]
+                if tool is not None
+                else NOT_GIVEN,
+                tool_choice="required" if tool else "none",
+                **kwargs,
             )
             content = ""
-            async for chunk in result:
-                if delta := chunk.choices[0].delta.content:
-                    logger.info("%s", delta)
-                    content += delta
+            if tool is None:
+                async for chunk in result:
+                    if delta := chunk.choices[0].delta.content:
+                        content += delta
+            else:
+                content = result.choices[0].message.tool_calls[0].function.arguments
 
             if not content:
-                raise LLMClientError("Failed to generate completion")
+                raise LLMClientError("Empty completion response from OpenAI")
 
             return content
         except OpenAIError as e:
-            raise LLMClientError("Failed to generate completion") from e
+            raise LLMClientError("Failed to generate completion", context=str(e)) from e
 
     @staticmethod
     def _map_messages_to_openai_message_types(messages: list[Message]) -> list[ChatCompletionMessageParam]:
