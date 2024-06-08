@@ -1,42 +1,35 @@
 import logging
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
-from httpx import URL
-from openai import DEFAULT_MAX_RETRIES, NOT_GIVEN, NotGiven, OpenAIError
-from openai.lib.azure import AsyncAzureADTokenProvider
-from openai.types import ChatModel
-from openai.types.chat import (
+from groq import DEFAULT_MAX_RETRIES, NOT_GIVEN, GroqError, NotGiven
+from groq.types.chat import (
     ChatCompletionMessageParam,
     ChatCompletionSystemMessageParam,
     ChatCompletionUserMessageParam,
 )
-from openai.types.chat.completion_create_params import ResponseFormat
+from groq.types.chat.completion_create_params import ResponseFormat
 from pydantic import BaseModel, ConfigDict
 
 from src.exceptions import LLMClientError
 from src.llm.base import LLMClient, Message
 
 if TYPE_CHECKING:
-    from openai import AsyncClient
-    from openai.lib.azure import AsyncAzureOpenAI
+    from groq import AsyncClient
 
 logger = logging.getLogger(__name__)
 
 
-class BaseOptions(BaseModel):
-    """Base options for OpenAI clients."""
+class GroqOptions(BaseModel):
+    """Base options for Groq clients."""
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     api_key: str
-    """The API key for the OpenAI model."""
-    model: ChatModel | str = "gpt-4o"
+    """The API key for the Groq model."""
+    base_url: str | None = None
+    model: str = "llama3-8b-8192"
     """The default model to use for generating completions."""
-    organization: str | None = None
-    """An organization namespace. Note: an error will be raised if this is not configured in the remote API."""
-    project: str | None = None
-    """The project namespace. Note: an error will be raised if this is not configured in the remote API"""
     timeout: float | None | NotGiven = NOT_GIVEN
     """The timeout for the HTTPX client."""
     max_retries: int = DEFAULT_MAX_RETRIES
@@ -47,70 +40,33 @@ class BaseOptions(BaseModel):
     """The default query parameters to use for the HTTPX client."""
 
 
-class OpenAIOptions(BaseOptions):
-    """OpenAI client options."""
+class GroqClient(LLMClient[GroqOptions]):
+    """Wrapper for Groq models."""
 
-    base_url: str | URL | None = None
-    """The base URL for the API."""
-
-
-class AzureOpenAIOptions(BaseOptions):
-    """Azure OpenAI client options."""
-
-    azure_endpoint: str
-    """The Azure endpoint for the API."""
-    azure_deployment: str | None = None
-    """The Azure deployment for the API."""
-    api_version: str | None = None
-    """The API version for the Azure API."""
-    azure_ad_token: str | None = None
-    """The Azure AD token."""
-    azure_ad_token_provider: AsyncAzureADTokenProvider | None = None
-    """The Azure AD token provider."""
-
-
-class OpenAIClient(LLMClient[AzureOpenAIOptions | OpenAIOptions]):
-    """Wrapper for OpenAI models."""
-
-    _client: Union["AsyncAzureOpenAI", "AsyncClient"]
-    """The OpenAI client instance."""
-    _model: ChatModel | str
+    _client: "AsyncClient"
+    """The Groq client instance."""
+    _model: str
     """The model to use for generating completions."""
 
     __slots__ = ("_client", "_model")
 
-    def __init__(self, *, options: AzureOpenAIOptions | OpenAIOptions) -> None:
-        """Initialize the OpenAI Client.
+    def __init__(self, *, options: GroqOptions) -> None:
+        """Initialize the Groq Client.
 
         Args:
-            options: The OpenAI options.
+            options: The Groq options.
         """
-        if isinstance(options, AzureOpenAIOptions):
-            from openai.lib.azure import AsyncAzureOpenAI
+        from groq import AsyncClient
 
-            self._client = AsyncAzureOpenAI(
-                azure_endpoint=options.azure_endpoint,
-                azure_deployment=options.azure_deployment,
-                api_version=options.api_version,
-                azure_ad_token=options.azure_ad_token,
-                azure_ad_token_provider=options.azure_ad_token_provider,
-                timeout=options.timeout,
-                max_retries=options.max_retries,
-                default_headers=options.default_headers,
-                default_query=options.default_query,
-            )
-        else:
-            from openai import AsyncClient
-
-            self._client = AsyncClient(
-                api_key=options.api_key,
-                base_url=options.base_url,
-                timeout=options.timeout,
-                max_retries=options.max_retries,
-                default_headers=options.default_headers,
-                default_query=options.default_query,
-            )
-            self._model = options.model
+        self._client = AsyncClient(
+            api_key=options.api_key,
+            base_url=options.base_url,
+            timeout=options.timeout,
+            max_retries=options.max_retries,
+            default_headers=options.default_headers,
+            default_query=options.default_query,
+        )
+        self._model = options.model
 
     async def create_completions(
         self,
@@ -147,18 +103,18 @@ class OpenAIClient(LLMClient[AzureOpenAIOptions | OpenAIOptions]):
                 raise LLMClientError("Failed to generate completion")
 
             return content
-        except OpenAIError as e:
+        except GroqError as e:
             raise LLMClientError("Failed to generate completion") from e
 
     @staticmethod
     def _map_messages_to_openai_message_types(messages: list[Message]) -> list[ChatCompletionMessageParam]:
-        """Map messages to OpenAI message types.
+        """Map messages to Groq message types.
 
         Args:
-            messages: A list of messages to map to OpenAI message types.
+            messages: A list of messages to map to Groq message types.
 
         Returns:
-            A list of OpenAI message types.
+            A list of Groq message types.
         """
         result: list[ChatCompletionMessageParam] = []
         for message in messages:

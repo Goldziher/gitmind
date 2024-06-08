@@ -1,5 +1,4 @@
 import asyncio
-from datetime import UTC, datetime
 from logging import Logger
 from os import environ
 from pathlib import Path
@@ -7,12 +6,13 @@ from typing import TYPE_CHECKING
 
 from dotenv import load_dotenv
 
+from prompts import grade_commit
 from src.commit import extract_commit_data
 from src.llm.groq_client import GroqClient, GroqOptions
 from src.llm.openai_client import OpenAIClient, OpenAIOptions
-from src.prompts import describe_commit_contents
 from src.repository import get_commits
 from src.utils.logger import get_logger
+from utils.serialization import serialize
 
 if TYPE_CHECKING:
     from llm.base import LLMClient
@@ -53,13 +53,14 @@ async def test_describe_commit(logger: Logger) -> None:
 
     for commit in [c for c in commits if c.hexsha == "9c8399e0fe619ff66f8bebe64039fc23a7f107cd"]:
         commit_data = extract_commit_data(commit)
-        description = await describe_commit_contents(client=client, commit_data=commit_data)
 
-        logger.info("Description for commit %s: %s", commit.hexsha, description)
+        description = Path(__file__).parent.joinpath(f"{provider}_{model}_describe_{commit.hexsha}.md").read_text()
+        grading = await grade_commit(client=client, commit_data=commit_data, commit_description=description)
+        logger.info("Graded commit %s", commit.hexsha)
 
-        Path(__file__).parent.joinpath(
-            f"./results/{provider}_{model}_describe_{commit.hexsha}_{datetime.now(UTC)}.md"
-        ).write_text(description)
+        Path(__file__).parent.joinpath(f"./results/{provider}_{model}_grading_{commit.hexsha}.json").write_bytes(
+            serialize(grading)
+        )
 
 
 if __name__ == "__main__":

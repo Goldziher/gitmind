@@ -18,6 +18,7 @@ dependencies = [
     "python-magic>=0.4.27",
     "jsonschema>=4.22.0",
     "python-dotenv>=1.0.1",
+    "groq>=0.8.0",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"

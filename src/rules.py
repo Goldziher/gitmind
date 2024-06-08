@@ -1,4 +1,4 @@
-from src.types import Rule
+from src.data_types import Rule
 
 DEFAULT_GRADING_RULES = [
     Rule(

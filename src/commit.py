@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING
 from git import Blob, Commit
 from magic import Magic
 
+from src.data_types import CommitDataDTO, ParsedCommitDTO
 from src.prompts import describe_commit_contents, grade_commit
-from src.types import CommitDataDTO, ParsedCommitDTO
 
 if TYPE_CHECKING:
     from src.llm.base import LLMClient

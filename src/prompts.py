@@ -1,20 +1,15 @@
-from itertools import chain
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from msgspec import DecodeError
 
+from src.data_types import CommitDataDTO, CommitGradingResult, Rule
 from src.exceptions import CriticError, LLMClientError
 from src.llm.base import LLMClient, Message
 from src.rules import DEFAULT_GRADING_RULES
-from src.types import CommitDataDTO, CommitGradingResult, Rule
 from src.utils.logger import get_logger
 from src.utils.serialization import deserialize, serialize
 
 logger = get_logger(__name__)
-
-
-if TYPE_CHECKING:
-    from collections.abc import Iterable
 
 
 async def describe_commit_contents(
@@ -32,8 +27,6 @@ async def describe_commit_contents(
         The description of the commit contents.
     """
     prompt = f"""
-        Describe in detail the changes made in the following git commit.
-
         Here are the totals for the commit:
 
         - Total files changed: {commit_data["total_files_changed"]}
@@ -55,9 +48,22 @@ async def describe_commit_contents(
 
     logger.debug("Sending describe commit contents request with the following prompt:\n\n%s", prompt)
 
+    system_message = """
+        You are a helpful assistant that describes the content of git commits.  Upon receiving a user message evaluate
+        the commit provided factoring in all context and provide a detailed description of the changes made in the
+        commit. The description is meant to be used by an LLM rather than a human and your response should optimize
+        for this.
+        Be precise and concise. Do not include code unless the code is necessary to describe the commit. Even in
+        this case, the code should be minimal and only used to explain a point. Any statistics provided should be
+        accurate and and comprehensive.
+    """
+
     completion = await client.create_completions(
         messages=[
-            Message(role="system", content="You are a helpful assistant that describes the content of git commits."),
+            Message(
+                role="system",
+                content=system_message,
+            ),
             Message(role="user", content=prompt),
         ],
     )
@@ -176,11 +182,11 @@ async def grade_commit(
             "Received content from OpenAI for grade commit request with the following content: %s",
             result,
         )
-        results: Iterable[tuple[str, dict]] = chain(*[list(datum.items()) for datum in deserialize(result, list[dict])])
-
+        result_dict = deserialize(result, dict)
         return [
             CommitGradingResult(rule_name=key, grade=value["grade"], reason=value["reasoning"])
-            for key, value in results
+            for (key, value) in result_dict.items()
+            if key in properties
         ]
     except (DecodeError, LLMClientError) as e:
         logger.error("Error occurred while grading commit: %s.", e)

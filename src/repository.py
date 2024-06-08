@@ -21,8 +21,11 @@ def get_commits(repo_path: PathLike) -> list[Commit]:
     Args:
         repo_path: The path to the Git repository.
 
+    Notes:
+         The commits are ordered from the first to the last.
+
     Returns:
         The list of commits in the repository.
     """
     repo = Repo(repo_path)
-    return list(repo.iter_commits())
+    return list(reversed(list(repo.iter_commits())))
