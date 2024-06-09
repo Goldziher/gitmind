@@ -1,11 +1,13 @@
 from typing import Any
 
+from anyio import sleep
+from inflection import titleize
 from msgspec import DecodeError
 
-from src.data_types import CommitDataDTO, CommitGradingResult, Rule
-from src.exceptions import CriticError, LLMClientError
-from src.llm.base import LLMClient, Message, Tool
-from src.rules import DEFAULT_GRADING_RULES
+from src.configuration_types import CommitGradingConfig, MessageDefinition, ToolDefinition
+from src.data_types import CommitDataDTO, CommitGradingResult
+from src.exceptions import LLMClientError
+from src.llm.base import LLMClient
 from src.utils.logger import get_logger
 from src.utils.serialization import deserialize, serialize
 
@@ -16,35 +18,46 @@ async def describe_commit_contents(
     *,
     client: LLMClient,
     commit_data: CommitDataDTO,
+    diff_contents: str,
 ) -> str:
     """Describe the contents of a commit.
 
     Args:
         client: The OpenAI client to use.
         commit_data: The data of the commit.
+        diff_contents: The contents of the diff.
 
     Returns:
         The description of the commit contents.
     """
     try:
+        commit_info = [
+            f"- {titleize(key)}: {value}"
+            for key, value in commit_data.items()
+            if key
+            not in {
+                "commit_author_email",
+                "commit_author_name",
+                "commit_commiter_email",
+                "commit_commiter_name",
+                "commit_authored_timestamp",
+                "commit_commited_timestamp",
+                "commit_hash",
+                "parent_commit_hash",
+                "per_files_changes",
+            }
+            and value is not None
+        ]
+
         prompt = f"""
-            Here are the totals for the commit:
+            Commit Info:
+            {'\n'.join(commit_info)}
 
-            - Total files changed: {commit_data["total_files_changed"]}
-            - Total lines changed: {commit_data["total_lines_changed"]}
+            Per file breakdown:
+            {serialize(commit_data["per_files_changes"]).decode()}
 
-            Here are the overall statistics for the commit:
-
-            - Additions: {commit_data["num_additions"]}
-            - Deletions: {commit_data["num_deletions"]}
-            - Copies: {commit_data["num_copies"]}
-            - Modifications: {commit_data["num_modifications"]}
-            - Renames: {commit_data["num_renames"]}
-            - Type changes: {commit_data["num_type_changes"]}
-
-            Here is a file by file breakdown: {serialize(commit_data["per_files_changes"]).decode()}
-
-            Here are the contents of the diff: {commit_data["diff_contents"]}
+            Commit Diff Contents:
+            {diff_contents}
             """
 
         logger.debug("Sending describe commit contents request with the following prompt:\n\n%s", prompt)
@@ -61,11 +74,11 @@ async def describe_commit_contents(
 
         completion = await client.create_completions(
             messages=[
-                Message(
+                MessageDefinition(
                     role="system",
                     content=system_message,
                 ),
-                Message(role="user", content=prompt),
+                MessageDefinition(role="user", content=prompt),
             ],
         )
         logger.debug(
@@ -75,7 +88,7 @@ async def describe_commit_contents(
         return completion
     except LLMClientError as e:
         logger.error("Error occurred while describing commit: %s.", e)
-        raise CriticError("Error occurred while describing commit.", context=str(e)) from e
+        raise
 
 
 async def grade_commit(
@@ -83,7 +96,8 @@ async def grade_commit(
     client: LLMClient,
     commit_data: CommitDataDTO,
     commit_description: str,
-    grading_rules: list[Rule] | None = None,
+    config: CommitGradingConfig,
+    retry_count: int = 0,
 ) -> list[CommitGradingResult]:
     """Grade a commit.
 
@@ -91,7 +105,8 @@ async def grade_commit(
         client: The OpenAI client to use.
         commit_data: The data of the commit.
         commit_description: The description of the commit.
-        grading_rules: The grading rules to use.
+        config: The grading configuration.
+        retry_count: The number of times to retry the grading.
 
     Returns:
         The grade for the commit.
@@ -100,12 +115,10 @@ async def grade_commit(
 
     evaluation_instructions = ""
 
-    rules = grading_rules or DEFAULT_GRADING_RULES
-
-    for grading_rule in rules:
+    for grading_rule in config.grading_rules:
         additional_conditions = ""
-        if grading_rule["additional_conditions"]:
-            for condition in grading_rule["additional_conditions"]:
+        if grading_rule["conditions"]:
+            for condition in grading_rule["conditions"]:
                 additional_conditions += f"        - {condition}\n"
 
         description = f"""
@@ -163,11 +176,11 @@ async def grade_commit(
     try:
         result = await client.create_completions(
             messages=[
-                Message(role="system", content="You are a helpful assistant that grades git commits."),
-                Message(role="user", content=prompt),
+                MessageDefinition(role="system", content="You are a helpful assistant that grades git commits."),
+                MessageDefinition(role="user", content=prompt),
             ],
             json_response=True,
-            tool=Tool(
+            tool=ToolDefinition(
                 name="grading_results",
                 description="Returns the grading results for a git commit.",
                 parameters={
@@ -188,6 +201,27 @@ async def grade_commit(
             for (key, value) in deserialize(result, dict).items()
             if key in properties and "grade" in value and "reasoning" in value
         ]
-    except (DecodeError, LLMClientError) as e:
+    except LLMClientError as e:
         logger.error("Error occurred while grading commit: %s.", e)
-        raise CriticError("Error occurred while grading commit.", context=str(e)) from e
+        raise
+    except DecodeError as e:
+        # Retry grading if the response is invalid JSON
+        # This has to be in place because LLMs sometimes return invalid JSON
+        if retry_count < config.retry_config.max_retries:
+            retry_count += 1
+            logger.warning(
+                "LLM responded with invalid JSON, retrying (%d/%d)", retry_count, config.retry_config.max_retries
+            )
+            await sleep((2**retry_count) if config.retry_config.exponential_backoff else 1)
+            return await grade_commit(
+                client=client,
+                commit_data=commit_data,
+                commit_description=commit_description,
+                config=config,
+                retry_count=retry_count,
+            )
+        logger.warning("LLM responded with invalid JSON, retrying")
+        raise LLMClientError(
+            f"LLM responded with invalid JSON all grading attempts for commit {commit_data["commit_hash"]}",
+            context=str(e),
+        ) from e

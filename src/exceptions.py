@@ -10,4 +10,8 @@ class CriticError(Exception):
 
 
 class LLMClientError(CriticError):
-    """Base class for all exceptions in the LLM module."""
+    """Error that occurs when an LLM client encounters an issue."""
+
+
+class EmptyContentError(CriticError):
+    """Error that occurs when an LLM response content is empty."""

@@ -7,35 +7,39 @@ if TYPE_CHECKING:
 class Rule(TypedDict):
     """A grading rule."""
 
+    conditions: list[str] | None
+    """Conditions for the rule."""
+    evaluation_guidelines: str
+    """The description of the rule."""
+    max_grade_description: str
+    """The maximum grade for the rule."""
+    min_grade_description: str
+    """The minimum grade for the rule."""
     name: str
     """The name of the rule."""
     title: str
     """The title of the rule."""
-    evaluation_guidelines: str
-    """The description of the rule."""
-    additional_conditions: list[str] | None
-    """Additional conditions for the rule."""
-    min_grade_description: str
-    """The minimum grade for the rule."""
-    max_grade_description: str
-    """The maximum grade for the rule."""
 
 
 class CommitDataDTO(TypedDict):
     """DTO for commit data."""
 
-    total_files_changed: int
-    """The total number of files changed in the commit."""
-    total_lines_changed: int
-    """The total number of lines changed in the commit."""
-    per_files_changes: dict["PathLike", "Files_TD"]
-    """The changes per file in the commit."""
-    author_email: str | None
+    commit_author_email: str | None
     """The email of the author of the commit."""
-    author_name: str | None
+    commit_author_name: str | None
     """The name of the author of the commit."""
-    diff_contents: str
-    """The contents of the commit."""
+    commit_authored_timestamp: int
+    """The unix UTC timestamp of when commit was authored."""
+    commit_commited_timestamp: int
+    """The unix UTC timestamp of when the commit was committed."""
+    commit_commiter_email: str | None
+    """The email of the committer of the commit."""
+    commit_commiter_name: str | None
+    """The name of the committer of the commit."""
+    commit_hash: str
+    """The hash of the commit."""
+    commit_message: str
+    """The message of the commit."""
     num_additions: int
     """The number of additions in the commit."""
     num_copies: int
@@ -50,6 +54,14 @@ class CommitDataDTO(TypedDict):
     """The number of type changes in the commit."""
     num_unmerged: int
     """The number of unmerged changes in the commit."""
+    parent_commit_hash: str | None
+    """The hash of the parent commit."""
+    per_files_changes: dict["PathLike", "Files_TD"]
+    """The changes per file in the commit."""
+    total_files_changed: int
+    """The total number of files changed in the commit."""
+    total_lines_changed: int
+    """The total number of lines changed in the commit."""
 
 
 class CommitGradingResult(TypedDict):
@@ -66,8 +78,6 @@ class CommitGradingResult(TypedDict):
 class ParsedCommitDTO(TypedDict):
     """DTO for commit data and grading."""
 
-    commit_hash: str
-    """The hash of the commit."""
     commit_data: CommitDataDTO
     """The data of the commit."""
     commit_description: str

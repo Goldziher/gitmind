@@ -1,36 +1,21 @@
 """Base classes for LLM clients."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Generic, NotRequired, TypedDict, TypeVar
+from typing import Any, Generic, TypeVar
 
-ClientConfig = TypeVar("ClientConfig")
+from pydantic import BaseModel
 
+from src.configuration_types import MessageDefinition, ToolDefinition
 
-class Message(TypedDict):
-    """A generic message object. An LLM client should be able to generate completions based on a list this object."""
-
-    role: str
-    """The role of the message."""
-    content: str
-    """The content of the message."""
+T = TypeVar("T", bound=BaseModel)
+M = TypeVar("M")
 
 
-class Tool(TypedDict):
-    """A tool that can be used by the LLM client to generate completions."""
-
-    name: str
-    """The name of the tool."""
-    description: NotRequired[str]
-    """A description of the tool."""
-    parameters: dict[str, Any]
-    """The parameters the tool accepts."""
-
-
-class LLMClient(ABC, Generic[ClientConfig]):
+class LLMClient(ABC, Generic[T]):
     """Base class for LLM clients."""
 
     @abstractmethod
-    def __init__(self, *, config: ClientConfig) -> None:  # pragma: no cover
+    def __init__(self, *, config: T) -> None:  # pragma: no cover
         """Initialize the client.
 
         Args:
@@ -40,7 +25,12 @@ class LLMClient(ABC, Generic[ClientConfig]):
 
     @abstractmethod
     async def create_completions(
-        self, *, messages: list[Message], json_response: bool = False, tool: Tool | None = None, **kwargs: Any
+        self,
+        *,
+        messages: list[MessageDefinition],
+        json_response: bool = False,
+        tool: ToolDefinition | None = None,
+        **kwargs: Any,
     ) -> str:  # pragma: no cover
         """Create completions.
 

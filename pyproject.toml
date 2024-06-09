@@ -19,6 +19,7 @@ dependencies = [
     "jsonschema>=4.22.0",
     "python-dotenv>=1.0.1",
     "groq>=0.8.0",
+    "inflection>=0.5.1",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"
@@ -140,7 +141,6 @@ warn_return_any = true
 warn_unreachable = true
 warn_unused_configs = true
 warn_unused_ignores = true
-ignore_missing_imports = true
 
 [tool.coverage.run]
 omit = ["*/tests/*"]

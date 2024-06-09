@@ -15,7 +15,7 @@ from src.repository import get_commits
 from src.utils.logger import get_logger
 
 if TYPE_CHECKING:
-    from llm.base import LLMClient
+    from src.llm.base import LLMClient
 
 
 async def test_describe_commit(logger: Logger) -> None:
@@ -52,8 +52,10 @@ async def test_describe_commit(logger: Logger) -> None:
     commits = get_commits(Path(__file__).parent.parent.resolve())
 
     for commit in [c for c in commits if c.hexsha == "9c8399e0fe619ff66f8bebe64039fc23a7f107cd"]:
-        commit_data = extract_commit_data(commit)
-        description = await describe_commit_contents(client=client, commit_data=commit_data)
+        commit_data, diff_contents = extract_commit_data(commit)
+        description = await describe_commit_contents(
+            client=client, commit_data=commit_data, diff_contents=diff_contents
+        )
 
         logger.info("Description for commit %s: %s", commit.hexsha, description)
 

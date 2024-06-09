@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 from git import Blob, Commit
 from magic import Magic
 
+from src.configuration_types import CommitGradingConfig
 from src.data_types import CommitDataDTO, ParsedCommitDTO
 from src.prompts import describe_commit_contents, grade_commit
 
@@ -49,7 +50,7 @@ def extract_files_from_commit(commit: Commit) -> dict[str, str]:
     return files
 
 
-def extract_commit_data(commit: Commit) -> CommitDataDTO:
+def extract_commit_data(commit: Commit) -> tuple[CommitDataDTO, str]:
     """Extract statistics from a commit.
 
     Notes:
@@ -73,13 +74,16 @@ def extract_commit_data(commit: Commit) -> CommitDataDTO:
         if contents := str(change.diff):
             diff_list.append(contents)
 
+    diff_contents = "".join(diff_list)
+
     return CommitDataDTO(
-        total_files_changed=len(diff_list),
-        total_lines_changed=sum(len(diff.splitlines()) for diff in diff_list),
-        per_files_changes=dict(commit.stats.files),
-        author_email=commit.author.email,
-        author_name=commit.author.name,
-        diff_contents="".join(diff_list),
+        commit_author_email=commit.author.email,
+        commit_author_name=commit.author.name,
+        commit_authored_timestamp=int(commit.authored_datetime.timestamp()),
+        commit_commited_timestamp=int(commit.committed_datetime.timestamp()),
+        commit_commiter_email=commit.committer.email,
+        commit_commiter_name=commit.committer.name,
+        commit_hash=commit.hexsha,
         num_additions=counters["A"],
         num_copies=counters["C"],
         num_deletions=counters["D"],
@@ -87,7 +91,14 @@ def extract_commit_data(commit: Commit) -> CommitDataDTO:
         num_renames=counters["R"],
         num_type_changes=counters["T"],
         num_unmerged=counters["U"],
-    )
+        commit_message=commit.message
+        if isinstance(commit.message, str)
+        else commit.message.decode(commit.encoding, "ignore"),
+        parent_commit_hash=parent_commit.hexsha if parent_commit else None,
+        per_files_changes=dict(commit.stats.files),
+        total_files_changed=len(diff_list),
+        total_lines_changed=sum(len(diff.splitlines()) for diff in diff_list),
+    ), diff_contents
 
 
 async def parse_commit_contents(commit: Commit, client: "LLMClient") -> ParsedCommitDTO:
@@ -100,14 +111,15 @@ async def parse_commit_contents(commit: Commit, client: "LLMClient") -> ParsedCo
     Returns:
         ParsedCommitDTO: Parsed commit data ready for storage and consumption.
     """
-    commit_data = extract_commit_data(commit=commit)
-    commit_description = await describe_commit_contents(commit_data=commit_data, client=client)
+    commit_data, diff_contents = extract_commit_data(commit=commit)
+    commit_description = await describe_commit_contents(
+        commit_data=commit_data, client=client, diff_contents=diff_contents
+    )
     commit_grading = await grade_commit(
-        commit_description=commit_description, commit_data=commit_data, grading_rules=None, client=client
+        commit_description=commit_description, commit_data=commit_data, client=client, config=CommitGradingConfig()
     )
     return ParsedCommitDTO(
         commit_data=commit_data,
         commit_description=commit_description,
         commit_grading=commit_grading,
-        commit_hash=commit.hexsha,
     )
