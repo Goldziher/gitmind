@@ -4,12 +4,12 @@ from typing import TYPE_CHECKING
 from git import Blob, Commit
 from magic import Magic
 
-from src.configuration_types import CommitGradingConfig
-from src.data_types import CommitDataDTO, ParsedCommitDTO
-from src.prompts import describe_commit_contents, grade_commit
+from git_critic.configuration_types import CommitGradingConfig
+from git_critic.data_types import CommitDataDTO, ParsedCommitDTO
+from git_critic.prompts import describe_commit_contents, grade_commit
 
 if TYPE_CHECKING:
-    from src.llm.base import LLMClient
+    from git_critic.llm.base import LLMClient
 
 
 text_mime_types = {"text", "application/json", "application/xml", "application/javascript"}

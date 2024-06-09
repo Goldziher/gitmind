@@ -1,6 +1,6 @@
 import pytest
 
-from src.commit import is_supported_mime_type
+from git_critic.commit import is_supported_mime_type
 
 
 @pytest.mark.parametrize(

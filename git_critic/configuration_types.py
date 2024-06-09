@@ -2,8 +2,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel
 
-from src.data_types import Rule
-from src.rules import DEFAULT_GRADING_RULES
+from git_critic.data_types import Rule
+from git_critic.rules import DEFAULT_GRADING_RULES
 
 MessageRole = Literal["system", "user"]
 

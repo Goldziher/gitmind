@@ -4,12 +4,12 @@ from anyio import sleep
 from inflection import titleize
 from msgspec import DecodeError
 
-from src.configuration_types import CommitGradingConfig, MessageDefinition, ToolDefinition
-from src.data_types import CommitDataDTO, CommitGradingResult
-from src.exceptions import LLMClientError
-from src.llm.base import LLMClient
-from src.utils.logger import get_logger
-from src.utils.serialization import deserialize, serialize
+from git_critic.configuration_types import CommitGradingConfig, MessageDefinition, ToolDefinition
+from git_critic.data_types import CommitDataDTO, CommitGradingResult
+from git_critic.exceptions import LLMClientError
+from git_critic.llm.base import LLMClient
+from git_critic.utils.logger import get_logger
+from git_critic.utils.serialization import deserialize, serialize
 
 logger = get_logger(__name__)
 

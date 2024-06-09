@@ -5,7 +5,7 @@ from typing import Any, Generic, TypeVar
 
 from pydantic import BaseModel
 
-from src.configuration_types import MessageDefinition, ToolDefinition
+from git_critic.configuration_types import MessageDefinition, ToolDefinition
 
 T = TypeVar("T", bound=BaseModel)
 M = TypeVar("M")

@@ -86,7 +86,7 @@ lint.ignore = [
     "E501", # pycodestyle line too long, handled by ruff format
     "ISC001", # ruff formatter incompatible
 ]
-src = ["src", "tests"]
+src = ["git_critic", "tests", "e2e"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.*" = [
@@ -126,10 +126,10 @@ docstring-code-line-length = 120
 convention = "google"
 
 [tool.ruff.lint.isort]
-known-first-party = ["src"]
+known-first-party = ["git_critic", "tests", "e2e"]
 
 [tool.mypy]
-packages = ["src", "tests"]
+packages = ["git_critic", "tests", "e2e"]
 python_version = "3.12"
 disallow_any_generics = false
 disallow_untyped_decorators = false
@@ -145,7 +145,7 @@ warn_unused_ignores = true
 [tool.coverage.run]
 omit = ["*/tests/*"]
 plugins = ["covdefaults"]
-source = [ "src"]
+source = [ "git_critic"]
 
 [tool.coverage.report]
 exclude_lines = [

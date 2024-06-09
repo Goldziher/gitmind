@@ -2,7 +2,7 @@ from pathlib import Path as SyncPath
 
 from anyio import Path as AsyncPath
 
-from src.caching.base import CacheBase
+from git_critic.caching.base import CacheBase
 
 
 def get_or_create_cache_dir() -> AsyncPath:

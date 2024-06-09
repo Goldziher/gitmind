@@ -3,9 +3,9 @@ from pathlib import Path
 import pytest
 from git import Commit
 
-from src.commit import extract_commit_data
-from src.data_types import CommitDataDTO
-from src.repository import get_commits
+from git_critic.commit import extract_commit_data
+from git_critic.data_types import CommitDataDTO
+from git_critic.repository import get_commits
 from tests.data_fixtures import describe_commit_response, grade_commit_response
 
 

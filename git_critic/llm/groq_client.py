@@ -13,9 +13,9 @@ from groq.types.chat.completion_create_params import ResponseFormat
 from groq.types.shared_params import FunctionDefinition
 from pydantic import BaseModel, ConfigDict
 
-from src.configuration_types import MessageDefinition, MessageRole, ToolDefinition
-from src.exceptions import EmptyContentError, LLMClientError
-from src.llm.base import LLMClient
+from git_critic.configuration_types import MessageDefinition, MessageRole, ToolDefinition
+from git_critic.exceptions import EmptyContentError, LLMClientError
+from git_critic.llm.base import LLMClient
 
 if TYPE_CHECKING:
     from groq import AsyncClient

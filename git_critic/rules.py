@@ -1,4 +1,4 @@
-from src.data_types import Rule
+from git_critic.data_types import Rule
 
 DEFAULT_GRADING_RULES = [
     Rule(

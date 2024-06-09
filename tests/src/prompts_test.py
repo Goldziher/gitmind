@@ -1,9 +1,9 @@
 import pytest
 
-from src.configuration_types import CommitGradingConfig, RequestRetryConfig
-from src.data_types import CommitDataDTO
-from src.exceptions import LLMClientError
-from src.prompts import describe_commit_contents, grade_commit
+from git_critic.configuration_types import CommitGradingConfig, RequestRetryConfig
+from git_critic.data_types import CommitDataDTO
+from git_critic.exceptions import LLMClientError
+from git_critic.prompts import describe_commit_contents, grade_commit
 from tests.utils import create_mock_client
 
 
@@ -59,7 +59,7 @@ async def test_grade_commit_success_path(
         {
             "rule_name": "documentation_quality",
             "grade": 8,
-            "reason": "The documentation in `src/llm/result.md` is comprehensive and clear. However, some of the refactored code could benefit from additional inline comments for better clarity.",
+            "reason": "The documentation in `git_critic/llm/result.md` is comprehensive and clear. However, some of the refactored code could benefit from additional inline comments for better clarity.",
         },
         {
             "rule_name": "codebase_impact",
