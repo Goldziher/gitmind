@@ -7,17 +7,12 @@ authors = [
 ]
 dependencies = [
     "gitpython>=3.1.43",
-    "transformers>=4.41.2",
-    "torch>=2.3.0",
-    "requests>=2.32.3",
     "openai>=1.30.5",
     "httpx>=0.27.0",
-    "aiosqlite>=0.20.0",
     "anyio>=4.4.0",
     "msgspec>=0.18.6",
     "python-magic>=0.4.27",
     "jsonschema>=4.22.0",
-    "python-dotenv>=1.0.1",
     "groq>=0.8.0",
     "inflection>=0.5.1",
 ]
@@ -35,6 +30,8 @@ dev = [
     "pre-commit>=3.7.1",
     "pytest>=8.2.2",
     "pytest-asyncio>=0.23.7",
+    "python-dotenv>=1.0.1",
+    "types-jsonschema>=4.22.0.20240501",
 ]
 
 # linters configuration below

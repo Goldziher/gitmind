@@ -2,6 +2,8 @@ from typing import Any
 
 from anyio import sleep
 from inflection import titleize
+from jsonschema import validate
+from jsonschema.exceptions import ValidationError
 from msgspec import DecodeError
 
 from git_critic.configuration_types import CommitGradingConfig, MessageDefinition, ToolDefinition
@@ -168,7 +170,7 @@ async def grade_commit(
 
     And here is the data extracted from the commit: {serialize(commit_data).decode()}
 
-    Respond by calling the provided tool 'grading_results' with an object adhering to its parameter definitions.
+    Respond by calling the provided tool 'grading_results' with a JSON object adhering to its parameter definitions.
     """
 
     logger.debug("Sending grade commit request with the following prompt:\n\n%s", prompt)
@@ -196,21 +198,35 @@ async def grade_commit(
             result,
         )
 
+        parsed_schema = {k: v for k, v in deserialize(result, dict).items() if k in properties}
+
+        validate(
+            instance=parsed_schema,
+            schema={
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "type": "object",
+                "properties": properties,
+                "additionalProperties": False,
+                "required": list(properties.keys()),
+            },
+        )
+
         return [
             CommitGradingResult(rule_name=key, grade=value["grade"], reason=value["reasoning"])
-            for (key, value) in deserialize(result, dict).items()
-            if key in properties and "grade" in value and "reasoning" in value
+            for (key, value) in parsed_schema.items()
         ]
     except LLMClientError as e:
         logger.error("Error occurred while grading commit: %s.", e)
         raise
-    except DecodeError as e:
-        # Retry grading if the response is invalid JSON
-        # This has to be in place because LLMs sometimes return invalid JSON
+    except (DecodeError, ValidationError) as e:
+        # Retry grading if the response is invalid JSON response
+        # This has to be in place because LLMs sometimes return invalid or partial JSON
         if retry_count < config.retry_config.max_retries:
             retry_count += 1
             logger.warning(
-                "LLM responded with invalid JSON, retrying (%d/%d)", retry_count, config.retry_config.max_retries
+                "LLM responded with an invalid or partial JSON response, retrying (%d/%d)",
+                retry_count,
+                config.retry_config.max_retries,
             )
             await sleep((2**retry_count) if config.retry_config.exponential_backoff else 1)
             return await grade_commit(
@@ -220,8 +236,8 @@ async def grade_commit(
                 config=config,
                 retry_count=retry_count,
             )
-        logger.warning("LLM responded with invalid JSON, retrying")
+        logger.warning("LLM responded with invalid or partial JSON response, retrying")
         raise LLMClientError(
-            f"LLM responded with invalid JSON all grading attempts for commit {commit_data["commit_hash"]}",
+            f"LLM responded with invalid or partial JSON response all grading attempts for commit {commit_data["commit_hash"]}",
             context=str(e),
         ) from e
