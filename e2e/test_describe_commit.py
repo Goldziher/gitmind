@@ -10,9 +10,10 @@ from dotenv import load_dotenv
 from git_critic.commit import extract_commit_data
 from git_critic.llm.groq_client import GroqClient, GroqOptions
 from git_critic.llm.openai_client import OpenAIClient, OpenAIOptions
-from git_critic.prompts import describe_commit_contents
+from git_critic.prompts import DescribeCommitHandler
 from git_critic.repository import get_commits
 from git_critic.utils.logger import get_logger
+from git_critic.utils.serialization import serialize
 
 if TYPE_CHECKING:
     from git_critic.llm.base import LLMClient
@@ -52,16 +53,12 @@ async def test_describe_commit(logger: Logger) -> None:
     commits = get_commits(Path(__file__).parent.parent.resolve())
 
     for commit in [c for c in commits if c.hexsha == "9c8399e0fe619ff66f8bebe64039fc23a7f107cd"]:
-        commit_data, diff_contents = extract_commit_data(commit)
-        description = await describe_commit_contents(
-            client=client, commit_data=commit_data, diff_contents=diff_contents
-        )
-
-        logger.info("Description for commit %s: %s", commit.hexsha, description)
+        statistics, metadata, diff = extract_commit_data(commit)
+        commit_description = await DescribeCommitHandler(client)(statistics=statistics, diff=diff, metadata=metadata)
 
         Path(__file__).parent.joinpath(
-            f".results/{provider}_{model}_describe_{commit.hexsha}_{datetime.now(UTC)}.md"
-        ).write_text(description)
+            f".results/{provider}_{model}_describe_{commit.hexsha}_{datetime.now(UTC)}.json"
+        ).write_bytes(serialize(commit_description))
 
 
 if __name__ == "__main__":

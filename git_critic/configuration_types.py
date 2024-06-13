@@ -2,9 +2,6 @@ from typing import Any, Literal
 
 from pydantic import BaseModel
 
-from git_critic.data_types import Rule
-from git_critic.rules import DEFAULT_GRADING_RULES
-
 MessageRole = Literal["system", "user"]
 
 
@@ -28,19 +25,10 @@ class ToolDefinition(BaseModel):
     """The parameters the tool accepts."""
 
 
-class RequestRetryConfig(BaseModel):
+class RetryConfig(BaseModel):
     """Configuration for request retries."""
 
     max_retries: int = 3
     """The maximum number of retries for a request."""
     exponential_backoff: bool = True
     """Whether to use exponential backoff for retries."""
-
-
-class CommitGradingConfig(BaseModel):
-    """Configuration for grading commits."""
-
-    grading_rules: list[Rule] = DEFAULT_GRADING_RULES
-    """The grading rules to use."""
-    retry_config: RequestRetryConfig = RequestRetryConfig()
-    """The retry configuration for grading commits."""

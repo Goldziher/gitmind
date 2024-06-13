@@ -4,9 +4,8 @@ import pytest
 from git import Commit
 
 from git_critic.commit import extract_commit_data
-from git_critic.data_types import CommitDataDTO
+from git_critic.data_types import CommitMetadata, CommitStatistics
 from git_critic.repository import get_commits
-from tests.data_fixtures import describe_commit_response, grade_commit_response
 
 
 @pytest.fixture(scope="session")
@@ -16,15 +15,5 @@ def test_commit() -> Commit:
 
 
 @pytest.fixture(scope="session")
-def commit_data_dto(test_commit: Commit) -> tuple[CommitDataDTO, str]:
+def commit_data(test_commit: Commit) -> tuple[CommitStatistics, CommitMetadata, str]:
     return extract_commit_data(test_commit)
-
-
-@pytest.fixture(scope="session")
-def commit_description() -> str:
-    return describe_commit_response
-
-
-@pytest.fixture(scope="session")
-def commit_grading() -> str:
-    return grade_commit_response

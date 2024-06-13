@@ -7,10 +7,9 @@ from typing import TYPE_CHECKING
 from dotenv import load_dotenv
 
 from git_critic.commit import extract_commit_data
-from git_critic.configuration_types import CommitGradingConfig
 from git_critic.llm.groq_client import GroqClient, GroqOptions
 from git_critic.llm.openai_client import OpenAIClient, OpenAIOptions
-from git_critic.prompts import grade_commit
+from git_critic.prompts import GradeCommitHandler
 from git_critic.repository import get_commits
 from git_critic.utils.logger import get_logger
 from git_critic.utils.serialization import serialize
@@ -53,14 +52,8 @@ async def test_describe_commit(logger: Logger) -> None:
     commits = get_commits(Path(__file__).parent.parent.resolve())
 
     for commit in [c for c in commits if c.hexsha == "9c8399e0fe619ff66f8bebe64039fc23a7f107cd"]:
-        commit_data, _ = extract_commit_data(commit)
-
-        description = (
-            Path(__file__).parent.joinpath(f".results/{provider}_{model}_describe_{commit.hexsha}.md").read_text()
-        )
-        grading = await grade_commit(
-            client=client, commit_data=commit_data, commit_description=description, config=CommitGradingConfig()
-        )
+        _, metadata, diff = extract_commit_data(commit)
+        grading = await GradeCommitHandler(client)(metadata=metadata, diff=diff)
         logger.info("Graded commit %s", commit.hexsha)
 
         Path(__file__).parent.joinpath(f".results/{provider}_{model}_grading_{commit.hexsha}.json").write_bytes(

@@ -140,7 +140,7 @@ files = [
 
 [[package]]
 name = "groq"
-version = "0.8.0"
+version = "0.9.0"
 requires_python = ">=3.7"
 summary = "The official Python library for the groq API"
 groups = ["default"]
@@ -153,8 +153,8 @@ dependencies = [
     "typing-extensions<5,>=4.7",
 ]
 files = [
-    {file = "groq-0.8.0-py3-none-any.whl", hash = "sha256:f5e4e892d45001241a930db451e633ca1f0007e3f749deaa5d7360062fcd61e3"},
-    {file = "groq-0.8.0.tar.gz", hash = "sha256:37ceb2f706bd516d0bfcac8e89048a24b375172987a0d6bd9efb521c54f6deff"},
+    {file = "groq-0.9.0-py3-none-any.whl", hash = "sha256:d0e46f4ad645504672bb09c8100af3ced3a7db0d5119dc13e4aca535fc455874"},
+    {file = "groq-0.9.0.tar.gz", hash = "sha256:130ed5e35d3acfaab46b9e7a078eeaebf91052f4a9d71f86f87fb319b5fec332"},
 ]
 
 [[package]]
@@ -337,7 +337,7 @@ files = [
 
 [[package]]
 name = "openai"
-version = "1.33.0"
+version = "1.34.0"
 requires_python = ">=3.7.1"
 summary = "The official Python library for the openai API"
 groups = ["default"]
@@ -351,8 +351,8 @@ dependencies = [
     "typing-extensions<5,>=4.7",
 ]
 files = [
-    {file = "openai-1.33.0-py3-none-any.whl", hash = "sha256:621163b56570897ab8389d187f686a53d4771fd6ce95d481c0a9611fe8bc4229"},
-    {file = "openai-1.33.0.tar.gz", hash = "sha256:1169211a7b326ecbc821cafb427c29bfd0871f9a3e0947dd9e51acb3b0f1df78"},
+    {file = "openai-1.34.0-py3-none-any.whl", hash = "sha256:018623c2f795424044675c6230fa3bfbf98d9e0aab45d8fd116f2efb2cfb6b7e"},
+    {file = "openai-1.34.0.tar.gz", hash = "sha256:95c8e2da4acd6958e626186957d656597613587195abd0fb2527566a93e76770"},
 ]
 
 [[package]]
@@ -669,7 +669,7 @@ files = [
 
 [[package]]
 name = "types-jsonschema"
-version = "4.22.0.20240501"
+version = "4.22.0.20240610"
 requires_python = ">=3.8"
 summary = "Typing stubs for jsonschema"
 groups = ["dev"]
@@ -677,8 +677,8 @@ dependencies = [
     "referencing",
 ]
 files = [
-    {file = "types-jsonschema-4.22.0.20240501.tar.gz", hash = "sha256:51c4ec05640909206551c8f57e630be570c4e0d86abda75d9d947521dffef6db"},
-    {file = "types_jsonschema-4.22.0.20240501-py3-none-any.whl", hash = "sha256:5cacc80cffef3cbbdd928954feb0f3d218d062b47333ca50841c27039efae29d"},
+    {file = "types-jsonschema-4.22.0.20240610.tar.gz", hash = "sha256:f82ab9fe756e3a2642ea9712c46b403ce61eb380b939b696cff3252af42f65b0"},
+    {file = "types_jsonschema-4.22.0.20240610-py3-none-any.whl", hash = "sha256:89996b9bd1928f820a0e252b2844be21cd2e55d062b6fa1048d88453006ad89e"},
 ]
 
 [[package]]

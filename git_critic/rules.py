@@ -1,4 +1,24 @@
-from git_critic.data_types import Rule
+from pydantic import BaseModel
+
+
+class Rule(BaseModel):
+    """Base class for rules."""
+
+    conditions: list[str] | None
+    """Conditions for the rule."""
+    evaluation_guidelines: str
+    """The description of the rule."""
+    max_grade_description: str
+    """The maximum grade for the rule."""
+    min_grade_description: str
+    """The minimum grade for the rule."""
+    name: str
+    """The name of the rule."""
+    title: str
+    """The title of the rule."""
+    weight: float = 1.0
+    """The weight of the rule."""
+
 
 DEFAULT_GRADING_RULES = [
     Rule(

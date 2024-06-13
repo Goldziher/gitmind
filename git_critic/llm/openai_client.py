@@ -163,7 +163,7 @@ class OpenAIClient(LLMClient[AzureOpenAIOptions | OpenAIOptions]):
                 ]
                 if tool is not None
                 else NOT_GIVEN,
-                tool_choice="required" if tool else "none",
+                tool_choice="required" if tool else NOT_GIVEN,
                 **kwargs,
             )
 

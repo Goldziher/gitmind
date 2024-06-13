@@ -4,25 +4,8 @@ if TYPE_CHECKING:
     from git.types import Files_TD, PathLike
 
 
-class Rule(TypedDict):
-    """A grading rule."""
-
-    conditions: list[str] | None
-    """Conditions for the rule."""
-    evaluation_guidelines: str
-    """The description of the rule."""
-    max_grade_description: str
-    """The maximum grade for the rule."""
-    min_grade_description: str
-    """The minimum grade for the rule."""
-    name: str
-    """The name of the rule."""
-    title: str
-    """The title of the rule."""
-
-
-class CommitDataDTO(TypedDict):
-    """DTO for commit data."""
+class CommitMetadata(TypedDict):
+    """DTO for commit descriptors."""
 
     commit_author_email: str | None
     """The email of the author of the commit."""
@@ -40,6 +23,11 @@ class CommitDataDTO(TypedDict):
     """The hash of the commit."""
     commit_message: str
     """The message of the commit."""
+
+
+class CommitStatistics(TypedDict):
+    """DTO for commit data."""
+
     num_additions: int
     """The number of additions in the commit."""
     num_copies: int
@@ -64,6 +52,30 @@ class CommitDataDTO(TypedDict):
     """The total number of lines changed in the commit."""
 
 
+class CommitFileChangeDescription(TypedDict):
+    """Description of the changes made in a file in a commit."""
+
+    file_name: str
+    """The name of the file."""
+    changes_description: str
+    """Description of the changes made in the file and their purpose."""
+
+
+class CommitDescriptionResult(TypedDict):
+    """Description of a commit."""
+
+    summary: str
+    """Summary of the commit."""
+    purpose: str
+    """An estimation to the purpose of the changes made in the commit and it's relative impact."""
+    breakdown: list[CommitFileChangeDescription]
+    """Description of changes in each file and the purpose of the changes."""
+    programming_languages_used: list[str]
+    """List of programming languages used in the commit."""
+    additional_notes: str
+    """Any additional relevant information."""
+
+
 class CommitGradingResult(TypedDict):
     """DTO for grading results."""
 
@@ -75,12 +87,14 @@ class CommitGradingResult(TypedDict):
     """The name of the rule."""
 
 
-class ParsedCommitDTO(TypedDict):
+class CommitData(TypedDict):
     """DTO for commit data and grading."""
 
-    commit_data: CommitDataDTO
-    """The data of the commit."""
-    commit_description: str
+    description: CommitDescriptionResult
     """The description of the commit."""
-    commit_grading: list[CommitGradingResult]
+    grading: list[CommitGradingResult]
     """The grading results for the commit."""
+    metadata: CommitMetadata
+    """The metadata of the commit."""
+    statistics: CommitStatistics
+    """The data of the commit."""

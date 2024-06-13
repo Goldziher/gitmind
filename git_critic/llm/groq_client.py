@@ -119,7 +119,7 @@ class GroqClient(LLMClient[GroqOptions]):
                 ]
                 if tool is not None
                 else NOT_GIVEN,
-                tool_choice="auto" if tool else "none",
+                tool_choice="auto" if tool else NOT_GIVEN,
                 **kwargs,
             )
 
