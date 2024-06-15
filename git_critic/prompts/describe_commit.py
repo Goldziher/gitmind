@@ -1,3 +1,4 @@
+from asyncio import gather
 from typing import Any, Final, override
 
 from inflection import titleize
@@ -11,9 +12,14 @@ from git_critic.utils.serialization import serialize
 logger = get_logger(__name__)
 
 DESCRIBE_COMMIT_SYSTEM_MESSAGE: Final[str] = """
-You are a helpful assistant that extracts information and describes the contents of git commits. Evaluate the provided
-commit factoring in the context and provide a detailed description of the changes made in the commit. Be precise and
-concise. Do not use unnecessary superlatives. Do not include any code in the output.
+You are an assistant that extracts information and describes the contents of git commits.
+
+Evaluate the provided commit factoring in the context and provide a detailed description of the changes made in the
+commit.
+
+- Be precise and concise.
+- Do not use unnecessary superlatives.
+- Do not include any code in the output.
 
 Respond by calling the provided tool 'describe_commit' with a JSON object adhering to its parameter definitions.
 """
@@ -51,6 +57,9 @@ DESCRIBE_COMMIT_PROPERTIES = {
 def titleize_commit_statistics(commit_statistics: CommitStatistics) -> str:
     """Titleize the commit statistics and render them as a string.
 
+    Notes:
+        - This is done to make the statistics more readable for human beings.
+
     Args:
         commit_statistics: The statistics of the commit.
 
@@ -87,36 +96,55 @@ class DescribeCommitHandler(AbstractPromptHandler[CommitDescriptionResult]):
             retry_config: The retry configuration to use.
             **kwargs: Additional arguments.
         """
-        prompt = (
+        describe_commit_prompt = (
             f"**Commit Message**:{metadata["commit_message"]}\n\n"
             f"**Commit Statistics**:\n{titleize_commit_statistics(statistics)}\n\n"
             f"**Per file breakdown**:\n{serialize(statistics["per_files_changes"]).decode()}\n\n"
-            f"**Commit Diff**:\n{diff}"
+            f"**Commit Diff**:\n"
         )
-        parsed_response = await self.generate_completions(
-            properties=DESCRIBE_COMMIT_PROPERTIES,
-            messages=[
-                MessageDefinition(
-                    role="system",
-                    content=DESCRIBE_COMMIT_SYSTEM_MESSAGE.strip(),
-                ),
-                MessageDefinition(role="user", content=prompt),
-            ],
-            json_response=True,
-            tool=ToolDefinition(
-                name="describe_commit",
-                description="Returns the description for a git commit.",
-                parameters={
-                    "type": "object",
-                    "properties": DESCRIBE_COMMIT_PROPERTIES,
-                    "required": list(DESCRIBE_COMMIT_PROPERTIES.keys()),
-                },
-            ),
+
+        tool = ToolDefinition(
+            name="describe_commit",
+            description="Returns the description for a git commit.",
+            parameters={
+                "type": "object",
+                "properties": DESCRIBE_COMMIT_PROPERTIES,
+                "required": list(DESCRIBE_COMMIT_PROPERTIES.keys()),
+            },
         )
+
+        chunk_size = self._chunk_size - len(describe_commit_prompt)
+        if len(diff) >= chunk_size:
+            chunk_responses = await gather(
+                *[
+                    self.generate_completions(
+                        properties=DESCRIBE_COMMIT_PROPERTIES,
+                        messages=[
+                            MessageDefinition(role="system", content=DESCRIBE_COMMIT_SYSTEM_MESSAGE.strip()),
+                            MessageDefinition(role="user", content=describe_commit_prompt + diff[i : i + chunk_size]),
+                        ],
+                        tool=tool,
+                    )
+                    for i in range(0, len(diff), chunk_size)
+                ]
+            )
+            final_response = await self.combine_results(
+                results=list(chunk_responses), tool=tool, properties=DESCRIBE_COMMIT_PROPERTIES
+            )
+        else:
+            final_response = await self.generate_completions(
+                properties=DESCRIBE_COMMIT_PROPERTIES,
+                messages=[
+                    MessageDefinition(role="system", content=DESCRIBE_COMMIT_SYSTEM_MESSAGE.strip()),
+                    MessageDefinition(role="user", content=describe_commit_prompt + diff),
+                ],
+                tool=tool,
+            )
+
         return CommitDescriptionResult(
-            summary=parsed_response["summary"],
-            purpose=parsed_response["purpose"],
-            breakdown=parsed_response["breakdown"],
-            programming_languages_used=parsed_response["programming_languages_used"],
-            additional_notes=parsed_response["additional_notes"],
+            summary=final_response["summary"],
+            purpose=final_response["purpose"],
+            breakdown=final_response["breakdown"],
+            programming_languages_used=final_response["programming_languages_used"],
+            additional_notes=final_response["additional_notes"],
         )

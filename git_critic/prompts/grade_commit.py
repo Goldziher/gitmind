@@ -1,3 +1,4 @@
+from asyncio import gather
 from typing import Any, Final, override
 
 from git_critic.configuration_types import MessageDefinition, ToolDefinition
@@ -33,10 +34,67 @@ class GradeCommitHandler(AbstractPromptHandler[list[CommitGradingResult]]):
             metadata: The metadata of the commit.
             diff: The diff of the commit.
             grading_rules: The grading rules to use.
-            retry_config: The retry configuration to use.
 
         Returns:
             The grading results for the commit.
+        """
+        properties, evaluation_instructions = self.create_evaluation_instructions(grading_rules)
+
+        commit_evaluation_prompt = (
+            f"Evaluate and grade a git commit based on the following criteria:\n{evaluation_instructions}\n\n"
+            f"**Commit Message**:{metadata["commit_message"]}\n\n"
+            f"**Commit Diff**:\n"
+        )
+
+        tool = ToolDefinition(
+            name="grading_results",
+            description="Returns the grading results for a git commit.",
+            parameters={
+                "type": "object",
+                "properties": properties,
+            },
+        )
+
+        chunk_size = self._chunk_size - len(commit_evaluation_prompt)
+        if len(diff) >= chunk_size:
+            chunk_responses = await gather(
+                *[
+                    self.generate_completions(
+                        properties=properties,
+                        messages=[
+                            MessageDefinition(role="system", content=GRADE_COMMIT_SYSTEM_MESSAGE),
+                            MessageDefinition(role="user", content=commit_evaluation_prompt + diff[i : i + chunk_size]),
+                        ],
+                        tool=tool,
+                    )
+                    for i in range(0, len(diff), chunk_size)
+                ]
+            )
+            final_response = await self.combine_results(results=list(chunk_responses), tool=tool, properties=properties)
+        else:
+            final_response = await self.generate_completions(
+                properties=properties,
+                messages=[
+                    MessageDefinition(role="system", content=GRADE_COMMIT_SYSTEM_MESSAGE),
+                    MessageDefinition(role="user", content=f"{commit_evaluation_prompt}{diff}"),
+                ],
+                tool=tool,
+            )
+
+        return [
+            CommitGradingResult(rule_name=key, grade=value["grade"], reason=value["reasoning"])
+            for (key, value) in final_response.items()
+        ]
+
+    @staticmethod
+    def create_evaluation_instructions(grading_rules: list[Rule]) -> tuple[dict[str, Any], str]:
+        """Create the evaluation instructions for the grading rules.
+
+        Args:
+            grading_rules: The grading rules to create evaluation instructions for.
+
+        Returns:
+            A tuple containing the properties and evaluation instructions.
         """
         properties: dict[str, Any] = {}
 
@@ -87,31 +145,4 @@ class GradeCommitHandler(AbstractPromptHandler[list[CommitGradingResult]]):
                 },
             }
 
-        prompt = (
-            f"Evaluate and grade a git commit based on the following criteria:\n{evaluation_instructions}\n\n"
-            f"**Commit Message**:{metadata["commit_message"]}\n\n"
-            f"**Commit Diff**:\n{diff}"
-        )
-
-        parsed_response = await self.generate_completions(
-            properties=properties,
-            messages=[
-                MessageDefinition(role="system", content=GRADE_COMMIT_SYSTEM_MESSAGE),
-                MessageDefinition(role="user", content=prompt),
-            ],
-            json_response=True,
-            tool=ToolDefinition(
-                name="grading_results",
-                description="Returns the grading results for a git commit.",
-                parameters={
-                    "type": "object",
-                    "properties": properties,
-                },
-            ),
-            max_tokens=4096,
-        )
-
-        return [
-            CommitGradingResult(rule_name=key, grade=value["grade"], reason=value["reasoning"])
-            for (key, value) in parsed_response.items()
-        ]
+        return properties, evaluation_instructions
