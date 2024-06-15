@@ -68,7 +68,6 @@ class AbstractPromptHandler(ABC, Generic[T]):
     ) -> dict[str, Any]:
         """Generate LLM completions.
 
-
         Args:
             messages: The messages to generate completions for.
             properties: The properties to validate.

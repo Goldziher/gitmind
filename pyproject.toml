@@ -79,9 +79,8 @@ lint.ignore = [
     "D100", # pydocstyle - missing docstring in public module
     "D104", # pydocstyle - missing docstring in public package
     "D107", # pydocstyle - missing docstring in __init__
-    "D205", # pydocstyle - 1 blank line required between summary line and description
+    "E203", # whitespace before ':', handled by ruff format
     "E501", # pycodestyle line too long, handled by ruff format
-    "ISC001", # ruff formatter incompatible
 ]
 src = ["git_critic", "tests", "e2e"]
 
@@ -112,8 +111,6 @@ src = ["git_critic", "tests", "e2e"]
 "e2e/**/*.*" = [
     "S101"
 ]
-
-
 
 [tool.ruff.format]
 docstring-code-format = true
