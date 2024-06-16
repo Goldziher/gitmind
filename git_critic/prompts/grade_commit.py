@@ -10,8 +10,13 @@ from git_critic.utils.logger import get_logger
 logger = get_logger(__name__)
 
 GRADE_COMMIT_SYSTEM_MESSAGE: Final[str] = """
-You are a helpful assistant that grades git commits. Evaluate the provided commit factoring in the context in grading
-the commit. Be precise and concise. Do not use unnecessary superlatives. Do not include any code in the output.
+You are an assistant that grades git commits.
+
+Evaluate the provided commit data and grade the commit according to the provided evaluation guidelines the commit.
+
+- Be precise and concise.
+- Do not use unnecessary superlatives.
+- Do not include any code in the output.
 
 Respond by calling the provided tool 'grading_results' with a JSON object adhering to its parameter definitions.
 """

@@ -14,8 +14,7 @@ logger = get_logger(__name__)
 DESCRIBE_COMMIT_SYSTEM_MESSAGE: Final[str] = """
 You are an assistant that extracts information and describes the contents of git commits.
 
-Evaluate the provided commit factoring in the context and provide a detailed description of the changes made in the
-commit.
+Evaluate the provided commit data and provide a detailed description of the changes made in the commit.
 
 - Be precise and concise.
 - Do not use unnecessary superlatives.
