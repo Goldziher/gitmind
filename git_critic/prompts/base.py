@@ -17,7 +17,7 @@ logger = get_logger(__name__)
 T = TypeVar("T")
 
 
-DEFAULT_CHUNK_SIZE: Final[int] = 4096
+DEFAULT_CHUNK_SIZE: Final[int] = 128000
 MAX_TOKENS: Final[int] = 4096
 
 
@@ -163,17 +163,21 @@ class AbstractPromptHandler(ABC, Generic[T]):
         Returns:
             The validated response.
         """
-        parsed_response = {k: v for k, v in deserialize(response, dict).items() if k in properties}
+        try:
+            parsed_response = {k: v for k, v in deserialize(response, dict).items() if k in properties}
 
-        validate(
-            instance=parsed_response,
-            schema={
-                "$schema": "http://json-schema.org/draft-07/schema#",
-                "type": "object",
-                "properties": properties,
-                "additionalProperties": False,
-                "required": list(properties),
-            },
-        )
+            validate(
+                instance=parsed_response,
+                schema={
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "type": "object",
+                    "properties": properties,
+                    "additionalProperties": False,
+                    "required": list(properties),
+                },
+            )
 
-        return parsed_response
+            return parsed_response
+        except ValidationError as e:
+            logger.warning("%s: Response validation failed: %s", AbstractPromptHandler.__name__, e)
+            raise e

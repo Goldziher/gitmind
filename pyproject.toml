@@ -2,9 +2,7 @@
 name = "code-critic"
 version = "0.1.0"
 description = "Default template for PDM package"
-authors = [
-    {name = "Na'aman Hirschfeld", email = "nhirschfeld@gmail.com"},
-]
+authors = [{ name = "Na'aman Hirschfeld", email = "nhirschfeld@gmail.com" }]
 dependencies = [
     "gitpython>=3.1.43",
     "openai>=1.30.5",
@@ -15,10 +13,13 @@ dependencies = [
     "jsonschema>=4.22.0",
     "groq>=0.8.0",
     "inflection>=0.5.1",
+    "semantic-text-splitter>=0.13.3",
+    "tree-sitter>=0.22.3",
+    "tree-sitter-language-pack>=0.1.2",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"
-license = {text = "UNLICENSED"}
+license = { text = "UNLICENSED" }
 
 [tool.pdm]
 distribution = false
@@ -32,6 +33,7 @@ dev = [
     "pytest-asyncio>=0.23.7",
     "python-dotenv>=1.0.1",
     "types-jsonschema>=4.22.0.20240501",
+    "polyfactory>=2.16.0",
 ]
 
 # linters configuration below
@@ -39,38 +41,38 @@ dev = [
 line-length = 120
 target-version = "py312"
 lint.select = [
-    "A", # flake8-builtins
-    "B", # flake8-bugbear
+    "A",   # flake8-builtins
+    "B",   # flake8-bugbear
     "BLE", # flake8-blind-except
-    "C4", # flake8-comprehensions
+    "C4",  # flake8-comprehensions
     "C90", # mccabe
-    "D", # pydocstyle
-    "DJ", # flake8-django
+    "D",   # pydocstyle
+    "DJ",  # flake8-django
     "DTZ", # flake8-datetimez
-    "E", # pycodestyle errors
+    "E",   # pycodestyle errors
     "ERA", # eradicate
     "EXE", # flake8-executable
-    "F", # pyflakes
-    "G", # flake8-logging-format
-    "I", # isort
+    "F",   # pyflakes
+    "G",   # flake8-logging-format
+    "I",   # isort
     "ICN", # flake8-import-conventions
     "ISC", # flake8-implicit-str-concat
-    "N", # pep8-naming
+    "N",   # pep8-naming
     "PIE", # flake8-pie
     "PLC", # pylint - convention
     "PLE", # pylint - error
     "PLW", # pylint - warning
-    "Q", # flake8-quotes
+    "Q",   # flake8-quotes
     "RET", # flake8-return
     "RUF", # Ruff-specific rules
-    "S", # flake8-bandit
+    "S",   # flake8-bandit
     "SIM", # flake8-simplify
     "T10", # flake8-debugger
     "T20", # flake8-print
     "TCH", # flake8-type-checking
     "TID", # flake8-tidy-imports
-    "UP", # pyupgrade
-    "W", # pycodestyle - warning
+    "UP",  # pyupgrade
+    "W",   # pycodestyle - warning
     "YTT", # flake8-2020
 ]
 lint.ignore = [
@@ -108,9 +110,7 @@ src = ["git_critic", "tests", "e2e"]
     "TCH",
     "TRY",
 ]
-"e2e/**/*.*" = [
-    "S101"
-]
+"e2e/**/*.*" = ["S101"]
 
 [tool.ruff.format]
 docstring-code-format = true
@@ -139,12 +139,10 @@ warn_unused_ignores = true
 [tool.coverage.run]
 omit = ["*/tests/*"]
 plugins = ["covdefaults"]
-source = [ "git_critic"]
+source = ["git_critic"]
 
 [tool.coverage.report]
-exclude_lines = [
-    'if TYPE_CHECKING:',
-]
+exclude_lines = ['if TYPE_CHECKING:']
 fail_under = 100
 
 [tool.pytest.ini_options]

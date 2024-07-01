@@ -1,8 +1,8 @@
 import logging
-from collections.abc import Mapping
+from collections.abc import Generator, Mapping
 from typing import TYPE_CHECKING, Any
 
-from groq import DEFAULT_MAX_RETRIES, NOT_GIVEN, AsyncStream, GroqError, NotGiven
+from groq import DEFAULT_MAX_RETRIES, NOT_GIVEN, GroqError, NotGiven
 from groq.types.chat import (
     ChatCompletionMessageParam,
     ChatCompletionSystemMessageParam,
@@ -12,10 +12,11 @@ from groq.types.chat import (
 from groq.types.chat.completion_create_params import ResponseFormat
 from groq.types.shared_params import FunctionDefinition
 from pydantic import BaseModel, ConfigDict
+from tree_sitter import Language
 
 from git_critic.configuration_types import MessageDefinition, MessageRole, ToolDefinition
 from git_critic.exceptions import EmptyContentError, LLMClientError
-from git_critic.llm.base import LLMClient
+from git_critic.llm.base import ChunkingType, LLMClient
 
 if TYPE_CHECKING:
     from groq import AsyncClient
@@ -36,6 +37,7 @@ class GroqOptions(BaseModel):
     api_key: str
     """The API key for the Groq model."""
     base_url: str | None = None
+    """The base URL for the Groq model."""
     model: str = "llama3-8b-8192"
     """The default model to use for generating completions."""
     timeout: float | None | NotGiven = NOT_GIVEN
@@ -122,18 +124,32 @@ class GroqClient(LLMClient[GroqOptions]):
                 tool_choice="auto" if tool else NOT_GIVEN,
                 **kwargs,
             )
-
-            if isinstance(result, AsyncStream):
-                content = ""
-                async for chunk in result:
-                    if delta := chunk.choices[0].delta.content:
-                        content += delta
-            else:
-                content = result.choices[0].message.tool_calls[0].function.arguments
-
-            if not content:
-                raise EmptyContentError("LLM client returned empty content", context=result.model_dump_json())
-
-            return content
         except GroqError as e:
             raise LLMClientError("Failed to generate completion", context=str(e)) from e
+
+        if content := result.choices[0].message.tool_calls[0].function.arguments:
+            return content
+
+        raise EmptyContentError("LLM client returned empty content", context=result.model_dump_json())
+
+    def chunk_content(
+        self, content: str, max_tokens: int, chunking_type: ChunkingType, language: Language | None = None
+    ) -> Generator[str, None, None]:
+        """Chunk the given content into chunks of the given size.
+
+        Args:
+            content: The content to chunk.
+            max_tokens: The maximum number of tokens per chunk.
+            chunking_type: The type of content to chunk.
+            language: The language to use for code chunking.
+
+        Returns:
+            A list of chunks.
+        """
+        kwargs = {"model": "gpt-3.5-turbo", "capacity": max_tokens}
+        if language:
+            kwargs["language"] = language
+
+        chunker_cls = self._get_chunker(chunking_type)
+        chunker = chunker_cls.from_tiktoken_model(**kwargs)
+        yield from chunker.chunks(content)

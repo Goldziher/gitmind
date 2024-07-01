@@ -4,8 +4,8 @@
 [metadata]
 groups = ["default", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
-lock_version = "4.4.1"
-content_hash = "sha256:c24e68619966b6590967808ff04fc09a94461c6ee295ef0cf626d2f56bf118a2"
+lock_version = "4.4.2"
+content_hash = "sha256:1c15c8f054a468e488f2e8d5b119202879d114b893bc3656826001469dfacef4"
 
 [[package]]
 name = "annotated-types"
@@ -97,6 +97,20 @@ groups = ["default"]
 files = [
     {file = "distro-1.9.0-py3-none-any.whl", hash = "sha256:7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2"},
     {file = "distro-1.9.0.tar.gz", hash = "sha256:2fa77c6fd8940f116ee1d6b94a2f90b13b5ea8d019b98bc8bafdcabcdd9bdbed"},
+]
+
+[[package]]
+name = "faker"
+version = "25.9.1"
+requires_python = ">=3.8"
+summary = "Faker is a Python package that generates fake data for you."
+groups = ["dev"]
+dependencies = [
+    "python-dateutil>=2.4",
+]
+files = [
+    {file = "Faker-25.9.1-py3-none-any.whl", hash = "sha256:f1dc27dc8035cb7e97e96afbb5fe1305eed6aeea53374702cbac96acfe851626"},
+    {file = "Faker-25.9.1.tar.gz", hash = "sha256:0e1cf7a8d3c94de91a65ab1e9cf7050903efae1e97901f8e5924a9f45147ae44"},
 ]
 
 [[package]]
@@ -389,6 +403,21 @@ files = [
 ]
 
 [[package]]
+name = "polyfactory"
+version = "2.16.0"
+requires_python = "<4.0,>=3.8"
+summary = "Mock data generation factories"
+groups = ["dev"]
+dependencies = [
+    "faker",
+    "typing-extensions>=4.6.0",
+]
+files = [
+    {file = "polyfactory-2.16.0-py3-none-any.whl", hash = "sha256:168d8e50b77e91e35e691e8b3eedac43d7e423a6857fa26d473def96d53f0ecf"},
+    {file = "polyfactory-2.16.0.tar.gz", hash = "sha256:03d8c706b70c4782ac8e637d0f6ab52760a7d11b712da5936a95a8f7022b2688"},
+]
+
+[[package]]
 name = "pre-commit"
 version = "3.7.1"
 requires_python = ">=3.9"
@@ -493,6 +522,20 @@ dependencies = [
 files = [
     {file = "pytest_asyncio-0.23.7-py3-none-any.whl", hash = "sha256:009b48127fbe44518a547bddd25611551b0e43ccdbf1e67d12479f569832c20b"},
     {file = "pytest_asyncio-0.23.7.tar.gz", hash = "sha256:5f5c72948f4c49e7db4f29f2521d4031f1c27f86e57b046126654083d4770268"},
+]
+
+[[package]]
+name = "python-dateutil"
+version = "2.9.0.post0"
+requires_python = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
+summary = "Extensions to the standard Python datetime module"
+groups = ["dev"]
+dependencies = [
+    "six>=1.5",
+]
+files = [
+    {file = "python-dateutil-2.9.0.post0.tar.gz", hash = "sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3"},
+    {file = "python_dateutil-2.9.0.post0-py2.py3-none-any.whl", hash = "sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427"},
 ]
 
 [[package]]
@@ -632,6 +675,37 @@ files = [
 ]
 
 [[package]]
+name = "semantic-text-splitter"
+version = "0.13.3"
+requires_python = ">=3.8"
+summary = "Split text into semantic chunks, up to a desired chunk size. Supports calculating length by characters and tokens, and is callable from Rust and Python."
+groups = ["default"]
+files = [
+    {file = "semantic_text_splitter-0.13.3-cp38-abi3-macosx_10_12_x86_64.whl", hash = "sha256:726b61139f69b64c4824b14ea9f8f92855fa245615c198cea3f855c8c98f868b"},
+    {file = "semantic_text_splitter-0.13.3-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:d0b0bbdb8774c646aa228ce44d188f7f778904506cdcf28e6908ec21111bb887"},
+    {file = "semantic_text_splitter-0.13.3-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:7212fd008ab05240657aff6ce943cffbf691163d4b5f514ac6f25f5a59f1c609"},
+    {file = "semantic_text_splitter-0.13.3-cp38-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:3820fb39955866840afb8c036f0ec2c99cf301fc3f5325ccc0adce31e5731707"},
+    {file = "semantic_text_splitter-0.13.3-cp38-abi3-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:f6bf3ccf463d70a7afb185eac8c770de1ac42625043de1f97c42098d24c0cfec"},
+    {file = "semantic_text_splitter-0.13.3-cp38-abi3-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:eef47993620f3991512a2df40610b3ebe84a016452f6b2f0f35f30be26b3c745"},
+    {file = "semantic_text_splitter-0.13.3-cp38-abi3-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:486216929540d83b783a06cf6b814e113b003fa92db7ce4591cb322a59b7a1dd"},
+    {file = "semantic_text_splitter-0.13.3-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6b5bd5e7d753e60886cde9cbc88cdc04fd11744662745efeda35ee111ea8767f"},
+    {file = "semantic_text_splitter-0.13.3-cp38-abi3-win32.whl", hash = "sha256:77e5bce62185b21fe329cd841c8ad72a0441a7997ae5784d95e4305677bf7815"},
+    {file = "semantic_text_splitter-0.13.3-cp38-abi3-win_amd64.whl", hash = "sha256:0f3d276702f10e0ea8d18c40ed474083d53848b888a3876922a3c472b8af2019"},
+    {file = "semantic_text_splitter-0.13.3.tar.gz", hash = "sha256:4a27cd1dfffd67041680e6921ea4f08caff5d4d1f943f2ef8603658215c0b2ea"},
+]
+
+[[package]]
+name = "six"
+version = "1.16.0"
+requires_python = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+summary = "Python 2 and 3 compatibility utilities"
+groups = ["dev"]
+files = [
+    {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
+    {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
+]
+
+[[package]]
 name = "smmap"
 version = "5.0.1"
 requires_python = ">=3.7"
@@ -665,6 +739,143 @@ dependencies = [
 files = [
     {file = "tqdm-4.66.4-py3-none-any.whl", hash = "sha256:b75ca56b413b030bc3f00af51fd2c1a1a5eac6a0c1cca83cbb37a5c52abce644"},
     {file = "tqdm-4.66.4.tar.gz", hash = "sha256:e4d936c9de8727928f3be6079590e97d9abfe8d39a590be678eb5919ffc186bb"},
+]
+
+[[package]]
+name = "tree-sitter"
+version = "0.22.3"
+requires_python = ">=3.9"
+summary = "Python bindings to the Tree-sitter parsing library"
+groups = ["default"]
+files = [
+    {file = "tree-sitter-0.22.3.tar.gz", hash = "sha256:6516bcef5d36e0365670b97c91a169c8b1aa82ea4b60946b879020820718ce3d"},
+    {file = "tree_sitter-0.22.3-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:7cb5c145fbd4bcc0cd4851dc4d0a6079a8e2f61257f8c0effc92434f6fb19b14"},
+    {file = "tree_sitter-0.22.3-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:d4a592080db6b9472a886f4593b4705d02630721fdbe4a700085fe775fcab20e"},
+    {file = "tree_sitter-0.22.3-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f36bf523763f05edf924126583ea997f905162046c0f184d6fd040cc1ccbf2c5"},
+    {file = "tree_sitter-0.22.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f8e1193f27c25aab299f4fc154664122c7bfe80633b726bb457356d371479a5b"},
+    {file = "tree_sitter-0.22.3-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:156df7e71a6c6b542ff29526cad6886a41115e42dc768c55101398d68325db54"},
+    {file = "tree_sitter-0.22.3-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:82e1d467ce23dd2ecc37d4fb83965e891fc37b943639c517cd5acf54a2df0ff7"},
+    {file = "tree_sitter-0.22.3-cp312-cp312-win_amd64.whl", hash = "sha256:e541a0c08a04f229ba9479a8c441dd267fdaa3e5842ae70a744c178bcaf53fa3"},
+]
+
+[[package]]
+name = "tree-sitter-c-sharp"
+version = "0.21.2"
+requires_python = ">=3.8"
+summary = "C# grammar for tree-sitter"
+groups = ["default"]
+files = [
+    {file = "tree-sitter-c-sharp-0.21.2.tar.gz", hash = "sha256:7404ccf96ccf5c02fcf48d78537d4358ba34672cf6fb89481f163fae971e07bc"},
+    {file = "tree_sitter_c_sharp-0.21.2-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:72f05432910a660976256f661507cbbb9c474430c43e136b540806c734707965"},
+    {file = "tree_sitter_c_sharp-0.21.2-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:fc9ea671205124a454ce347c90158582b08e7463467cffd60f9a78f4ad1e76d9"},
+    {file = "tree_sitter_c_sharp-0.21.2-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3669971d973c1cc58ea5606bf884aa6c504d1121d1433cea9461eed2c44d4604"},
+    {file = "tree_sitter_c_sharp-0.21.2-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:82dc46e929dad7fc64f3a22077d8a3e39bc597cf0f4ce9a50b12be62aacf54d1"},
+    {file = "tree_sitter_c_sharp-0.21.2-cp38-abi3-musllinux_1_1_aarch64.whl", hash = "sha256:70e5c95644603f3dedbeddc1bca2258e1d2ce2b3995225bca6fa216f08333cae"},
+    {file = "tree_sitter_c_sharp-0.21.2-cp38-abi3-musllinux_1_1_x86_64.whl", hash = "sha256:12a78b17bfcf343efe01c6df52ebba67fecfbdfd41408ac11b100ed2083ca3cc"},
+    {file = "tree_sitter_c_sharp-0.21.2-cp38-abi3-win_amd64.whl", hash = "sha256:88cfc8e3980a88fbcf64d86b45286ff19f7bec1cac2a71299b26b9c92bf4b558"},
+]
+
+[[package]]
+name = "tree-sitter-embedded-template"
+version = "0.21.0"
+requires_python = ">=3.8"
+summary = "Embedded Template (ERB, EJS) grammar for tree-sitter"
+groups = ["default"]
+files = [
+    {file = "tree-sitter-embedded-template-0.21.0.tar.gz", hash = "sha256:39798a7152a9c88f6eb7d53ef9ac0f1b10071a6c65c1e8b6d0d7b1fb175ab0ec"},
+    {file = "tree_sitter_embedded_template-0.21.0-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:72df793eac7c00e52ad9e887d438db6c8b6031f3f557e96aa514915238f4542c"},
+    {file = "tree_sitter_embedded_template-0.21.0-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:d352e95d2fd2ce57529d513ce6ba7d2c979f6bb30d4083b7f1ed4998ad71558b"},
+    {file = "tree_sitter_embedded_template-0.21.0-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:41753db8fbcd4f12312ad0f91d8dc5584e628d750f5ae84747f3ecd5a9b85cee"},
+    {file = "tree_sitter_embedded_template-0.21.0-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:dcb846c63876d43779949e28aff7407fd14507ce4dac8871c6b6713f99f2baa4"},
+    {file = "tree_sitter_embedded_template-0.21.0-cp38-abi3-musllinux_1_1_aarch64.whl", hash = "sha256:480b830fdde379a666de78b03889b19487bd861ba30255caafd2b99c99a6778a"},
+    {file = "tree_sitter_embedded_template-0.21.0-cp38-abi3-musllinux_1_1_x86_64.whl", hash = "sha256:91cd9b3d6b96f58aea30526af0abd17f6b814ac8a167b1a126898fbd4adcea8a"},
+    {file = "tree_sitter_embedded_template-0.21.0-cp38-abi3-win_amd64.whl", hash = "sha256:13ce8750b7a66050c0436ec0a0f574a59e191f67521f10cb983dd488b31f54fc"},
+]
+
+[[package]]
+name = "tree-sitter-language-pack"
+version = "0.1.2"
+requires_python = ">=3.9.0"
+summary = "Extensive Language Pack for Tree-Sitter"
+groups = ["default"]
+dependencies = [
+    "tree-sitter-c-sharp>=0.21.2",
+    "tree-sitter-embedded-template>=0.21.0",
+    "tree-sitter-php>=0.22.5",
+    "tree-sitter-typescript>=0.21.1",
+    "tree-sitter-xml>=0.6.4",
+    "tree-sitter-yaml>=0.6.0",
+    "tree-sitter>=0.22.0",
+]
+files = [
+    {file = "tree_sitter_language_pack-0.1.2.tar.gz", hash = "sha256:825b03062b3ad36ddd0088ebaafa30bf38d021d31f4563d207ac8b891ff239db"},
+]
+
+[[package]]
+name = "tree-sitter-php"
+version = "0.22.5"
+requires_python = ">=3.8"
+summary = "PHP grammar for tree-sitter"
+groups = ["default"]
+files = [
+    {file = "tree-sitter-php-0.22.5.tar.gz", hash = "sha256:0b62eabc26f099f30dc947f81b7b7949ac4ded11cb7c155bfeb233b79cfebd59"},
+    {file = "tree_sitter_php-0.22.5-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:ef019a5abcb1c3d3149e9112425020467a930f927e32428a987247fbd75db085"},
+    {file = "tree_sitter_php-0.22.5-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:09a7253dc2ac84d779128a041cd41d52cc2e51121a45298e70c71b8b415e73b1"},
+    {file = "tree_sitter_php-0.22.5-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d3a0384291391f27710080e8a74652620244ba4b91d7a75a3fae327b1b0097ec"},
+    {file = "tree_sitter_php-0.22.5-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:111bfc28753a1189b6b1ab267efde43fa34fd39b4cb297edf53a54df72067b5d"},
+    {file = "tree_sitter_php-0.22.5-cp38-abi3-musllinux_1_1_aarch64.whl", hash = "sha256:843608470ca0aa94f8f8554bc8316cb939c35673cd0a3fc255f0623784184781"},
+    {file = "tree_sitter_php-0.22.5-cp38-abi3-musllinux_1_1_x86_64.whl", hash = "sha256:8fc84eb7847a420e9f3e29743c6178788167abd13b8605eec5ef6ca282e4103d"},
+    {file = "tree_sitter_php-0.22.5-cp38-abi3-win_amd64.whl", hash = "sha256:a90309b3aaa510900c318ca085f1a27af5b43487f544484c46dd7414ecdfe379"},
+]
+
+[[package]]
+name = "tree-sitter-typescript"
+version = "0.21.1"
+requires_python = ">=3.8"
+summary = "TypeScript and TSX grammars for tree-sitter"
+groups = ["default"]
+files = [
+    {file = "tree-sitter-typescript-0.21.1.tar.gz", hash = "sha256:529baac41cda9a086adbffc00ecaa34fd80968ba25a9a9b34d3f74135571d3a9"},
+    {file = "tree_sitter_typescript-0.21.1-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:7a46ebbd94532cd8c86f347f82f62e760eb155a7472ced3626a762c39027f272"},
+    {file = "tree_sitter_typescript-0.21.1-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:27170954e5d6f59aeb9c3856b8ad149489f741ce83923bfe8f5eb22cb63888b7"},
+    {file = "tree_sitter_typescript-0.21.1-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c43b7496254d086d756d57c148505e9f7f6c12ff8f8307a18554438d251fa934"},
+    {file = "tree_sitter_typescript-0.21.1-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:78bcf50a786ff7ff0ac034b16f34c77b526aeed5d34c42038f0a8ee4dcf6b42e"},
+    {file = "tree_sitter_typescript-0.21.1-cp38-abi3-musllinux_1_1_aarch64.whl", hash = "sha256:256d6a3505680c106639c654e4830a844a47a53e002958124d2a22a8d8fabe1e"},
+    {file = "tree_sitter_typescript-0.21.1-cp38-abi3-musllinux_1_1_x86_64.whl", hash = "sha256:d148399bb41b894e025a8e05ef858471f3ffc41ff26d200e76452997d273075b"},
+    {file = "tree_sitter_typescript-0.21.1-cp38-abi3-win_amd64.whl", hash = "sha256:30730311251163f30527509f3c52446f197c8170e7bffae4c3a14de84b5df938"},
+]
+
+[[package]]
+name = "tree-sitter-xml"
+version = "0.6.4"
+requires_python = ">=3.8"
+summary = "XML & DTD grammars for tree-sitter"
+groups = ["default"]
+files = [
+    {file = "tree-sitter-xml-0.6.4.tar.gz", hash = "sha256:4cb39822825a550c3f5241dfaf33c7cba3b324ad8cdcb82d168516a40e0518b7"},
+    {file = "tree_sitter_xml-0.6.4-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:5b7729f0d8901fc09d7e7a36e25759042b396d02c3ccdc1137cb33883bd0ff14"},
+    {file = "tree_sitter_xml-0.6.4-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:6b8cb8bb8cd0d3e0d750cddcbe4ffbb0613c132c401d6f0192cc5fb8bfb01941"},
+    {file = "tree_sitter_xml-0.6.4-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:63d9faab1d36c9e164dea97c0ed3bdc577f8bbba4779964fa2e9d7e648cfd98f"},
+    {file = "tree_sitter_xml-0.6.4-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8349b6b66cc109845bfc3174b84d6cd96d861ed0dbbdbc7b4c50327920bb6369"},
+    {file = "tree_sitter_xml-0.6.4-cp38-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:ba2b33b885c9dd9ec9d7cef91e61f7d121a5ff77a89ad231034ef60c0ee26b67"},
+    {file = "tree_sitter_xml-0.6.4-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:2def889035c9a98041ac35c323e1ede3a4a43707df824889c6ea4f7e2a318f1d"},
+    {file = "tree_sitter_xml-0.6.4-cp38-abi3-win_amd64.whl", hash = "sha256:2d2ac7eada13c03510e32b65e5f8c115b921025664e4648a611ff223aa461bbe"},
+]
+
+[[package]]
+name = "tree-sitter-yaml"
+version = "0.6.0"
+requires_python = ">=3.8"
+summary = "YAML grammar for tree-sitter"
+groups = ["default"]
+files = [
+    {file = "tree_sitter_yaml-0.6.0-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:62d53ef380d6f0ae731818be4e236d3006abede6331d1b727fe6a5476601cff9"},
+    {file = "tree_sitter_yaml-0.6.0-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:7e7ccc5666336dabf3bfbffd6333c3df7ab8c8b6564fd550fe443d4a09609f57"},
+    {file = "tree_sitter_yaml-0.6.0-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:b0b5c0a4db1834e8066fe011f6a9e9a7dbd03eb70321a59c74b079dd6ca8389e"},
+    {file = "tree_sitter_yaml-0.6.0-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:41ea2cc2857982c4e2102032fadf186d9c8d5b53706f5963c5470234eac39fc4"},
+    {file = "tree_sitter_yaml-0.6.0-cp38-abi3-musllinux_1_1_aarch64.whl", hash = "sha256:c07c297e515af4c11912d32ad8115261c1999570f6cee0af96850ed9daacda6d"},
+    {file = "tree_sitter_yaml-0.6.0-cp38-abi3-musllinux_1_1_x86_64.whl", hash = "sha256:f20b99ee3b11c7307d80698ac71a3c9b1284760cd205d6575e796e0285a172a7"},
+    {file = "tree_sitter_yaml-0.6.0-cp38-abi3-win_amd64.whl", hash = "sha256:5cd6a603303c3c3a8f1e79245d202fb1156baff48000c7a01de085767eba9253"},
 ]
 
 [[package]]
