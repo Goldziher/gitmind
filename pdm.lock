@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.2"
-content_hash = "sha256:1c15c8f054a468e488f2e8d5b119202879d114b893bc3656826001469dfacef4"
+content_hash = "sha256:1b0ec4f8c517e6274cf8ae1ef20bc1d928acb00af50996a2b80a126008e07303"
 
 [[package]]
 name = "annotated-types"
@@ -309,7 +309,7 @@ files = [
 
 [[package]]
 name = "mypy"
-version = "1.10.0"
+version = "1.10.1"
 requires_python = ">=3.8"
 summary = "Optional static typing for Python"
 groups = ["dev"]
@@ -318,13 +318,13 @@ dependencies = [
     "typing-extensions>=4.1.0",
 ]
 files = [
-    {file = "mypy-1.10.0-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:a781f6ad4bab20eef8b65174a57e5203f4be627b46291f4589879bf4e257b97b"},
-    {file = "mypy-1.10.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:b808e12113505b97d9023b0b5e0c0705a90571c6feefc6f215c1df9381256e30"},
-    {file = "mypy-1.10.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8f55583b12156c399dce2df7d16f8a5095291354f1e839c252ec6c0611e86e2e"},
-    {file = "mypy-1.10.0-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:4cf18f9d0efa1b16478c4c129eabec36148032575391095f73cae2e722fcf9d5"},
-    {file = "mypy-1.10.0-cp312-cp312-win_amd64.whl", hash = "sha256:bc6ac273b23c6b82da3bb25f4136c4fd42665f17f2cd850771cb600bdd2ebeda"},
-    {file = "mypy-1.10.0-py3-none-any.whl", hash = "sha256:f8c083976eb530019175aabadb60921e73b4f45736760826aa1689dda8208aee"},
-    {file = "mypy-1.10.0.tar.gz", hash = "sha256:3d087fcbec056c4ee34974da493a826ce316947485cef3901f511848e687c131"},
+    {file = "mypy-1.10.1-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:d8681909f7b44d0b7b86e653ca152d6dff0eb5eb41694e163c6092124f8246d7"},
+    {file = "mypy-1.10.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:378c03f53f10bbdd55ca94e46ec3ba255279706a6aacaecac52ad248f98205d3"},
+    {file = "mypy-1.10.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6bacf8f3a3d7d849f40ca6caea5c055122efe70e81480c8328ad29c55c69e93e"},
+    {file = "mypy-1.10.1-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:701b5f71413f1e9855566a34d6e9d12624e9e0a8818a5704d74d6b0402e66c04"},
+    {file = "mypy-1.10.1-cp312-cp312-win_amd64.whl", hash = "sha256:3c4c2992f6ea46ff7fce0072642cfb62af7a2484efe69017ed8b095f7b39ef31"},
+    {file = "mypy-1.10.1-py3-none-any.whl", hash = "sha256:71d8ac0b906354ebda8ef1673e5fde785936ac1f29ff6987c7483cfbd5a4235a"},
+    {file = "mypy-1.10.1.tar.gz", hash = "sha256:1f8f492d7db9e3593ef42d4f115f04e556130f2819ad33ab84551403e97dd4c0"},
 ]
 
 [[package]]
@@ -351,7 +351,7 @@ files = [
 
 [[package]]
 name = "openai"
-version = "1.34.0"
+version = "1.35.10"
 requires_python = ">=3.7.1"
 summary = "The official Python library for the openai API"
 groups = ["default"]
@@ -365,8 +365,8 @@ dependencies = [
     "typing-extensions<5,>=4.7",
 ]
 files = [
-    {file = "openai-1.34.0-py3-none-any.whl", hash = "sha256:018623c2f795424044675c6230fa3bfbf98d9e0aab45d8fd116f2efb2cfb6b7e"},
-    {file = "openai-1.34.0.tar.gz", hash = "sha256:95c8e2da4acd6958e626186957d656597613587195abd0fb2527566a93e76770"},
+    {file = "openai-1.35.10-py3-none-any.whl", hash = "sha256:962cb5c23224b5cbd16078308dabab97a08b0a5ad736a4fdb3dc2ffc44ac974f"},
+    {file = "openai-1.35.10.tar.gz", hash = "sha256:85966949f4f960f3e4b239a659f9fd64d3a97ecc43c44dc0a044b5c7f11cccc6"},
 ]
 
 [[package]]
@@ -404,7 +404,7 @@ files = [
 
 [[package]]
 name = "polyfactory"
-version = "2.16.0"
+version = "2.16.1"
 requires_python = "<4.0,>=3.8"
 summary = "Mock data generation factories"
 groups = ["dev"]
@@ -413,8 +413,8 @@ dependencies = [
     "typing-extensions>=4.6.0",
 ]
 files = [
-    {file = "polyfactory-2.16.0-py3-none-any.whl", hash = "sha256:168d8e50b77e91e35e691e8b3eedac43d7e423a6857fa26d473def96d53f0ecf"},
-    {file = "polyfactory-2.16.0.tar.gz", hash = "sha256:03d8c706b70c4782ac8e637d0f6ab52760a7d11b712da5936a95a8f7022b2688"},
+    {file = "polyfactory-2.16.1-py3-none-any.whl", hash = "sha256:94c41e37ce90df10744bf69d9380d480b573d8b7cf1f3227d016155898f83b2c"},
+    {file = "polyfactory-2.16.1.tar.gz", hash = "sha256:9d8692e3fab725964abdd4be80c747b1b69a28d9af43d1851a23806f7b32513d"},
 ]
 
 [[package]]
@@ -650,48 +650,49 @@ files = [
 
 [[package]]
 name = "ruff"
-version = "0.4.9"
+version = "0.5.1"
 requires_python = ">=3.7"
 summary = "An extremely fast Python linter and code formatter, written in Rust."
 groups = ["dev"]
 files = [
-    {file = "ruff-0.4.9-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:b262ed08d036ebe162123170b35703aaf9daffecb698cd367a8d585157732991"},
-    {file = "ruff-0.4.9-py3-none-macosx_11_0_arm64.whl", hash = "sha256:98ec2775fd2d856dc405635e5ee4ff177920f2141b8e2d9eb5bd6efd50e80317"},
-    {file = "ruff-0.4.9-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4555056049d46d8a381f746680db1c46e67ac3b00d714606304077682832998e"},
-    {file = "ruff-0.4.9-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:e91175fbe48f8a2174c9aad70438fe9cb0a5732c4159b2a10a3565fea2d94cde"},
-    {file = "ruff-0.4.9-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:0e8e7b95673f22e0efd3571fb5b0cf71a5eaaa3cc8a776584f3b2cc878e46bff"},
-    {file = "ruff-0.4.9-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:2d45ddc6d82e1190ea737341326ecbc9a61447ba331b0a8962869fcada758505"},
-    {file = "ruff-0.4.9-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:78de3fdb95c4af084087628132336772b1c5044f6e710739d440fc0bccf4d321"},
-    {file = "ruff-0.4.9-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:06b60f91bfa5514bb689b500a25ba48e897d18fea14dce14b48a0c40d1635893"},
-    {file = "ruff-0.4.9-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:88bffe9c6a454bf8529f9ab9091c99490578a593cc9f9822b7fc065ee0712a06"},
-    {file = "ruff-0.4.9-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:673bddb893f21ab47a8334c8e0ea7fd6598ecc8e698da75bcd12a7b9d0a3206e"},
-    {file = "ruff-0.4.9-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:8c1aff58c31948cc66d0b22951aa19edb5af0a3af40c936340cd32a8b1ab7438"},
-    {file = "ruff-0.4.9-py3-none-musllinux_1_2_i686.whl", hash = "sha256:784d3ec9bd6493c3b720a0b76f741e6c2d7d44f6b2be87f5eef1ae8cc1d54c84"},
-    {file = "ruff-0.4.9-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:732dd550bfa5d85af8c3c6cbc47ba5b67c6aed8a89e2f011b908fc88f87649db"},
-    {file = "ruff-0.4.9-py3-none-win32.whl", hash = "sha256:8064590fd1a50dcf4909c268b0e7c2498253273309ad3d97e4a752bb9df4f521"},
-    {file = "ruff-0.4.9-py3-none-win_amd64.whl", hash = "sha256:e0a22c4157e53d006530c902107c7f550b9233e9706313ab57b892d7197d8e52"},
-    {file = "ruff-0.4.9-py3-none-win_arm64.whl", hash = "sha256:5d5460f789ccf4efd43f265a58538a2c24dbce15dbf560676e430375f20a8198"},
-    {file = "ruff-0.4.9.tar.gz", hash = "sha256:f1cb0828ac9533ba0135d148d214e284711ede33640465e706772645483427e3"},
+    {file = "ruff-0.5.1-py3-none-linux_armv6l.whl", hash = "sha256:6ecf968fcf94d942d42b700af18ede94b07521bd188aaf2cd7bc898dd8cb63b6"},
+    {file = "ruff-0.5.1-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:204fb0a472f00f2e6280a7c8c7c066e11e20e23a37557d63045bf27a616ba61c"},
+    {file = "ruff-0.5.1-py3-none-macosx_11_0_arm64.whl", hash = "sha256:d235968460e8758d1e1297e1de59a38d94102f60cafb4d5382033c324404ee9d"},
+    {file = "ruff-0.5.1-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:38beace10b8d5f9b6bdc91619310af6d63dd2019f3fb2d17a2da26360d7962fa"},
+    {file = "ruff-0.5.1-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:5e478d2f09cf06add143cf8c4540ef77b6599191e0c50ed976582f06e588c994"},
+    {file = "ruff-0.5.1-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:f0368d765eec8247b8550251c49ebb20554cc4e812f383ff9f5bf0d5d94190b0"},
+    {file = "ruff-0.5.1-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:3a9a9a1b582e37669b0138b7c1d9d60b9edac880b80eb2baba6d0e566bdeca4d"},
+    {file = "ruff-0.5.1-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:bdd9f723e16003623423affabcc0a807a66552ee6a29f90eddad87a40c750b78"},
+    {file = "ruff-0.5.1-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:be9fd62c1e99539da05fcdc1e90d20f74aec1b7a1613463ed77870057cd6bd96"},
+    {file = "ruff-0.5.1-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e216fc75a80ea1fbd96af94a6233d90190d5b65cc3d5dfacf2bd48c3e067d3e1"},
+    {file = "ruff-0.5.1-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:c4c2112e9883a40967827d5c24803525145e7dab315497fae149764979ac7929"},
+    {file = "ruff-0.5.1-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:dfaf11c8a116394da3b65cd4b36de30d8552fa45b8119b9ef5ca6638ab964fa3"},
+    {file = "ruff-0.5.1-py3-none-musllinux_1_2_i686.whl", hash = "sha256:d7ceb9b2fe700ee09a0c6b192c5ef03c56eb82a0514218d8ff700f6ade004108"},
+    {file = "ruff-0.5.1-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:bac6288e82f6296f82ed5285f597713acb2a6ae26618ffc6b429c597b392535c"},
+    {file = "ruff-0.5.1-py3-none-win32.whl", hash = "sha256:5c441d9c24ec09e1cb190a04535c5379b36b73c4bc20aa180c54812c27d1cca4"},
+    {file = "ruff-0.5.1-py3-none-win_amd64.whl", hash = "sha256:b1789bf2cd3d1b5a7d38397cac1398ddf3ad7f73f4de01b1e913e2abc7dfc51d"},
+    {file = "ruff-0.5.1-py3-none-win_arm64.whl", hash = "sha256:2875b7596a740cbbd492f32d24be73e545a4ce0a3daf51e4f4e609962bfd3cd2"},
+    {file = "ruff-0.5.1.tar.gz", hash = "sha256:3164488aebd89b1745b47fd00604fb4358d774465f20d1fcd907f9c0fc1b0655"},
 ]
 
 [[package]]
 name = "semantic-text-splitter"
-version = "0.13.3"
+version = "0.14.1"
 requires_python = ">=3.8"
 summary = "Split text into semantic chunks, up to a desired chunk size. Supports calculating length by characters and tokens, and is callable from Rust and Python."
 groups = ["default"]
 files = [
-    {file = "semantic_text_splitter-0.13.3-cp38-abi3-macosx_10_12_x86_64.whl", hash = "sha256:726b61139f69b64c4824b14ea9f8f92855fa245615c198cea3f855c8c98f868b"},
-    {file = "semantic_text_splitter-0.13.3-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:d0b0bbdb8774c646aa228ce44d188f7f778904506cdcf28e6908ec21111bb887"},
-    {file = "semantic_text_splitter-0.13.3-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:7212fd008ab05240657aff6ce943cffbf691163d4b5f514ac6f25f5a59f1c609"},
-    {file = "semantic_text_splitter-0.13.3-cp38-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:3820fb39955866840afb8c036f0ec2c99cf301fc3f5325ccc0adce31e5731707"},
-    {file = "semantic_text_splitter-0.13.3-cp38-abi3-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:f6bf3ccf463d70a7afb185eac8c770de1ac42625043de1f97c42098d24c0cfec"},
-    {file = "semantic_text_splitter-0.13.3-cp38-abi3-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:eef47993620f3991512a2df40610b3ebe84a016452f6b2f0f35f30be26b3c745"},
-    {file = "semantic_text_splitter-0.13.3-cp38-abi3-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:486216929540d83b783a06cf6b814e113b003fa92db7ce4591cb322a59b7a1dd"},
-    {file = "semantic_text_splitter-0.13.3-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6b5bd5e7d753e60886cde9cbc88cdc04fd11744662745efeda35ee111ea8767f"},
-    {file = "semantic_text_splitter-0.13.3-cp38-abi3-win32.whl", hash = "sha256:77e5bce62185b21fe329cd841c8ad72a0441a7997ae5784d95e4305677bf7815"},
-    {file = "semantic_text_splitter-0.13.3-cp38-abi3-win_amd64.whl", hash = "sha256:0f3d276702f10e0ea8d18c40ed474083d53848b888a3876922a3c472b8af2019"},
-    {file = "semantic_text_splitter-0.13.3.tar.gz", hash = "sha256:4a27cd1dfffd67041680e6921ea4f08caff5d4d1f943f2ef8603658215c0b2ea"},
+    {file = "semantic_text_splitter-0.14.1-cp38-abi3-macosx_10_12_x86_64.whl", hash = "sha256:ef253f486cff350758de9ba7b4646371ecaccd303ed4093771635247188182b2"},
+    {file = "semantic_text_splitter-0.14.1-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:4079592c4dfa1fd7cc758ef0c339a643cdfcb7de046c47d8dc3984c6d9537855"},
+    {file = "semantic_text_splitter-0.14.1-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4a4cace20b54394c563c5225fe114a0232c262d97d771d1e69ddc3bc9139e7c9"},
+    {file = "semantic_text_splitter-0.14.1-cp38-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:5133fd73ec2ef03cfda5058aa865bf518acbf8b4650f14ceb52e0b1249ecb32e"},
+    {file = "semantic_text_splitter-0.14.1-cp38-abi3-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:5be385bc0f3e21ed16f164ac81f55f5e5e8c3f2c742ab37da75fe9417d80c2f8"},
+    {file = "semantic_text_splitter-0.14.1-cp38-abi3-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:8ebe0287ffa2f2acdd14760a3617c6eacd65c2de8d67a0cef827b3ce7dbd9a8c"},
+    {file = "semantic_text_splitter-0.14.1-cp38-abi3-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:c5e8dd844eda8893ee9ed09fbd6dcfebeff93d39858c65dda1c6ee81f3e827bb"},
+    {file = "semantic_text_splitter-0.14.1-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ad4145ba1b1af3332fc32518356fc4e667486d8325c5fbb220403701556ab929"},
+    {file = "semantic_text_splitter-0.14.1-cp38-abi3-win32.whl", hash = "sha256:3b008cb1f85686e1382201476e8bd4b78f3e5e1b6f2d76f4b6055eff896e4f73"},
+    {file = "semantic_text_splitter-0.14.1-cp38-abi3-win_amd64.whl", hash = "sha256:180cd0808893d8a16dd0750c17caf61f3d0af3a963938bd3604f5f30a3d194ff"},
+    {file = "semantic_text_splitter-0.14.1.tar.gz", hash = "sha256:f9bd23932a0f112df11d668588bd32f3e78580593cb7f453981aef529b2d6991"},
 ]
 
 [[package]]
@@ -728,6 +729,17 @@ files = [
 ]
 
 [[package]]
+name = "structlog"
+version = "24.2.0"
+requires_python = ">=3.8"
+summary = "Structured Logging for Python"
+groups = ["default"]
+files = [
+    {file = "structlog-24.2.0-py3-none-any.whl", hash = "sha256:983bd49f70725c5e1e3867096c0c09665918936b3db27341b41d294283d7a48a"},
+    {file = "structlog-24.2.0.tar.gz", hash = "sha256:0e3fe74924a6d8857d3f612739efb94c72a7417d7c7c008d12276bca3b5bf13b"},
+]
+
+[[package]]
 name = "tqdm"
 version = "4.66.4"
 requires_python = ">=3.7"
@@ -760,19 +772,19 @@ files = [
 
 [[package]]
 name = "tree-sitter-c-sharp"
-version = "0.21.2"
+version = "0.21.3"
 requires_python = ">=3.8"
 summary = "C# grammar for tree-sitter"
 groups = ["default"]
 files = [
-    {file = "tree-sitter-c-sharp-0.21.2.tar.gz", hash = "sha256:7404ccf96ccf5c02fcf48d78537d4358ba34672cf6fb89481f163fae971e07bc"},
-    {file = "tree_sitter_c_sharp-0.21.2-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:72f05432910a660976256f661507cbbb9c474430c43e136b540806c734707965"},
-    {file = "tree_sitter_c_sharp-0.21.2-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:fc9ea671205124a454ce347c90158582b08e7463467cffd60f9a78f4ad1e76d9"},
-    {file = "tree_sitter_c_sharp-0.21.2-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3669971d973c1cc58ea5606bf884aa6c504d1121d1433cea9461eed2c44d4604"},
-    {file = "tree_sitter_c_sharp-0.21.2-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:82dc46e929dad7fc64f3a22077d8a3e39bc597cf0f4ce9a50b12be62aacf54d1"},
-    {file = "tree_sitter_c_sharp-0.21.2-cp38-abi3-musllinux_1_1_aarch64.whl", hash = "sha256:70e5c95644603f3dedbeddc1bca2258e1d2ce2b3995225bca6fa216f08333cae"},
-    {file = "tree_sitter_c_sharp-0.21.2-cp38-abi3-musllinux_1_1_x86_64.whl", hash = "sha256:12a78b17bfcf343efe01c6df52ebba67fecfbdfd41408ac11b100ed2083ca3cc"},
-    {file = "tree_sitter_c_sharp-0.21.2-cp38-abi3-win_amd64.whl", hash = "sha256:88cfc8e3980a88fbcf64d86b45286ff19f7bec1cac2a71299b26b9c92bf4b558"},
+    {file = "tree-sitter-c-sharp-0.21.3.tar.gz", hash = "sha256:5afcc6bedd5b95065955f86858ecf623ac2d5f94e51c7b4fd5e80ceb2f3e375a"},
+    {file = "tree_sitter_c_sharp-0.21.3-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:740ac4ab8eeb9d3912b99c21e205932a08674f0fbe55063ba4adbc7283a50e90"},
+    {file = "tree_sitter_c_sharp-0.21.3-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:9c07e4bceb6b80d1074275f57b390426b69ee48664909c112bc359bf27466cdd"},
+    {file = "tree_sitter_c_sharp-0.21.3-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ceb9c8d911a10f3d48534f798880d7756e6b82a5e1d20fdafaaa2acb91cb413a"},
+    {file = "tree_sitter_c_sharp-0.21.3-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:99cc01b65022cbbc1165a55df8cfa898aec2562fe3304fca1ccbee0daa4554bf"},
+    {file = "tree_sitter_c_sharp-0.21.3-cp38-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:40a6f775b71ff4f8d9d74c6d8ce66542e312ceff42ab7195a5c8dbdcc6196837"},
+    {file = "tree_sitter_c_sharp-0.21.3-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:b11024c4ac2123a46972e51d22e7960f80dc65f53d3b6bad897f20db8f1d37e0"},
+    {file = "tree_sitter_c_sharp-0.21.3-cp38-abi3-win_amd64.whl", hash = "sha256:a7cde252d28ddde0ec6e0afdb0acb655cfe9884fc9fbcde3a16160a68b8ad08d"},
 ]
 
 [[package]]
@@ -794,7 +806,7 @@ files = [
 
 [[package]]
 name = "tree-sitter-language-pack"
-version = "0.1.2"
+version = "0.2.0"
 requires_python = ">=3.9.0"
 summary = "Extensive Language Pack for Tree-Sitter"
 groups = ["default"]
@@ -808,41 +820,41 @@ dependencies = [
     "tree-sitter>=0.22.0",
 ]
 files = [
-    {file = "tree_sitter_language_pack-0.1.2.tar.gz", hash = "sha256:825b03062b3ad36ddd0088ebaafa30bf38d021d31f4563d207ac8b891ff239db"},
+    {file = "tree_sitter_language_pack-0.2.0.tar.gz", hash = "sha256:14c83c43a2f7236a2c39c1c196fd0a2415305dee97263aa80c653623fa23ef13"},
 ]
 
 [[package]]
 name = "tree-sitter-php"
-version = "0.22.5"
+version = "0.22.7"
 requires_python = ">=3.8"
 summary = "PHP grammar for tree-sitter"
 groups = ["default"]
 files = [
-    {file = "tree-sitter-php-0.22.5.tar.gz", hash = "sha256:0b62eabc26f099f30dc947f81b7b7949ac4ded11cb7c155bfeb233b79cfebd59"},
-    {file = "tree_sitter_php-0.22.5-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:ef019a5abcb1c3d3149e9112425020467a930f927e32428a987247fbd75db085"},
-    {file = "tree_sitter_php-0.22.5-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:09a7253dc2ac84d779128a041cd41d52cc2e51121a45298e70c71b8b415e73b1"},
-    {file = "tree_sitter_php-0.22.5-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d3a0384291391f27710080e8a74652620244ba4b91d7a75a3fae327b1b0097ec"},
-    {file = "tree_sitter_php-0.22.5-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:111bfc28753a1189b6b1ab267efde43fa34fd39b4cb297edf53a54df72067b5d"},
-    {file = "tree_sitter_php-0.22.5-cp38-abi3-musllinux_1_1_aarch64.whl", hash = "sha256:843608470ca0aa94f8f8554bc8316cb939c35673cd0a3fc255f0623784184781"},
-    {file = "tree_sitter_php-0.22.5-cp38-abi3-musllinux_1_1_x86_64.whl", hash = "sha256:8fc84eb7847a420e9f3e29743c6178788167abd13b8605eec5ef6ca282e4103d"},
-    {file = "tree_sitter_php-0.22.5-cp38-abi3-win_amd64.whl", hash = "sha256:a90309b3aaa510900c318ca085f1a27af5b43487f544484c46dd7414ecdfe379"},
+    {file = "tree-sitter-php-0.22.7.tar.gz", hash = "sha256:5140933455c4b59a1f2a5947745411cb339bf07e541cbfd75ccfc1e0f5b8491d"},
+    {file = "tree_sitter_php-0.22.7-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:e13988097e2ff0fa98e3eb44d1f78e6159ed423627a4296a0d33c04e82d557d2"},
+    {file = "tree_sitter_php-0.22.7-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:64a7dfb83857fe62cc585781455fba1cc2fec1ec5fec793bc2a7d169c18311f7"},
+    {file = "tree_sitter_php-0.22.7-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1420d8b6d786462bdca95df3024bac8aed27ee4094e38c8baefd02aa382f981a"},
+    {file = "tree_sitter_php-0.22.7-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6ee326bd5a8291f165ba81cf4af7d30a2a5b281cafd3acf88a2bea73cd49025c"},
+    {file = "tree_sitter_php-0.22.7-cp38-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:6f9e9f04f814d847f719d166c7a942059c2e7ca450b98bc66455f04f5c053020"},
+    {file = "tree_sitter_php-0.22.7-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:f4d6d4b5da26545c6a374e216ce0ec4d7998ff1644a2852d39a62039c3ccbcfa"},
+    {file = "tree_sitter_php-0.22.7-cp38-abi3-win_amd64.whl", hash = "sha256:15cac68439e49cc7109320f82d2c8c26c485415e49a17f6b2b253c3d3d853a73"},
 ]
 
 [[package]]
 name = "tree-sitter-typescript"
-version = "0.21.1"
+version = "0.21.2"
 requires_python = ">=3.8"
 summary = "TypeScript and TSX grammars for tree-sitter"
 groups = ["default"]
 files = [
-    {file = "tree-sitter-typescript-0.21.1.tar.gz", hash = "sha256:529baac41cda9a086adbffc00ecaa34fd80968ba25a9a9b34d3f74135571d3a9"},
-    {file = "tree_sitter_typescript-0.21.1-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:7a46ebbd94532cd8c86f347f82f62e760eb155a7472ced3626a762c39027f272"},
-    {file = "tree_sitter_typescript-0.21.1-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:27170954e5d6f59aeb9c3856b8ad149489f741ce83923bfe8f5eb22cb63888b7"},
-    {file = "tree_sitter_typescript-0.21.1-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c43b7496254d086d756d57c148505e9f7f6c12ff8f8307a18554438d251fa934"},
-    {file = "tree_sitter_typescript-0.21.1-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:78bcf50a786ff7ff0ac034b16f34c77b526aeed5d34c42038f0a8ee4dcf6b42e"},
-    {file = "tree_sitter_typescript-0.21.1-cp38-abi3-musllinux_1_1_aarch64.whl", hash = "sha256:256d6a3505680c106639c654e4830a844a47a53e002958124d2a22a8d8fabe1e"},
-    {file = "tree_sitter_typescript-0.21.1-cp38-abi3-musllinux_1_1_x86_64.whl", hash = "sha256:d148399bb41b894e025a8e05ef858471f3ffc41ff26d200e76452997d273075b"},
-    {file = "tree_sitter_typescript-0.21.1-cp38-abi3-win_amd64.whl", hash = "sha256:30730311251163f30527509f3c52446f197c8170e7bffae4c3a14de84b5df938"},
+    {file = "tree-sitter-typescript-0.21.2.tar.gz", hash = "sha256:c0d8a22d5bff5c4ead0cafe09de39a61a2f5d51709ab382f3bd10e66db27f59b"},
+    {file = "tree_sitter_typescript-0.21.2-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:5cf887119df68684da10b459e4fda6344d0264c3965fd74a662c1846fdeee95d"},
+    {file = "tree_sitter_typescript-0.21.2-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:2a374de17bc0f2ec3c382c718f1e2b65527eded37c7302266301362b635b9b28"},
+    {file = "tree_sitter_typescript-0.21.2-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3983cd2872c0a3380ecd8a57011e087243e000ff971717c789193eea05ad6ff9"},
+    {file = "tree_sitter_typescript-0.21.2-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ecc3b3eca84e6b3d19bfa783364e56b89996dbbb65cb25cba102ad19c534240a"},
+    {file = "tree_sitter_typescript-0.21.2-cp38-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:b6d4572dbff40ea80566eaeb8fcce188fd2b79ed5fd0c064819e0b2986d4b542"},
+    {file = "tree_sitter_typescript-0.21.2-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:4c6e0b499c1fcac00e2e318e6a58d70b0faef85a8c624ee00c813a569f239159"},
+    {file = "tree_sitter_typescript-0.21.2-cp38-abi3-win_amd64.whl", hash = "sha256:20534e4264823ace685f8009719bb249bfef3042d58e9bd5c9af8c7c61eeed42"},
 ]
 
 [[package]]

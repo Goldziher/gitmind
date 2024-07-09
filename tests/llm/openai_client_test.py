@@ -6,10 +6,12 @@ from openai.types import CompletionUsage
 from openai.types.chat import ChatCompletionMessage, ChatCompletionMessageToolCall
 from openai.types.chat.chat_completion import ChatCompletion, Choice
 from openai.types.chat.chat_completion_message_tool_call import Function
+from tree_sitter_language_pack import SupportedLanguage
 
 from git_critic.configuration_types import MessageDefinition
 from git_critic.exceptions import EmptyContentError, LLMClientError
-from llm.openai_client import AzureOpenAIOptions, OpenAIClient, OpenAIOptions
+from git_critic.llm.openai_client import AzureOpenAIOptions, OpenAIClient, OpenAIOptions
+from git_critic.utils.chunking import ChunkingType
 
 
 @pytest.fixture
@@ -110,7 +112,7 @@ async def test_create_completions_failure(
 
 
 @pytest.mark.parametrize(
-    "chunking_type, content, expected_chunks",
+    "chunking_type, content, expected_chunks, language",
     (
         (
             "text",
@@ -124,6 +126,7 @@ async def test_create_completions_failure(
             The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section
             """,
             2,
+            None,
         ),
         (
             "markdown",
@@ -141,6 +144,7 @@ async def test_create_completions_failure(
             "Lorem ipsum dolor sit amet..", comes from a line in section.
             """,
             2,
+            None,
         ),
         (
             "code",
@@ -156,13 +160,18 @@ async def test_create_completions_failure(
      }
      """,
             2,
+            "kotlin",
         ),
     ),
 )
 async def test_chunk_content(
-    openai_client: OpenAIClient, chunking_type: str, content: str, expected_chunks: int
+    openai_client: OpenAIClient,
+    chunking_type: ChunkingType,
+    content: str,
+    expected_chunks: int,
+    language: SupportedLanguage | None,
 ) -> None:
     content = "This is a test string to verify the chunk content functionality over the defined maximum token limit."
     max_tokens = 10
-    chunks = list(openai_client.chunk_content(content, max_tokens))
+    chunks = list(openai_client.chunk_content(content, max_tokens, chunking_type, language))
     assert len(chunks) == expected_chunks

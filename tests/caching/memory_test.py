@@ -1,7 +1,7 @@
 import pytest
 from anyio import create_task_group
 
-from caching import InMemoryCache
+from git_critic.caching import InMemoryCache
 
 
 @pytest.fixture

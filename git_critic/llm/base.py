@@ -5,15 +5,13 @@ from collections.abc import Generator
 from typing import Any, Generic, Literal, TypeVar, overload
 
 from pydantic import BaseModel
-from semantic_text_splitter import CodeSplitter, MarkdownSplitter, TextSplitter
 from tree_sitter import Language
 
 from git_critic.configuration_types import MessageDefinition, ToolDefinition
+from git_critic.utils.chunking import ChunkingType
 
 T = TypeVar("T", bound=BaseModel)
 M = TypeVar("M")
-
-ChunkingType = Literal["text", "markdown", "code"]
 
 
 class LLMClient(ABC, Generic[T]):
@@ -79,25 +77,3 @@ class LLMClient(ABC, Generic[T]):
             A list of chunks.
         """
         raise NotImplementedError("Method not implemented")
-
-    @staticmethod
-    def _get_chunker(
-        chunking_type: ChunkingType,
-    ) -> type[TextSplitter] | type[CodeSplitter] | type[MarkdownSplitter]:
-        """Get the chunker for the given chunking type.
-
-        Args:
-            chunking_type: The type of content to chunk.
-
-        Returns:
-            The chunker for the given chunking type.
-        """
-        match chunking_type:
-            case "text":
-                return TextSplitter
-            case "markdown":
-                return MarkdownSplitter
-            case "code":
-                return CodeSplitter
-            case _:
-                raise ValueError(f"Invalid chunking type: {chunking_type}")

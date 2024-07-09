@@ -15,11 +15,12 @@ from openai.types.chat import (
 from openai.types.chat.completion_create_params import ResponseFormat
 from openai.types.shared_params import FunctionDefinition
 from pydantic import BaseModel, ConfigDict
-from tree_sitter import Language
+from tree_sitter_language_pack import SupportedLanguage, get_binding
 
 from git_critic.configuration_types import MessageDefinition, MessageRole, ToolDefinition
 from git_critic.exceptions import EmptyContentError, LLMClientError
-from git_critic.llm.base import ChunkingType, LLMClient
+from git_critic.llm.base import LLMClient
+from git_critic.utils.chunking import ChunkingType, get_chunker
 
 if TYPE_CHECKING:
     from openai import AsyncClient
@@ -178,7 +179,7 @@ class OpenAIClient(LLMClient[AzureOpenAIOptions | OpenAIOptions]):
         raise EmptyContentError("LLM client returned empty content", context=result.model_dump_json())
 
     def chunk_content(
-        self, content: str, max_tokens: int, chunking_type: ChunkingType, language: Language | None = None
+        self, content: str, max_tokens: int, chunking_type: ChunkingType, language: SupportedLanguage | None = None
     ) -> Generator[str, None, None]:
         """Chunk the given content into chunks of the given size.
 
@@ -193,8 +194,7 @@ class OpenAIClient(LLMClient[AzureOpenAIOptions | OpenAIOptions]):
         """
         kwargs = {"model": self._model, "capacity": max_tokens}
         if language:
-            kwargs["language"] = language
+            kwargs["language"] = get_binding(language)
 
-        chunker_cls = self._get_chunker(chunking_type)
-        chunker = chunker_cls.from_tiktoken_model(**kwargs)
+        chunker = get_chunker(chunking_type).from_tiktoken_model(**kwargs)
         yield from chunker.chunks(content)
