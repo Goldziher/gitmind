@@ -7,16 +7,16 @@ from typing import TYPE_CHECKING
 
 from dotenv import load_dotenv
 
-from git_critic.commit import extract_commit_data
-from git_critic.llm.groq_client import GroqClient, GroqOptions
-from git_critic.llm.openai_client import OpenAIClient, OpenAIOptions
-from git_critic.prompts import DescribeCommitHandler
-from git_critic.repository import get_commits
-from git_critic.utils.logger import get_logger
-from git_critic.utils.serialization import serialize
+from gitmind.commit_processing.commit import extract_commit_data
+from gitmind.llm.groq_client import GroqClient, GroqOptions
+from gitmind.llm.openai_client import OpenAIClient, OpenAIOptions
+from gitmind.prompts import DescribeCommitHandler
+from gitmind.repository import get_commits
+from gitmind.utils.logger import get_logger
+from gitmind.utils.serialization import serialize
 
 if TYPE_CHECKING:
-    from git_critic.llm.base import LLMClient
+    from gitmind.llm.base import LLMClient
 
 
 async def test_describe_commit(logger: Logger) -> None:

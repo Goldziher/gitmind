@@ -1,14 +1,17 @@
 import logging
 from sys import stdout
+from typing import cast
 
-from git_critic.utils.env import get_env
-from git_critic.utils.ref import Ref
-from git_critic.utils.serialization import serialize
+from structlog.typing import FilteringBoundLogger
+
+from gitmind.utils.env import get_env
+from gitmind.utils.ref import Ref
+from gitmind.utils.serialization import serialize
 
 configured_ref = Ref[bool]()
 
 
-def get_logger(name: str) -> logging.Logger:
+def get_logger(name: str) -> FilteringBoundLogger:
     """Get a logger with the given name.
 
     Args:
@@ -30,7 +33,7 @@ def get_logger(name: str) -> logging.Logger:
                 add_log_level,
                 format_exc_info,
                 TimeStamper(fmt="iso", utc=True),
-                ConsoleRenderer(colors=True) if stdout.isatty() else JSONRenderer(serializer=serialize),
+                ConsoleRenderer(colors=True) if stdout.isatty() else JSONRenderer(serializer=serialize),  # type: ignore[list-item]
             ],
             logger_factory=PrintLoggerFactory() if stdout.isatty() else BytesLoggerFactory(),
         )
@@ -39,4 +42,4 @@ def get_logger(name: str) -> logging.Logger:
 
     from structlog import get_logger as get_structlog_logger
 
-    return get_structlog_logger(name)
+    return cast(FilteringBoundLogger, get_structlog_logger(name))

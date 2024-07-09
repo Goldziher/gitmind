@@ -1,14 +1,14 @@
 from collections import defaultdict
 from typing import TYPE_CHECKING
 
-from git import Blob, Commit
+from git import Commit
 from magic import Magic
 
-from git_critic.data_types import CommitData, CommitMetadata, CommitStatistics
-from git_critic.prompts import DescribeCommitHandler, GradeCommitHandler
+from gitmind.data_types import CommitData, CommitMetadata, CommitStatistics
+from gitmind.prompts import DescribeCommitHandler, GradeCommitHandler
 
 if TYPE_CHECKING:
-    from git_critic.llm.base import LLMClient
+    from gitmind.llm.base import LLMClient
 
 
 text_mime_types = {"text", "application/json", "application/xml", "application/javascript"}
@@ -28,25 +28,6 @@ def is_supported_mime_type(mime_type: str) -> bool:
         True if the MIME type is supported, False otherwise.
     """
     return any(mime_type.startswith(mime_type_prefix) for mime_type_prefix in text_mime_types)
-
-
-def extract_files_from_commit(commit: Commit) -> dict[str, str]:
-    """Extract files from a commit.
-
-    Args:
-        commit: The GitPython commit object.
-
-    Returns:
-        The files in the commit.
-    """
-    files = {}
-    for item in commit.tree.traverse():
-        if isinstance(item, Blob):
-            file_content = item.data_stream.read()
-            mime_type = mime.from_buffer(file_content)
-            if is_supported_mime_type(mime_type):
-                files[str(item.path)] = file_content.decode(errors="ignore")
-    return files
 
 
 def extract_commit_data(commit: Commit) -> tuple[CommitStatistics, CommitMetadata, str]:

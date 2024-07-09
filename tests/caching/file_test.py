@@ -5,7 +5,7 @@ import pytest
 from anyio import Path as AsyncPath
 from anyio import create_task_group
 
-from git_critic.caching.file import DEFAULT_FOLDER_NAME, FileSystemCache, get_or_create_cache_dir
+from gitmind.caching.file import DEFAULT_FOLDER_NAME, FileSystemCache, get_or_create_cache_dir
 
 
 @pytest.fixture

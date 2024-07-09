@@ -1,12 +1,12 @@
 import pytest
 
-from git_critic.configuration_types import RetryConfig
-from git_critic.data_types import CommitDescriptionResult, CommitMetadata, CommitStatistics
-from git_critic.exceptions import LLMClientError
-from git_critic.prompts import DescribeCommitHandler
-from git_critic.utils.serialization import deserialize
+from gitmind.configuration_types import RetryConfig
+from gitmind.data_types import CommitDescriptionResult, CommitMetadata, CommitStatistics
+from gitmind.exceptions import LLMClientError
+from gitmind.prompts import DescribeCommitHandler
+from gitmind.utils.serialization import deserialize
 from tests.data_fixtures import describe_commit_response
-from tests.utils import create_mock_client
+from tests.helpers import create_mock_client
 
 
 async def test_describe_commit_contents_success_path(commit_data: tuple[CommitStatistics, CommitMetadata, str]) -> None:

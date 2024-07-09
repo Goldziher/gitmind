@@ -1,12 +1,12 @@
 import pytest
 
-from git_critic.configuration_types import RetryConfig
-from git_critic.data_types import CommitGradingResult, CommitMetadata, CommitStatistics
-from git_critic.exceptions import LLMClientError
-from git_critic.prompts import GradeCommitHandler
-from git_critic.rules import DEFAULT_GRADING_RULES
+from gitmind.configuration_types import RetryConfig
+from gitmind.data_types import CommitGradingResult, CommitMetadata, CommitStatistics
+from gitmind.exceptions import LLMClientError
+from gitmind.prompts import GradeCommitHandler
+from gitmind.rules import DEFAULT_GRADING_RULES
 from tests.data_fixtures import grade_commit_response
-from tests.utils import create_mock_client
+from tests.helpers import create_mock_client
 
 
 async def test_grade_commit_success_path(commit_data: tuple[CommitStatistics, CommitMetadata, str]) -> None:
@@ -40,7 +40,7 @@ async def test_grade_commit_success_path(commit_data: tuple[CommitStatistics, Co
         CommitGradingResult(
             rule_name="documentation_quality",
             grade=8,
-            reason="The documentation in `git_critic/llm/result.md` is comprehensive and clear. However, some of the refactored code could benefit from additional inline comments for better clarity.",
+            reason="The documentation in `gitmind/llm/result.md` is comprehensive and clear. However, some of the refactored code could benefit from additional inline comments for better clarity.",
         ),
         CommitGradingResult(
             rule_name="codebase_impact",

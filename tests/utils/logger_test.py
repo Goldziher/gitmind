@@ -5,7 +5,7 @@ import pytest
 from _pytest.monkeypatch import MonkeyPatch
 from structlog._native import BoundLoggerFilteringAtDebug, BoundLoggerFilteringAtInfo
 
-from git_critic.utils.logger import configured_ref, get_logger
+from gitmind.utils.logger import configured_ref, get_logger
 
 
 @pytest.fixture

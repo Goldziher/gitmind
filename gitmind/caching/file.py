@@ -5,7 +5,7 @@ from typing import Final
 
 from anyio import Path as AsyncPath
 
-from git_critic.caching.base import CacheBase
+from gitmind.caching.base import CacheBase
 
 DEFAULT_FOLDER_NAME: Final[str] = ".git_critic_cache"
 

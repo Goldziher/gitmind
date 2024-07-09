@@ -1,11 +1,11 @@
 from asyncio import gather
 from typing import Any, Final, override
 
-from git_critic.configuration_types import MessageDefinition, ToolDefinition
-from git_critic.data_types import CommitGradingResult, CommitMetadata
-from git_critic.prompts.base import AbstractPromptHandler
-from git_critic.rules import DEFAULT_GRADING_RULES, Rule
-from git_critic.utils.logger import get_logger
+from gitmind.configuration_types import MessageDefinition, ToolDefinition
+from gitmind.data_types import CommitGradingResult, CommitMetadata
+from gitmind.prompts.base import AbstractPromptHandler
+from gitmind.rules import DEFAULT_GRADING_RULES, Rule
+from gitmind.utils.logger import get_logger
 
 logger = get_logger(__name__)
 

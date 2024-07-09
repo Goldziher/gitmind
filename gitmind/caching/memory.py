@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from anyio import Lock
 
-from git_critic.caching.base import CacheBase
+from gitmind.caching.base import CacheBase
 
 
 class InMemoryCache(CacheBase):

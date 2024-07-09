@@ -1,6 +1,6 @@
 import logging
-from collections.abc import Generator, Mapping
-from typing import TYPE_CHECKING, Any
+from collections.abc import Mapping
+from typing import TYPE_CHECKING, Any, cast
 
 from groq import DEFAULT_MAX_RETRIES, NOT_GIVEN, GroqError, NotGiven
 from groq.types.chat import (
@@ -12,12 +12,10 @@ from groq.types.chat import (
 from groq.types.chat.completion_create_params import ResponseFormat
 from groq.types.shared_params import FunctionDefinition
 from pydantic import BaseModel, ConfigDict
-from tree_sitter_language_pack import SupportedLanguage, get_binding
 
-from git_critic.configuration_types import MessageDefinition, MessageRole, ToolDefinition
-from git_critic.exceptions import EmptyContentError, LLMClientError
-from git_critic.llm.base import LLMClient
-from git_critic.utils.chunking import ChunkingType, get_chunker
+from gitmind.configuration_types import MessageDefinition, MessageRole, ToolDefinition
+from gitmind.exceptions import EmptyContentError, LLMClientError
+from gitmind.llm.base import LLMClient
 
 if TYPE_CHECKING:
     from groq import AsyncClient
@@ -129,27 +127,6 @@ class GroqClient(LLMClient[GroqOptions]):
             raise LLMClientError("Failed to generate completion", context=str(e)) from e
 
         if content := result.choices[0].message.tool_calls[0].function.arguments:
-            return content
+            return cast(str, content)
 
         raise EmptyContentError("LLM client returned empty content", context=result.model_dump_json())
-
-    def chunk_content(
-        self, content: str, max_tokens: int, chunking_type: ChunkingType, language: SupportedLanguage | None = None
-    ) -> Generator[str, None, None]:
-        """Chunk the given content into chunks of the given size.
-
-        Args:
-            content: The content to chunk.
-            max_tokens: The maximum number of tokens per chunk.
-            chunking_type: The type of content to chunk.
-            language: The language to use for code chunking.
-
-        Returns:
-            A list of chunks.
-        """
-        kwargs = {"model": "gpt-3.5-turbo", "capacity": max_tokens}
-        if language:
-            kwargs["language"] = get_binding(language)
-
-        chunker = get_chunker(chunking_type).from_tiktoken_model(**kwargs)
-        yield from chunker.chunks(content)

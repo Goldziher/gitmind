@@ -6,11 +6,11 @@ from anyio import sleep
 from jsonschema import ValidationError, validate
 from msgspec import DecodeError
 
-from git_critic.configuration_types import MessageDefinition, RetryConfig, ToolDefinition
-from git_critic.exceptions import LLMClientError
-from git_critic.llm.base import LLMClient
-from git_critic.utils.logger import get_logger
-from git_critic.utils.serialization import deserialize, serialize
+from gitmind.configuration_types import MessageDefinition, RetryConfig, ToolDefinition
+from gitmind.exceptions import LLMClientError
+from gitmind.llm.base import LLMClient
+from gitmind.utils.logger import get_logger
+from gitmind.utils.serialization import deserialize, serialize
 
 logger = get_logger(__name__)
 

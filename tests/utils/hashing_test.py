@@ -1,4 +1,4 @@
-from git_critic.utils.hashing import get_sha_hash
+from gitmind.utils.hashing import get_sha_hash
 
 
 def test_get_sha_hash() -> None:

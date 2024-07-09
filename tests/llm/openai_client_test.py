@@ -8,10 +8,10 @@ from openai.types.chat.chat_completion import ChatCompletion, Choice
 from openai.types.chat.chat_completion_message_tool_call import Function
 from tree_sitter_language_pack import SupportedLanguage
 
-from git_critic.configuration_types import MessageDefinition
-from git_critic.exceptions import EmptyContentError, LLMClientError
-from git_critic.llm.openai_client import AzureOpenAIOptions, OpenAIClient, OpenAIOptions
-from git_critic.utils.chunking import ChunkingType
+from gitmind.configuration_types import MessageDefinition
+from gitmind.exceptions import EmptyContentError, LLMClientError
+from gitmind.llm.openai_client import AzureOpenAIOptions, OpenAIClient, OpenAIOptions
+from gitmind.utils.chunking import ChunkingType
 
 
 @pytest.fixture
@@ -85,9 +85,9 @@ async def test_create_completions_success(
     describe_commit_message_definitions: list[MessageDefinition],
     describe_commit_chat_completion: ChatCompletion,
 ) -> None:
-    openai_client._client.chat.completions.create = AsyncMock(return_value=describe_commit_chat_completion)
+    openai_client._client.chat.completions.create = AsyncMock(return_value=describe_commit_chat_completion)  # type: ignore
     result = await openai_client.create_completions(messages=describe_commit_message_definitions, json_response=True)
-    assert result == describe_commit_chat_completion.choices[0].message.tool_calls[0].function.arguments
+    assert result == describe_commit_chat_completion.choices[0].message.tool_calls[0].function.arguments  # type: ignore
 
 
 async def test_create_completions_empty_content(
@@ -95,8 +95,8 @@ async def test_create_completions_empty_content(
     describe_commit_message_definitions: list[MessageDefinition],
     describe_commit_chat_completion: ChatCompletion,
 ) -> None:
-    describe_commit_chat_completion.choices[0].message.tool_calls[0].function.arguments = ""
-    openai_client._client.chat.completions.create = AsyncMock(return_value=describe_commit_chat_completion)
+    describe_commit_chat_completion.choices[0].message.tool_calls[0].function.arguments = ""  # type: ignore
+    openai_client._client.chat.completions.create = AsyncMock(return_value=describe_commit_chat_completion)  # type: ignore
 
     with pytest.raises(EmptyContentError):
         await openai_client.create_completions(messages=describe_commit_message_definitions, json_response=True)
@@ -106,7 +106,7 @@ async def test_create_completions_failure(
     openai_client: OpenAIClient, describe_commit_message_definitions: list[MessageDefinition]
 ) -> None:
     # Simulate an API error scenario
-    openai_client._client.chat.completions.create = AsyncMock(side_effect=OpenAIError("API error"))
+    openai_client._client.chat.completions.create = AsyncMock(side_effect=OpenAIError("API error"))  # type: ignore
     with pytest.raises(LLMClientError):
         await openai_client.create_completions(messages=describe_commit_message_definitions, json_response=True)
 

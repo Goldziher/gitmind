@@ -14,8 +14,8 @@ async def run_sync(fn: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
     """Run a synchronous function in an asynchronous context.
 
     Notes:
-        - we use partial to bind the function with the arguments and keyword arguments because run_until_complete
-            expects a function with no arguments.
+        - we use partial to bind the function with the arguments and keyword arguments because anyio.run_sync
+            cannot handle kwargs.
 
     Args:
         fn: The function to run.

@@ -3,10 +3,10 @@ from pathlib import Path
 import pytest
 from git import Commit
 
-from git_critic.commit import extract_commit_data
-from git_critic.configuration_types import MessageDefinition
-from git_critic.data_types import CommitMetadata, CommitStatistics
-from git_critic.repository import get_commits
+from gitmind.commit_processing.commit import extract_commit_data
+from gitmind.configuration_types import MessageDefinition
+from gitmind.data_types import CommitMetadata, CommitStatistics
+from gitmind.repository import get_commits
 
 
 @pytest.fixture(scope="session")

@@ -3,11 +3,11 @@ from typing import Any, Final, override
 
 from inflection import titleize
 
-from git_critic.configuration_types import MessageDefinition, ToolDefinition
-from git_critic.data_types import CommitDescriptionResult, CommitMetadata, CommitStatistics
-from git_critic.prompts.base import AbstractPromptHandler
-from git_critic.utils.logger import get_logger
-from git_critic.utils.serialization import serialize
+from gitmind.configuration_types import MessageDefinition, ToolDefinition
+from gitmind.data_types import CommitDescriptionResult, CommitMetadata, CommitStatistics
+from gitmind.prompts.base import AbstractPromptHandler
+from gitmind.utils.logger import get_logger
+from gitmind.utils.serialization import serialize
 
 logger = get_logger(__name__)
 

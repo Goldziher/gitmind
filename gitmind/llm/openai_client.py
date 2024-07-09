@@ -1,6 +1,6 @@
 import logging
 from collections.abc import Generator, Mapping
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any, Union, cast
 
 from httpx import URL
 from openai import DEFAULT_MAX_RETRIES, NOT_GIVEN, NotGiven, OpenAIError
@@ -17,10 +17,10 @@ from openai.types.shared_params import FunctionDefinition
 from pydantic import BaseModel, ConfigDict
 from tree_sitter_language_pack import SupportedLanguage, get_binding
 
-from git_critic.configuration_types import MessageDefinition, MessageRole, ToolDefinition
-from git_critic.exceptions import EmptyContentError, LLMClientError
-from git_critic.llm.base import LLMClient
-from git_critic.utils.chunking import ChunkingType, get_chunker
+from gitmind.configuration_types import MessageDefinition, MessageRole, ToolDefinition
+from gitmind.exceptions import EmptyContentError, LLMClientError
+from gitmind.llm.base import LLMClient
+from gitmind.utils.chunking import ChunkingType, get_chunker
 
 if TYPE_CHECKING:
     from openai import AsyncClient
@@ -174,7 +174,7 @@ class OpenAIClient(LLMClient[AzureOpenAIOptions | OpenAIOptions]):
             raise LLMClientError("Failed to generate completion", context=str(e)) from e
 
         if content := result.choices[0].message.tool_calls[0].function.arguments:
-            return content
+            return cast(str, content)
 
         raise EmptyContentError("LLM client returned empty content", context=result.model_dump_json())
 
@@ -196,5 +196,5 @@ class OpenAIClient(LLMClient[AzureOpenAIOptions | OpenAIOptions]):
         if language:
             kwargs["language"] = get_binding(language)
 
-        chunker = get_chunker(chunking_type).from_tiktoken_model(**kwargs)
+        chunker = get_chunker(chunking_type=chunking_type, language=language, chunk_size=max_tokens, model=self._model)  # type: ignore[arg-type]
         yield from chunker.chunks(content)
