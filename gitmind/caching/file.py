@@ -10,7 +10,7 @@ from gitmind.caching.base import CacheBase
 DEFAULT_FOLDER_NAME: Final[str] = ".git_critic_cache"
 
 
-def get_or_create_cache_dir(cache_dir: str | PathLike | SyncPath | None = None) -> AsyncPath:
+def get_or_create_cache_dir(cache_dir: str | PathLike[str] | SyncPath | None = None) -> AsyncPath:
     """Get or create the cache directory.
 
     Notes:
@@ -33,7 +33,7 @@ class FileSystemCache(CacheBase):
 
     _cache_dir: AsyncPath
 
-    def __init__(self, cache_dir: str | PathLike | PurePath | None = None) -> None:
+    def __init__(self, cache_dir: str | PathLike[str] | PurePath | None = None) -> None:
         """Initialize the file system cache.
 
         Args:

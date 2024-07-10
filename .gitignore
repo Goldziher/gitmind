@@ -13,4 +13,4 @@ __pypackages__/
 coverage.xml
 cython_debug/
 node_modules/
-e2e/.results/
+tests/e2e/.results/

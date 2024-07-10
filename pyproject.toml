@@ -40,6 +40,7 @@ dev = [
     "python-dotenv>=1.0.1",
     "types-jsonschema>=4.22.0.20240501",
     "polyfactory>=2.16.0",
+    "pytest-logger>=1.1.1",
 ]
 
 # linters configuration below
@@ -135,7 +136,6 @@ plugins = ["pydantic.mypy"]
 
 disallow_untyped_decorators = true
 disallow_any_unimported = true
-disallow_any_decorated = true
 untyped_calls_exclude = []
 
 show_error_codes = true
@@ -151,7 +151,6 @@ warn_required_dynamic_aliases = true
 module = "tests.*"
 disallow_untyped_decorators = false
 disallow_any_unimported = false
-disallow_any_decorated = false
 disable_error_code = "method-assign"
 
 [tool.coverage.run]

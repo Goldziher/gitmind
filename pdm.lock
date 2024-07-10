@@ -5,14 +5,14 @@
 groups = ["default", "dev", "openai", "groq"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.2"
-content_hash = "sha256:4d89870282e864ebe949b6f11cff401db373d1c3f140481d15ec407f5096962f"
+content_hash = "sha256:dd59fa24a7b80b9791d42e4356cabb5b26648a7700ecc29ef661ec7c5ad815bc"
 
 [[package]]
 name = "annotated-types"
 version = "0.7.0"
 requires_python = ">=3.8"
 summary = "Reusable constraint types to use with typing.Annotated"
-groups = ["default", "groq", "openai"]
+groups = ["groq", "openai"]
 files = [
     {file = "annotated_types-0.7.0-py3-none-any.whl", hash = "sha256:1f02e8b43a8fbbc3f3e0d4f0f4bfc8131bcb4eebe8849b8e5c773f3a1c582a53"},
     {file = "annotated_types-0.7.0.tar.gz", hash = "sha256:aff07c09a53a08bc8cfccb9c85b05f1aa9a2a6f23728d790723543408344ce89"},
@@ -93,7 +93,7 @@ name = "distro"
 version = "1.9.0"
 requires_python = ">=3.6"
 summary = "Distro - an OS platform information API"
-groups = ["default", "groq", "openai"]
+groups = ["groq", "openai"]
 files = [
     {file = "distro-1.9.0-py3-none-any.whl", hash = "sha256:7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2"},
     {file = "distro-1.9.0.tar.gz", hash = "sha256:2fa77c6fd8940f116ee1d6b94a2f90b13b5ea8d019b98bc8bafdcabcdd9bdbed"},
@@ -157,7 +157,7 @@ name = "groq"
 version = "0.9.0"
 requires_python = ">=3.7"
 summary = "The official Python library for the groq API"
-groups = ["default", "groq"]
+groups = ["groq"]
 dependencies = [
     "anyio<5,>=3.5.0",
     "distro<2,>=1.7.0",
@@ -440,7 +440,7 @@ name = "pydantic"
 version = "2.7.2"
 requires_python = ">=3.8"
 summary = "Data validation using Python type hints"
-groups = ["default", "groq", "openai"]
+groups = ["groq", "openai"]
 dependencies = [
     "annotated-types>=0.4.0",
     "pydantic-core==2.18.3",
@@ -456,7 +456,7 @@ name = "pydantic-core"
 version = "2.18.3"
 requires_python = ">=3.8"
 summary = "Core functionality for Pydantic validation and serialization"
-groups = ["default", "groq", "openai"]
+groups = ["groq", "openai"]
 dependencies = [
     "typing-extensions!=4.7.0,>=4.6.0",
 ]
@@ -522,6 +522,19 @@ dependencies = [
 files = [
     {file = "pytest_asyncio-0.23.7-py3-none-any.whl", hash = "sha256:009b48127fbe44518a547bddd25611551b0e43ccdbf1e67d12479f569832c20b"},
     {file = "pytest_asyncio-0.23.7.tar.gz", hash = "sha256:5f5c72948f4c49e7db4f29f2521d4031f1c27f86e57b046126654083d4770268"},
+]
+
+[[package]]
+name = "pytest-logger"
+version = "1.1.1"
+summary = "Plugin configuring handlers for loggers from Python logging module."
+groups = ["dev"]
+dependencies = [
+    "pytest>=3.2",
+]
+files = [
+    {file = "pytest-logger-1.1.1.tar.gz", hash = "sha256:82cb36b505a72e15a2f0e12c6451d8c21ecbe0379d322b2bed4f05cb7842c9d9"},
+    {file = "pytest_logger-1.1.1-py2.py3-none-any.whl", hash = "sha256:d9f7b88c04828de649a033779d30f359fce026fde37c1e91d83336a66d27a9fb"},
 ]
 
 [[package]]
@@ -909,7 +922,7 @@ name = "typing-extensions"
 version = "4.12.0"
 requires_python = ">=3.8"
 summary = "Backported and Experimental Type Hints for Python 3.8+"
-groups = ["default", "dev", "groq", "openai"]
+groups = ["dev", "groq", "openai"]
 files = [
     {file = "typing_extensions-4.12.0-py3-none-any.whl", hash = "sha256:b349c66bea9016ac22978d800cfff206d5f9816951f12a7d0ec5578b0a819594"},
     {file = "typing_extensions-4.12.0.tar.gz", hash = "sha256:8cbcdc8606ebcb0d95453ad7dc5065e6237b6aa230a31e81d0f440c30fed5fd8"},

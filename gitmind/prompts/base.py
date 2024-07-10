@@ -28,7 +28,7 @@ class AbstractPromptHandler(ABC, Generic[T]):
 
     def __init__(
         self,
-        client: LLMClient,
+        client: LLMClient[Any],
         retry_config: RetryConfig | None = None,
         chunk_size: int | None = None,
         max_response_tokens: int | None = None,

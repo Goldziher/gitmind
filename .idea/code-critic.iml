@@ -9,7 +9,7 @@
       <excludeFolder url="file://$MODULE_DIR$/.venv/bin" />
       <excludeFolder url="file://$MODULE_DIR$/.venv/lib" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
-      <excludeFolder url="file://$MODULE_DIR$/e2e/.results" />
+      <excludeFolder url="file://$MODULE_DIR$/tests/e2e/.results" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

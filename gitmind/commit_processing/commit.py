@@ -1,15 +1,12 @@
 from collections import defaultdict
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from git import Commit
 from magic import Magic
 
 from gitmind.data_types import CommitData, CommitMetadata, CommitStatistics
+from gitmind.llm.base import LLMClient
 from gitmind.prompts import DescribeCommitHandler, GradeCommitHandler
-
-if TYPE_CHECKING:
-    from gitmind.llm.base import LLMClient
-
 
 text_mime_types = {"text", "application/json", "application/xml", "application/javascript"}
 mime = Magic(mime=True)
@@ -87,7 +84,7 @@ def extract_commit_data(commit: Commit) -> tuple[CommitStatistics, CommitMetadat
     return statistics, metadata, diff_contents
 
 
-async def parse_commit_contents(commit: Commit, client: "LLMClient") -> CommitData:
+async def parse_commit_contents(commit: Commit, client: LLMClient[Any]) -> CommitData:
     """Describe the contents of a commit.
 
     Args:
