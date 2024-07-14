@@ -1,21 +1,57 @@
 """Base classes for LLM clients."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Generic, TypeVar
+from typing import Any, Literal
 
 from pydantic import BaseModel
 
-from gitmind.configuration_types import MessageDefinition, ToolDefinition
-
-T = TypeVar("T", bound=BaseModel)
-M = TypeVar("M")
+__all__ = ["LLMClient", "MessageDefinition", "MessageRole", "ToolDefinition", "RetryConfig"]
 
 
-class LLMClient(ABC, Generic[T]):
+MessageRole = Literal["system", "user"]
+
+
+class MessageDefinition(BaseModel):
+    """A generic message object. An LLM client should be able to generate completions based on a list of this object."""
+
+    role: MessageRole
+    """The role of the message."""
+    content: str
+    """The content of the message."""
+
+
+class ToolDefinition(BaseModel):
+    """A tool that can be used by the LLM client to generate completions."""
+
+    name: str
+    """The name of the tool."""
+    description: str | None = None
+    """A description of the tool."""
+    parameters: dict[str, Any]
+    """The parameters the tool accepts."""
+
+
+class RetryConfig(BaseModel):
+    """Configuration for request retries."""
+
+    max_retries: int = 3
+    """The maximum number of retries for a request."""
+    exponential_backoff: bool = True
+    """Whether to use exponential backoff for retries."""
+
+
+class LLMClient(ABC):
     """Base class for LLM clients."""
 
     @abstractmethod
-    def __init__(self, *, config: T) -> None:  # pragma: no cover
+    def __init__(
+        self,
+        *,
+        api_key: str,
+        model_name: str,
+        endpoint_url: str | None = None,
+        deployment_id: str | None = None,
+    ) -> None:  # pragma: no cover
         """Initialize the client.
 
         Args:

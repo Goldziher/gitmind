@@ -1,7 +1,7 @@
 from typing import Any
 
 
-class CriticError(Exception):
+class GitMindError(Exception):
     """Base class for all exceptions in critic."""
 
     def __init__(self, message: str, context: Any = None) -> None:
@@ -9,9 +9,17 @@ class CriticError(Exception):
         self.context = context
 
 
-class LLMClientError(CriticError):
+class LLMClientError(GitMindError):
     """Error that occurs when an LLM client encounters an issue."""
 
 
-class EmptyContentError(CriticError):
+class EmptyContentError(GitMindError):
     """Error that occurs when an LLM response content is empty."""
+
+
+class MissingDependencyError(GitMindError):
+    """Error that occurs when a dependency is not installed."""
+
+
+class ConfigurationError(GitMindError):
+    """Error that occurs when a configuration is invalid."""

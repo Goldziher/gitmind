@@ -1,26 +1,26 @@
-import logging
-from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, cast
 
-from groq import DEFAULT_MAX_RETRIES, NOT_GIVEN, GroqError, NotGiven
-from groq.types.chat import (
-    ChatCompletionMessageParam,
-    ChatCompletionSystemMessageParam,
-    ChatCompletionToolParam,
-    ChatCompletionUserMessageParam,
-)
-from groq.types.chat.completion_create_params import ResponseFormat
-from groq.types.shared_params import FunctionDefinition
-from pydantic import BaseModel, ConfigDict
+from gitmind.config import GroqProviderConfig
+from gitmind.exceptions import EmptyContentError, LLMClientError, MissingDependencyError
+from gitmind.llm.base import LLMClient, MessageDefinition, MessageRole, ToolDefinition
 
-from gitmind.configuration_types import MessageDefinition, MessageRole, ToolDefinition
-from gitmind.exceptions import EmptyContentError, LLMClientError
-from gitmind.llm.base import LLMClient
+try:
+    from groq import NOT_GIVEN, GroqError
+    from groq.types.chat import (
+        ChatCompletionMessageParam,
+        ChatCompletionSystemMessageParam,
+        ChatCompletionToolParam,
+        ChatCompletionUserMessageParam,
+    )
+    from groq.types.chat.completion_create_params import ResponseFormat
+    from groq.types.shared_params import FunctionDefinition
 
-if TYPE_CHECKING:
-    from groq import AsyncClient
+    if TYPE_CHECKING:
+        from groq import AsyncClient
+except ImportError as e:
+    raise MissingDependencyError("groq is not installed") from e
 
-logger = logging.getLogger(__name__)
+__all__ = ["GroqClient"]
 
 _groq_message_mapping: dict[MessageRole, type[ChatCompletionMessageParam]] = {
     "system": ChatCompletionSystemMessageParam,
@@ -28,28 +28,7 @@ _groq_message_mapping: dict[MessageRole, type[ChatCompletionMessageParam]] = {
 }
 
 
-class GroqOptions(BaseModel):
-    """Base options for Groq clients."""
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
-    api_key: str
-    """The API key for the Groq model."""
-    base_url: str | None = None
-    """The base URL for the Groq model."""
-    model: str = "llama3-8b-8192"
-    """The default model to use for generating completions."""
-    timeout: float | None | NotGiven = NOT_GIVEN
-    """The timeout for the HTTPX client."""
-    max_retries: int = DEFAULT_MAX_RETRIES
-    """The maximum number of retries for the HTTPX client."""
-    default_headers: Mapping[str, str] | None = None
-    """The default headers to use for the HTTPX client."""
-    default_query: Mapping[str, object] | None = None
-    """The default query parameters to use for the HTTPX client."""
-
-
-class GroqClient(LLMClient[GroqOptions]):
+class GroqClient(LLMClient[GroqProviderConfig]):
     """Wrapper for Groq models."""
 
     _client: "AsyncClient"
@@ -59,23 +38,20 @@ class GroqClient(LLMClient[GroqOptions]):
 
     __slots__ = ("_client", "_model")
 
-    def __init__(self, *, options: GroqOptions) -> None:
+    def __init__(self, *, config: GroqProviderConfig) -> None:
         """Initialize the Groq Client.
 
         Args:
-            options: The Groq options.
+            config: The Groq provider config.
         """
         from groq import AsyncClient
 
         self._client = AsyncClient(
-            api_key=options.api_key,
-            base_url=options.base_url,
-            timeout=options.timeout,
-            max_retries=options.max_retries,
-            default_headers=options.default_headers,
-            default_query=options.default_query,
+            api_key=config.api_key,
+            base_url=config.base_url,
+            max_retries=config.max_retries,
         )
-        self._model = options.model
+        self._model = config.model
 
     async def create_completions(
         self,
@@ -103,7 +79,7 @@ class GroqClient(LLMClient[GroqOptions]):
             result = await self._client.chat.completions.create(  # type: ignore[call-overload]
                 model=self._model,
                 messages=[
-                    _groq_message_mapping[message.role](role=message.role, content=message.content)  # type: ignore
+                    _groq_message_mapping[message.role](role=message.role, content=message.content)  # type: ignore[call-arg,arg-type]
                     for message in messages
                 ],
                 response_format=ResponseFormat(type="json_object" if json_response else "text"),

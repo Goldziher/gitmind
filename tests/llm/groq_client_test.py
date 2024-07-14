@@ -7,22 +7,23 @@ from groq.types.chat import ChatCompletionMessage, ChatCompletionMessageToolCall
 from groq.types.chat.chat_completion import ChatCompletion, Choice
 from groq.types.chat.chat_completion_message_tool_call import Function
 
-from gitmind.configuration_types import MessageDefinition
+from gitmind.config import GroqProviderConfig
 from gitmind.exceptions import EmptyContentError, LLMClientError
-from gitmind.llm.groq_client import GroqClient, GroqOptions
+from gitmind.llm.base import MessageDefinition
+from gitmind.llm.groq_client import GroqClient
 
 
-@pytest.fixture
-def groq_options() -> GroqOptions:
-    return GroqOptions(api_key="fake_key")
+@pytest.fixture()
+def groq_config() -> GroqProviderConfig:
+    return GroqProviderConfig(api_key="fake_key")
 
 
-@pytest.fixture
-async def groq_client(groq_options: GroqOptions) -> GroqClient:
-    return GroqClient(options=groq_options)
+@pytest.fixture()
+async def groq_client(groq_config: GroqProviderConfig) -> GroqClient:
+    return GroqClient(config=groq_config)
 
 
-@pytest.fixture
+@pytest.fixture()
 def describe_commit_chat_completion() -> ChatCompletion:
     return ChatCompletion(
         id="chatcmpl-9e5AtvzgX3wpNKavzubGkSDSw67Ef",
@@ -57,8 +58,8 @@ def describe_commit_chat_completion() -> ChatCompletion:
 
 
 @patch("groq.AsyncClient", autospec=True)
-async def test_init_groq_client(mock_client: Mock, groq_options: GroqOptions) -> None:
-    GroqClient(options=groq_options)
+async def test_init_groq_client(mock_client: Mock, groq_config: GroqProviderConfig) -> None:
+    GroqClient(config=groq_config)
     mock_client.assert_called_once()
 
 

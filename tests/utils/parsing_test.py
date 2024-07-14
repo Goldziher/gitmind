@@ -1,6 +1,6 @@
 import pytest
 
-from gitmind.commit_processing.commit import is_supported_mime_type
+from gitmind.utils.parsing import is_supported_mime_type
 
 
 @pytest.mark.parametrize(

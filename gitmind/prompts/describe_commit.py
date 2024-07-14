@@ -1,11 +1,11 @@
 from asyncio import gather
-from typing import Any, Final, override
+from typing import Any, Final, TypedDict, override
 
 from inflection import titleize
 
-from gitmind.configuration_types import MessageDefinition, ToolDefinition
-from gitmind.data_types import CommitDescriptionResult, CommitMetadata, CommitStatistics
+from gitmind.llm.base import MessageDefinition, ToolDefinition
 from gitmind.prompts.base import AbstractPromptHandler
+from gitmind.utils.commit import CommitMetadata, CommitStatistics
 from gitmind.utils.logger import get_logger
 from gitmind.utils.serialization import serialize
 
@@ -74,6 +74,30 @@ def titleize_commit_statistics(commit_statistics: CommitStatistics) -> str:
     return "\n".join(infos)
 
 
+class CommitFileChangeDescription(TypedDict):
+    """Description of the changes made in a file in a commit."""
+
+    file_name: str
+    """The name of the file."""
+    changes_description: str
+    """Description of the changes made in the file and their purpose."""
+
+
+class CommitDescriptionResult(TypedDict):
+    """Description of a commit."""
+
+    summary: str
+    """Summary of the commit."""
+    purpose: str
+    """An estimation to the purpose of the changes made in the commit and it's relative impact."""
+    breakdown: list[CommitFileChangeDescription]
+    """Description of changes in each file and the purpose of the changes."""
+    programming_languages_used: list[str]
+    """List of programming languages used in the commit."""
+    additional_notes: str
+    """Any additional relevant information."""
+
+
 class DescribeCommitHandler(AbstractPromptHandler[CommitDescriptionResult]):
     """Handler for the describe commit prompt."""
 
@@ -96,9 +120,9 @@ class DescribeCommitHandler(AbstractPromptHandler[CommitDescriptionResult]):
             **kwargs: Additional arguments.
         """
         describe_commit_prompt = (
-            f"**Commit Message**:{metadata["commit_message"]}\n\n"
+            f"**Commit Message**:{metadata["message"]}\n\n"
             f"**Commit Statistics**:\n{titleize_commit_statistics(statistics)}\n\n"
-            f"**Per file breakdown**:\n{serialize(statistics["per_files_changes"]).decode()}\n\n"
+            f"**Per file breakdown**:\n{serialize(statistics["files_changed"]).decode()}\n\n"
             f"**Commit Diff**:\n"
         )
 

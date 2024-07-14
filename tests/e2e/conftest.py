@@ -1,12 +1,13 @@
 from logging import Logger, getLogger
 from os import environ
-from typing import Any
+from typing import Any, Literal
 
 import pytest
 
+from gitmind.config import GroqProviderConfig, OpenAIProviderConfig
 from gitmind.llm.base import LLMClient
-from gitmind.llm.groq_client import GroqClient, GroqOptions
-from gitmind.llm.openai_client import OpenAIClient, OpenAIOptions
+from gitmind.llm.groq_client import GroqClient
+from gitmind.llm.openai_client import OpenAIClient
 
 TEST_COMMIT_HASH = "9c8399e0fe619ff66f8bebe64039fc23a7f107cd"
 
@@ -38,27 +39,24 @@ def model() -> str:
 
 
 @pytest.fixture(scope="session")
-def llm_client(provider: str) -> LLMClient[Any]:
-    match provider:
-        case "openai":
-            openai_key = environ.get("OPENAI_API_KEY")
-            assert openai_key is not None, "OPENAI_API_KEY is not set"
+def llm_client(provider: Literal["openai", "groq"]) -> LLMClient[Any]:
+    if provider == "groq":
+        groq_key = environ.get("GROQ_API_KEY")
+        assert groq_key is not None, "GROQ_API_KEY is not set"
 
-            return OpenAIClient(
-                options=OpenAIOptions(
-                    api_key=openai_key,
-                    model="gpt-4o",
-                )
+        return GroqClient(
+            config=GroqProviderConfig(
+                api_key=groq_key,
+                model="llama3-70b-8192",
             )
-        case "groq":
-            groq_key = environ.get("GROQ_API_KEY")
-            assert groq_key is not None, "GROQ_API_KEY is not set"
+        )
 
-            return GroqClient(
-                options=GroqOptions(
-                    api_key=groq_key,
-                    model="llama3-70b-8192",
-                )
-            )
-        case _:  # pragma: no cover
-            raise ValueError(f"Unknown provider: {provider}")
+    openai_key = environ.get("OPENAI_API_KEY")
+    assert openai_key is not None, "OPENAI_API_KEY is not set"
+
+    return OpenAIClient(
+        config=OpenAIProviderConfig(
+            api_key=openai_key,
+            model="gpt-4o",
+        )
+    )

@@ -6,9 +6,8 @@ from anyio import sleep
 from jsonschema import ValidationError, validate
 from msgspec import DecodeError
 
-from gitmind.configuration_types import MessageDefinition, RetryConfig, ToolDefinition
 from gitmind.exceptions import LLMClientError
-from gitmind.llm.base import LLMClient
+from gitmind.llm.base import LLMClient, MessageDefinition, RetryConfig, ToolDefinition
 from gitmind.utils.logger import get_logger
 from gitmind.utils.serialization import deserialize, serialize
 

@@ -1,13 +1,22 @@
 from asyncio import gather
-from typing import Any, Final, override
+from typing import Any, Final, TypedDict, override
 
-from gitmind.configuration_types import MessageDefinition, ToolDefinition
-from gitmind.data_types import CommitGradingResult, CommitMetadata
+from gitmind.llm.base import MessageDefinition, ToolDefinition
 from gitmind.prompts.base import AbstractPromptHandler
 from gitmind.rules import DEFAULT_GRADING_RULES, Rule
-from gitmind.utils.logger import get_logger
+from gitmind.utils.commit import CommitMetadata
 
-logger = get_logger(__name__)
+
+class CommitGradingResult(TypedDict):
+    """DTO for grading results."""
+
+    grade: int
+    """The grade for the commit."""
+    reason: str
+    """The reason for the grade."""
+    rule_name: str
+    """The name of the rule."""
+
 
 GRADE_COMMIT_SYSTEM_MESSAGE: Final[str] = """
 You are an assistant that grades git commits.
@@ -47,7 +56,7 @@ class GradeCommitHandler(AbstractPromptHandler[list[CommitGradingResult]]):
 
         commit_evaluation_prompt = (
             f"Evaluate and grade a git commit based on the following criteria:\n{evaluation_instructions}\n\n"
-            f"**Commit Message**:{metadata["commit_message"]}\n\n"
+            f"**Commit Message**:{metadata["message"]}\n\n"
             f"**Commit Diff**:\n"
         )
 

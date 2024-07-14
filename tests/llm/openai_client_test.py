@@ -8,33 +8,34 @@ from openai.types.chat.chat_completion import ChatCompletion, Choice
 from openai.types.chat.chat_completion_message_tool_call import Function
 from tree_sitter_language_pack import SupportedLanguage
 
-from gitmind.configuration_types import MessageDefinition
+from gitmind.config import AzureOpenAIProviderConfig, OpenAIProviderConfig
 from gitmind.exceptions import EmptyContentError, LLMClientError
-from gitmind.llm.openai_client import AzureOpenAIOptions, OpenAIClient, OpenAIOptions
+from gitmind.llm.base import MessageDefinition
+from gitmind.llm.openai_client import OpenAIClient
 from gitmind.utils.chunking import ChunkingType
 
 
-@pytest.fixture
-def openai_options() -> OpenAIOptions:
-    return OpenAIOptions(api_key="fake_key")
+@pytest.fixture()
+def openai_config() -> OpenAIProviderConfig:
+    return OpenAIProviderConfig(api_key="fake_key")
 
 
-@pytest.fixture
-def azure_options() -> AzureOpenAIOptions:
-    return AzureOpenAIOptions(azure_endpoint="https://example.com/api", api_key="fake_token")
+@pytest.fixture()
+def azure_openai_config() -> AzureOpenAIProviderConfig:
+    return AzureOpenAIProviderConfig(endpoint="https://example.com/api", api_key="fake_token")
 
 
-@pytest.fixture
-async def openai_client(openai_options: OpenAIOptions) -> OpenAIClient:
-    return OpenAIClient(options=openai_options)
+@pytest.fixture()
+async def openai_client(openai_config: OpenAIProviderConfig) -> OpenAIClient:
+    return OpenAIClient(config=openai_config)
 
 
-@pytest.fixture
-async def azure_client(azure_options: AzureOpenAIOptions) -> OpenAIClient:
-    return OpenAIClient(options=azure_options)
+@pytest.fixture()
+async def azure_client(azure_openai_config: AzureOpenAIProviderConfig) -> OpenAIClient:
+    return OpenAIClient(config=azure_openai_config)
 
 
-@pytest.fixture
+@pytest.fixture()
 def describe_commit_chat_completion() -> ChatCompletion:
     return ChatCompletion(
         id="chatcmpl-9e5AtvzgX3wpNKavzubGkSDSw67Ef",
@@ -69,14 +70,14 @@ def describe_commit_chat_completion() -> ChatCompletion:
 
 
 @patch("openai.AsyncClient", autospec=True)
-async def test_init_openai_client(mock_client: Mock, openai_options: OpenAIOptions) -> None:
-    OpenAIClient(options=openai_options)
+async def test_init_openai_client(mock_client: Mock, openai_config: OpenAIProviderConfig) -> None:
+    OpenAIClient(config=openai_config)
     mock_client.assert_called_once()
 
 
 @patch("openai.lib.azure.AsyncAzureOpenAI", autospec=True)
-async def test_init_azure_client(mock_client: Mock, azure_options: AzureOpenAIOptions) -> None:
-    OpenAIClient(options=azure_options)
+async def test_init_azure_client(mock_client: Mock, azure_openai_config: AzureOpenAIProviderConfig) -> None:
+    OpenAIClient(config=azure_openai_config)
     mock_client.assert_called_once()
 
 
