@@ -1,10 +1,9 @@
 from logging import Logger, getLogger
 from os import environ
-from typing import Any, Literal
+from typing import Any
 
 import pytest
 
-from gitmind.config import GroqProviderConfig, OpenAIProviderConfig
 from gitmind.llm.base import LLMClient
 from gitmind.llm.groq_client import GroqClient
 from gitmind.llm.openai_client import OpenAIClient
@@ -23,40 +22,28 @@ def logger() -> Logger:
 
 
 @pytest.fixture(scope="session")
-def provider() -> str:
-    provider = environ.get("PROVIDER")
-    assert provider is not None, "PROVIDER environment variable is not set"
+def provider_name() -> str:
+    provider_name = environ.get("PROVIDER_NAME", None)
+    assert provider_name is not None, "PROVIDER_NAME environment variable is not set"
 
-    return provider.lower()
-
-
-@pytest.fixture(scope="session")
-def model() -> str:
-    model = environ.get("MODEL")
-    assert model is not None, "MODEL environment variable is not set"
-
-    return model
+    return provider_name
 
 
 @pytest.fixture(scope="session")
-def llm_client(provider: Literal["openai", "groq"]) -> LLMClient[Any]:
-    if provider == "groq":
+def llm_client(provider_name: str) -> LLMClient:
+    if provider_name == "groq":
         groq_key = environ.get("GROQ_API_KEY")
         assert groq_key is not None, "GROQ_API_KEY is not set"
 
         return GroqClient(
-            config=GroqProviderConfig(
-                api_key=groq_key,
-                model="llama3-70b-8192",
-            )
+            api_key=groq_key,
+            model_name="llama3-70b-8192",
         )
 
     openai_key = environ.get("OPENAI_API_KEY")
     assert openai_key is not None, "OPENAI_API_KEY is not set"
 
     return OpenAIClient(
-        config=OpenAIProviderConfig(
-            api_key=openai_key,
-            model="gpt-4o",
-        )
+        api_key=openai_key,
+        model_name="gpt-4o",
     )

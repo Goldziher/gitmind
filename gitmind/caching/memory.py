@@ -12,7 +12,6 @@ class InMemoryCache(CacheBase):
     _lock: Lock
 
     def __init__(self) -> None:
-        """Initialize the in-memory cache."""
         super().__init__()
         self._store: dict[str, str] = {}
         self._lock = Lock()
@@ -61,6 +60,6 @@ class InMemoryCache(CacheBase):
             key: The key to check the existence of.
 
         Returns:
-            bool: True if the key exists, else False.
+            True if the key exists, else False.
         """
         return key in self._store

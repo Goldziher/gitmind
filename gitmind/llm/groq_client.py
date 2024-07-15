@@ -1,6 +1,5 @@
 from typing import TYPE_CHECKING, Any, cast
 
-from gitmind.config import GroqProviderConfig
 from gitmind.exceptions import EmptyContentError, LLMClientError, MissingDependencyError
 from gitmind.llm.base import LLMClient, MessageDefinition, MessageRole, ToolDefinition
 
@@ -28,8 +27,15 @@ _groq_message_mapping: dict[MessageRole, type[ChatCompletionMessageParam]] = {
 }
 
 
-class GroqClient(LLMClient[GroqProviderConfig]):
-    """Wrapper for Groq models."""
+class GroqClient(LLMClient):
+    """Groq LLM client.
+
+    Args:
+        api_key: The API key for the provider.
+        model_name: The model to use for completions.
+        endpoint_url: The endpoint URL for the provider.
+        **kwargs: Additional client options.
+    """
 
     _client: "AsyncClient"
     """The Groq client instance."""
@@ -38,20 +44,22 @@ class GroqClient(LLMClient[GroqProviderConfig]):
 
     __slots__ = ("_client", "_model")
 
-    def __init__(self, *, config: GroqProviderConfig) -> None:
-        """Initialize the Groq Client.
-
-        Args:
-            config: The Groq provider config.
-        """
+    def __init__(
+        self,
+        *,
+        api_key: str,
+        model_name: str,
+        endpoint_url: str | None = None,
+        **kwargs: Any,
+    ) -> None:
         from groq import AsyncClient
 
         self._client = AsyncClient(
-            api_key=config.api_key,
-            base_url=config.base_url,
-            max_retries=config.max_retries,
+            api_key=api_key,
+            base_url=endpoint_url,
+            **kwargs,
         )
-        self._model = config.model
+        self._model = model_name
 
     async def create_completions(
         self,

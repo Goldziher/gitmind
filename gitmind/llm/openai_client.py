@@ -1,12 +1,7 @@
-from collections.abc import Generator
 from typing import TYPE_CHECKING, Any, Union, cast
 
-from tree_sitter_language_pack import SupportedLanguage, get_binding
-
-from gitmind.config import AzureOpenAIProviderConfig, OpenAIProviderConfig
 from gitmind.exceptions import EmptyContentError, LLMClientError, MissingDependencyError
 from gitmind.llm.base import LLMClient, MessageDefinition, MessageRole, ToolDefinition
-from gitmind.utils.chunking import ChunkingType, get_chunker
 
 try:
     from openai import NOT_GIVEN, OpenAIError
@@ -34,8 +29,15 @@ _openai_message_mapping: dict[MessageRole, type[ChatCompletionMessageParam]] = {
 }
 
 
-class OpenAIClient(LLMClient[AzureOpenAIProviderConfig | OpenAIProviderConfig]):
-    """Wrapper for OpenAI models."""
+class OpenAIClient(LLMClient):
+    """Wrapper for OpenAI models.
+
+    Args:
+        api_key: The API key for the provider.
+        model_name: The model to use for completions.
+        endpoint_url: The endpoint URL for the provider.
+        **kwargs: Additional keyword arguments.
+    """
 
     _client: Union["AsyncAzureOpenAI", "AsyncClient"]
     """The OpenAI client instance."""
@@ -44,32 +46,28 @@ class OpenAIClient(LLMClient[AzureOpenAIProviderConfig | OpenAIProviderConfig]):
 
     __slots__ = ("_client", "_model")
 
-    def __init__(self, *, config: AzureOpenAIProviderConfig | OpenAIProviderConfig) -> None:
-        """Initialize the OpenAI Client.
-
-        Args:
-            config: The OpenAI or AzureOpenAI provider config.
-        """
-        if isinstance(config, AzureOpenAIProviderConfig):
+    def __init__(
+        self,
+        *,
+        api_key: str,
+        model_name: str,
+        endpoint_url: str | None = None,
+        **kwargs: Any,
+    ) -> None:
+        if deployment_id := kwargs.pop("deployment_id", None) and endpoint_url is not None:
             from openai.lib.azure import AsyncAzureOpenAI
 
             self._client = AsyncAzureOpenAI(
-                azure_endpoint=config.endpoint,
-                azure_deployment=config.deployment,
-                api_version=config.api_version,
-                api_key=config.api_key,
-                azure_ad_token=config.ad_token,
-                max_retries=config.max_retries,
+                azure_endpoint=endpoint_url,
+                api_key=api_key,
+                azure_deployment=cast(str, deployment_id),
+                **kwargs,
             )
         else:
             from openai import AsyncClient
 
-            self._client = AsyncClient(
-                api_key=config.api_key,
-                base_url=config.base_url,
-                max_retries=config.max_retries,
-            )
-            self._model = config.model
+            self._client = AsyncClient(api_key=api_key, base_url=endpoint_url, **kwargs)
+            self._model = model_name
 
     async def create_completions(
         self,
@@ -125,24 +123,3 @@ class OpenAIClient(LLMClient[AzureOpenAIProviderConfig | OpenAIProviderConfig]):
             return cast(str, content)
 
         raise EmptyContentError("LLM client returned empty content", context=result.model_dump_json())
-
-    def chunk_content(
-        self, content: str, max_tokens: int, chunking_type: ChunkingType, language: SupportedLanguage | None = None
-    ) -> Generator[str, None, None]:
-        """Chunk the given content into chunks of the given size.
-
-        Args:
-            content: The content to chunk.
-            max_tokens: The maximum number of tokens per chunk.
-            chunking_type: The type of content to chunk.
-            language: The language to use for code chunking.
-
-        Returns:
-            A list of chunks.
-        """
-        kwargs = {"model": self._model, "capacity": max_tokens}
-        if language:
-            kwargs["language"] = get_binding(language)
-
-        chunker = get_chunker(chunking_type=chunking_type, language=language, chunk_size=max_tokens, model=self._model)  # type: ignore[arg-type]
-        yield from chunker.chunks(content)

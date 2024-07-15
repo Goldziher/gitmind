@@ -116,8 +116,10 @@ class DescribeCommitHandler(AbstractPromptHandler[CommitDescriptionResult]):
             statistics: The statistics of the commit.
             metadata: The metadata of the commit.
             diff: The diff of the commit.
-            retry_config: The retry configuration to use.
             **kwargs: Additional arguments.
+
+        Returns:
+            Commit description result.
         """
         describe_commit_prompt = (
             f"**Commit Message**:{metadata["message"]}\n\n"

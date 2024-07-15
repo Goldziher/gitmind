@@ -6,33 +6,53 @@ from openai.types import CompletionUsage
 from openai.types.chat import ChatCompletionMessage, ChatCompletionMessageToolCall
 from openai.types.chat.chat_completion import ChatCompletion, Choice
 from openai.types.chat.chat_completion_message_tool_call import Function
-from tree_sitter_language_pack import SupportedLanguage
 
-from gitmind.config import AzureOpenAIProviderConfig, OpenAIProviderConfig
+from gitmind.config import GitMindSettings
 from gitmind.exceptions import EmptyContentError, LLMClientError
 from gitmind.llm.base import MessageDefinition
 from gitmind.llm.openai_client import OpenAIClient
-from gitmind.utils.chunking import ChunkingType
 
 
 @pytest.fixture()
-def openai_config() -> OpenAIProviderConfig:
-    return OpenAIProviderConfig(api_key="fake_key")
+def openai_config() -> GitMindSettings:
+    return GitMindSettings(
+        provider_api_key="fake_token",  # type: ignore[arg-type]
+        provider_name="openai",
+        provider_deployment_id="abc123jeronimo",
+        provider_model="gpt-4o",
+        target_repo="git@github.com:libgit2/pygit2.git",
+    )
 
 
 @pytest.fixture()
-def azure_openai_config() -> AzureOpenAIProviderConfig:
-    return AzureOpenAIProviderConfig(endpoint="https://example.com/api", api_key="fake_token")
+def azure_openai_config() -> GitMindSettings:
+    return GitMindSettings(
+        provider_endpoint_url="https://example.com/api",  # type: ignore[arg-type]
+        provider_api_key="fake_token",  # type: ignore[arg-type]
+        provider_name="azure-openai",
+        provider_deployment_id="abc123jeronimo",
+        provider_model="gpt-4o",
+        target_repo="git@github.com:libgit2/pygit2.git",
+    )
 
 
 @pytest.fixture()
-async def openai_client(openai_config: OpenAIProviderConfig) -> OpenAIClient:
-    return OpenAIClient(config=openai_config)
+async def openai_client(openai_config: GitMindSettings) -> OpenAIClient:
+    return OpenAIClient(
+        api_key=openai_config.provider_api_key.get_secret_value(),
+        model_name=openai_config.provider_model,
+        endpoint_url=openai_config.provider_endpoint_url,  # type: ignore[arg-type]
+    )
 
 
 @pytest.fixture()
-async def azure_client(azure_openai_config: AzureOpenAIProviderConfig) -> OpenAIClient:
-    return OpenAIClient(config=azure_openai_config)
+async def azure_client(azure_openai_config: GitMindSettings) -> OpenAIClient:
+    return OpenAIClient(
+        api_key=azure_openai_config.provider_api_key.get_secret_value(),
+        model_name=azure_openai_config.provider_model,
+        endpoint_url=azure_openai_config.provider_endpoint_url,  # type: ignore[arg-type]
+        deployment_id=azure_openai_config.provider_deployment_id,
+    )
 
 
 @pytest.fixture()
@@ -70,14 +90,23 @@ def describe_commit_chat_completion() -> ChatCompletion:
 
 
 @patch("openai.AsyncClient", autospec=True)
-async def test_init_openai_client(mock_client: Mock, openai_config: OpenAIProviderConfig) -> None:
-    OpenAIClient(config=openai_config)
+async def test_init_openai_client(mock_client: Mock, openai_config: GitMindSettings) -> None:
+    OpenAIClient(
+        api_key=openai_config.provider_api_key.get_secret_value(),
+        model_name=openai_config.provider_model,
+        endpoint_url=openai_config.provider_endpoint_url,  # type: ignore[arg-type]
+    )
     mock_client.assert_called_once()
 
 
 @patch("openai.lib.azure.AsyncAzureOpenAI", autospec=True)
-async def test_init_azure_client(mock_client: Mock, azure_openai_config: AzureOpenAIProviderConfig) -> None:
-    OpenAIClient(config=azure_openai_config)
+async def test_init_azure_client(mock_client: Mock, azure_openai_config: GitMindSettings) -> None:
+    OpenAIClient(
+        api_key=azure_openai_config.provider_api_key.get_secret_value(),
+        model_name=azure_openai_config.provider_model,
+        endpoint_url=azure_openai_config.provider_endpoint_url,  # type: ignore[arg-type]
+        deployment_id=azure_openai_config.provider_deployment_id,
+    )
     mock_client.assert_called_once()
 
 
@@ -110,69 +139,3 @@ async def test_create_completions_failure(
     openai_client._client.chat.completions.create = AsyncMock(side_effect=OpenAIError("API error"))  # type: ignore
     with pytest.raises(LLMClientError):
         await openai_client.create_completions(messages=describe_commit_message_definitions, json_response=True)
-
-
-@pytest.mark.parametrize(
-    "chunking_type, content, expected_chunks, language",
-    (
-        (
-            "text",
-            """
-            Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin
-            literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney
-            College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage,
-            and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum
-            comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by
-            Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance.
-            The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section
-            """,
-            2,
-            None,
-        ),
-        (
-            "markdown",
-            """
-            # Lorem Ipsum Into
-
-            Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature
-            from 45 BC, making it over 2000 years old.
-
-            Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin
-            words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature,
-            discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum"
-            (The Extremes of Good and Evil) by Cicero, written in 45 BC.
-            This book is a treatise on the theory of ethics, very popular during the Renaissance. he first line of Lorem Ipsum,
-            "Lorem ipsum dolor sit amet..", comes from a line in section.
-            """,
-            2,
-            None,
-        ),
-        (
-            "code",
-            """
-     import kotlin.random.Random
-
-     fun main() {
-         val randomNumbers = IntArray(10) { Random.nextInt(1, 100) } // Generate an array of 10 random integers between 1 and 99
-         println("Random numbers:")
-         for (number in randomNumbers) {
-             println(number)  // Print each random number
-         }
-     }
-     """,
-            2,
-            "kotlin",
-        ),
-    ),
-)
-async def test_chunk_content(
-    openai_client: OpenAIClient,
-    chunking_type: ChunkingType,
-    content: str,
-    expected_chunks: int,
-    language: SupportedLanguage | None,
-) -> None:
-    content = "This is a test string to verify the chunk content functionality over the defined maximum token limit."
-    max_tokens = 10
-    chunks = list(openai_client.chunk_content(content, max_tokens, chunking_type, language))
-    assert len(chunks) == expected_chunks

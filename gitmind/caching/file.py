@@ -29,19 +29,15 @@ def get_or_create_cache_dir(cache_dir: str | PathLike[str] | SyncPath | None = N
 
 
 class FileSystemCache(CacheBase):
-    """File system cache implementation."""
+    """File system cache implementation.
+
+    Args:
+        cache_dir: The name of the cache directory.
+    """
 
     _cache_dir: AsyncPath
 
     def __init__(self, cache_dir: str | PathLike[str] | PurePath | None = None) -> None:
-        """Initialize the file system cache.
-
-        Args:
-            cache_dir: The name of the cache directory.
-
-        Returns:
-            None
-        """
         super().__init__()
         self._cache_dir = get_or_create_cache_dir(cache_dir=cache_dir)
 
@@ -49,10 +45,10 @@ class FileSystemCache(CacheBase):
         """Get a value from the cache.
 
         Args:
-            key (str): The key to retrieve the value for.
+            key: The key to retrieve the value for.
 
         Returns:
-            str | None: The cached value or None if the key does not exist.
+            The cached value or None if the key does not exist.
         """
         cache_file = self._cache_dir / key
         try:
@@ -92,7 +88,7 @@ class FileSystemCache(CacheBase):
             key: The key to check the existence of.
 
         Returns:
-            bool: True if the key exists, else False.
+            True if the key exists, else False.
         """
         cache_file = self._cache_dir / key
         return await cache_file.exists()

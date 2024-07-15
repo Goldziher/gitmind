@@ -16,6 +16,9 @@ def get_logger(name: str) -> FilteringBoundLogger:
 
     Args:
         name: The name of the logger.
+
+    Returns:
+        The struct-logger.
     """
     if configured_ref.value is None:
         from structlog import BytesLoggerFactory, PrintLoggerFactory, configure_once, make_filtering_bound_logger

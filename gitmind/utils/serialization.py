@@ -18,6 +18,9 @@ def decode_hook(target: Any, value: dict[str, Any]) -> Any:
         target: The type to decode the data into.
         value: The dictionary to decode.
 
+    Raises:
+        TypeError: If the target type is not supported.
+
     Returns:
         An instance of ``type_``.
     """
@@ -32,6 +35,9 @@ def encode_hook(obj: Any) -> Any:
 
     Args:
         obj: The object to encode.
+
+    Raises:
+        TypeError: If the object type is not supported.
 
     Returns:
         A dictionary representation of ``obj``.
@@ -68,7 +74,7 @@ def serialize(
     Args:
         value: Value to serialize to JSON.
         encoder: A custom encoder to use.
-        kwargs: Additional arguments to pass to the encoder.
+        **kwargs: Additional arguments to pass to the encoder.
 
     Returns:
         A JSON string.

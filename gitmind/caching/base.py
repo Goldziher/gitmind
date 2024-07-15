@@ -9,9 +9,12 @@ class CacheBase(ABC):
         """Get a value from the cache.
 
         Args:
-            key (str): The key to retrieve the value for.
+            key: The key to retrieve the value for.
+
+        Returns:
+            The value if it exists, else None
         """
-        raise NotImplementedError
+        ...
 
     @abstractmethod
     async def set(
@@ -28,7 +31,7 @@ class CacheBase(ABC):
         Returns:
             None
         """
-        raise NotImplementedError
+        ...
 
     @abstractmethod
     async def delete(self, key: str) -> None:
@@ -40,7 +43,7 @@ class CacheBase(ABC):
         Returns:
             None
         """
-        raise NotImplementedError
+        ...
 
     @abstractmethod
     async def exists(self, key: str) -> bool:
@@ -50,6 +53,6 @@ class CacheBase(ABC):
             key: The key to check the existence of.
 
         Returns:
-            bool: True if the key exists, else False.
+            True if the key exists, else False.
         """
-        raise NotImplementedError
+        ...

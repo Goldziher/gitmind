@@ -1,7 +1,6 @@
 from logging import Logger
 from os import environ
 from pathlib import Path
-from typing import Any
 
 import pytest
 from pygit2 import Repository
@@ -17,7 +16,7 @@ from tests.e2e.conftest import TEST_COMMIT_HASH
     not environ.get("E2E_TESTS"),
     reason="End-to-end tests are disabled. Set E2E_TESTS to execute the E2E tests",
 )
-async def test_describe_commit(logger: Logger, provider: str, model: str, llm_client: LLMClient[Any]) -> None:
+async def test_describe_commit(logger: Logger, provider_name: str, provider_model: str, llm_client: LLMClient) -> None:
     """Test the describe_commit_contents function.
 
     Notes:
@@ -39,6 +38,6 @@ async def test_describe_commit(logger: Logger, provider: str, model: str, llm_cl
     grading = await GradeCommitHandler(llm_client)(metadata=metadata, diff=diff)
     logger.info("Successfully graded commit %s, writing results", str(test_commit.id))
 
-    file = Path(__file__).parent.joinpath(f".results/{provider}_{model}_grading_{TEST_COMMIT_HASH}.json")
+    file = Path(__file__).parent.joinpath(f".results/{provider_name}_{provider_model}_grading_{TEST_COMMIT_HASH}.json")
     file.write_bytes(serialize(grading))
     logger.info("Results written to %s", file.name)

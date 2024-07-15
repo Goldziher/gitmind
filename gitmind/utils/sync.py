@@ -34,6 +34,9 @@ async def run_sync(fn: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
 def run_as_sync(async_fn: Callable[P, Coroutine[None, None, T]]) -> Callable[P, T]:
     """Decorator to run an async function in a synchronous context.
 
+    Args:
+        async_fn: The async function to run.
+
     Returns:
         A wrapped function that runs the async function in a synchronous context.
     """

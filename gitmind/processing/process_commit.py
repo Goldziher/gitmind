@@ -1,4 +1,4 @@
-from typing import Any, TypedDict
+from typing import TypedDict
 
 from pygit2 import Repository
 
@@ -21,7 +21,7 @@ class CommitData(TypedDict):
     """The data of the commit."""
 
 
-async def parse_commit_contents(repo: Repository, commit_hex: str, client: LLMClient[Any]) -> CommitData:
+async def parse_commit_contents(repo: Repository, commit_hex: str, client: LLMClient) -> CommitData:
     """Describe the contents of a commit.
 
     Args:

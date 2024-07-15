@@ -12,13 +12,21 @@ ChunkingType = TextualChunkingType | CodeChunkingType
 
 @overload
 def get_chunker(
-    *, chunk_size: int, chunking_type: TextualChunkingType, model: str, language: None = None
+    *,
+    chunk_size: int,
+    chunking_type: TextualChunkingType,
+    language: None = None,
+    model: str,
 ) -> TextSplitter | MarkdownSplitter: ...
 
 
 @overload
 def get_chunker(
-    *, chunk_size: int, chunking_type: CodeChunkingType, model: str, language: SupportedLanguage
+    *,
+    chunk_size: int,
+    chunking_type: CodeChunkingType,
+    language: SupportedLanguage,
+    model: str,
 ) -> CodeSplitter: ...
 
 
@@ -26,16 +34,16 @@ def get_chunker(
     *,
     chunk_size: int,
     chunking_type: ChunkingType,
-    model: str,
     language: SupportedLanguage | None = None,
+    model: str,
 ) -> TextSplitter | MarkdownSplitter | CodeSplitter:
     """Get the chunker for the given chunking type.
 
     Args:
         chunk_size: The maximal number of tokens per chunk.
         chunking_type: The type of content to chunk.
-        model: The model name, e.g. gpt-3.5-turbo.
         language: The coding language to chunk - if the content is code.
+        model: The model name, e.g. gpt-3.5-turbo.
 
     Raises:
         ValueError: If the language is not provided for code chunking.
@@ -63,7 +71,12 @@ def chunk_content(
 
 @overload
 def chunk_content(
-    content: str, *, chunk_size: int, chunking_type: CodeChunkingType, model: str, language: SupportedLanguage
+    content: str,
+    *,
+    chunk_size: int,
+    chunking_type: CodeChunkingType,
+    language: SupportedLanguage,
+    model: str,
 ) -> Generator[str, None, None]: ...
 
 
@@ -72,24 +85,20 @@ def chunk_content(
     *,
     chunk_size: int,
     chunking_type: ChunkingType,
-    model: str,
     language: SupportedLanguage | None = None,
+    model: str,
 ) -> Generator[str, None, None]:
     """Chunk the given content into chunks of the given size.
 
     Args:
+        content: The content to chunk.
         chunk_size: The maximal number of tokens per chunk.
         chunking_type: The type of content to chunk.
-        content: The content to chunk.
-        model: The model name, e.g. gpt-3.5-turbo.
         language: The coding language to chunk - if the content is code.
-
-    Raises:
-        ValueError: If the language is not provided for code chunking.
+        model: The model name, e.g. gpt-3.5-turbo.
 
     Yields:
-        The chunks of the content.
+        str: A chunk string
     """
-    chunker = get_chunker(chunking_type=chunking_type, model=model, chunk_size=chunk_size, language=language)  # type: ignore[arg-type]
-
+    chunker = get_chunker(chunking_type=chunking_type, model=model, chunk_size=chunk_size, language=language, trim=True)  # type: ignore[call-overload]
     yield from chunker.chunks(content)

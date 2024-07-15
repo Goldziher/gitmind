@@ -92,18 +92,19 @@ class GitMindSettings(BaseGitmineSetting):
         """Validate the target repository value.
 
         Args:
-            value (str | DirectoryPath | None): The target repository value.
+            value: The target repository value.
+
+        Raises:
+            ValueError: If the target repository is not a git repository.
 
         Returns:
-            str | DirectoryPath | None: The validated target repository value.
+            The validated target repository value.
         """
         if value is None:
-            cwd = Path.cwd()
-            if not cwd.joinpath(".git").exists():
-                raise ValueError("The current directory is not a git repository.")
-            return cwd
+            value = Path.cwd()
+
         if isinstance(value, Path) and not value.joinpath(".git").exists():
-            raise ValueError("The target_repo directory is not a git repository.")
+            raise ValueError(f"The value for target_repo - {value} - is not a git repository.")
 
         return value
 
@@ -113,13 +114,13 @@ class GitMindSettings(BaseGitmineSetting):
         """Validate the values of the settings.
 
         Args:
-            values_dict (dict[str, Any]): The values dictionary.
+            values_dict: The values dictionary.
 
         Raises:
             ValidationError: If the values are invalid.
 
         Returns:
-            dict[str, Any]: The validated values dictionary.
+            The validated values dictionary.
         """
         if provider_name := values_dict.get("provider_name"):
             if provider_name == "azure-openai":

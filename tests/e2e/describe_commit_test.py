@@ -2,7 +2,6 @@ from datetime import UTC, datetime
 from logging import Logger
 from os import environ
 from pathlib import Path
-from typing import Any
 
 import pytest
 from pygit2 import Repository
@@ -18,7 +17,7 @@ from tests.e2e.conftest import TEST_COMMIT_HASH
     not environ.get("E2E_TESTS"),
     reason="End-to-end tests are disabled. Set E2E_TESTS to execute the E2E tests",
 )
-async def test_describe_commit(logger: Logger, provider: str, model: str, llm_client: LLMClient[Any]) -> None:
+async def test_describe_commit(logger: Logger, provider_name: str, provider_model: str, llm_client: LLMClient) -> None:
     """Test the describe_commit_contents prompt.
 
     Notes:
@@ -41,7 +40,7 @@ async def test_describe_commit(logger: Logger, provider: str, model: str, llm_cl
     logger.info("Successfully described commit %s, writing results", str(test_commit.id))
 
     file = Path(__file__).parent.joinpath(
-        f".results/{provider}_{model}_describe_{TEST_COMMIT_HASH}_{datetime.now(UTC)}.json"
+        f".results/{provider_name}_{provider_model}_describe_{TEST_COMMIT_HASH}_{datetime.now(UTC)}.json"
     )
     file.write_bytes(serialize(commit_description))
     logger.info("Results written to %s", file.name)
