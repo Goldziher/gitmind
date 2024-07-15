@@ -1,3 +1,4 @@
+from functools import cached_property
 from pathlib import Path
 from re import Pattern
 from re import compile as compile_regex
@@ -14,6 +15,8 @@ from pydantic_settings import (
     TomlConfigSettingsSource,
     YamlConfigSettingsSource,
 )
+
+from gitmind.llm.base import LLMClient
 
 CONFIG_FILE_NAME: Final[str] = "gitmind-config"
 
@@ -134,3 +137,37 @@ class GitMindSettings(BaseGitmineSetting):
             return values_dict
 
         raise ValueError("Missing required parameter: provider_name")
+
+    @cached_property
+    def llm_client(self) -> LLMClient:
+        """Get the LLM client for the provider.
+
+        Returns:
+            The LLM client for the provider.
+        """
+        match self.provider_name:
+            case "azure-openai":
+                from gitmind.llm.openai_client import OpenAIClient
+
+                return OpenAIClient(
+                    api_key=self.provider_api_key.get_secret_value(),
+                    model_name=self.provider_model,
+                    endpoint_url=self.provider_endpoint_url,  # type: ignore[arg-type]
+                    deployment_id=self.provider_deployment_id,
+                )
+            case "groq":
+                from gitmind.llm.groq_client import GroqClient
+
+                return GroqClient(
+                    api_key=self.provider_api_key.get_secret_value(),
+                    model_name=self.provider_model,
+                    endpoint_url=self.provider_endpoint_url,  # type: ignore[arg-type]
+                )
+            case "openai":
+                from gitmind.llm.openai_client import OpenAIClient
+
+                return OpenAIClient(
+                    api_key=self.provider_api_key.get_secret_value(),
+                    model_name=self.provider_model,
+                    endpoint_url=self.provider_endpoint_url,  # type: ignore[arg-type]
+                )

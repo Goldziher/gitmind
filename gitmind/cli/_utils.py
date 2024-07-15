@@ -12,9 +12,10 @@ from typing import (  # type: ignore[attr-defined]
 
 from pydantic import ValidationError
 from pygit2 import Repository
-from rich_click import Choice, Context, UsageError, option
+from rich_click import Choice, Context, UsageError, echo, option
 
 from gitmind.config import GitMindSettings
+from gitmind.prompts.describe_commit import CommitDescriptionResult
 from gitmind.utils.repository import get_or_clone_repository
 
 T = TypeVar("T")
@@ -30,6 +31,8 @@ class CLIContext(TypedDict):
     """The repository object."""
     commit_hash: NotRequired[str]
     """The commit hash."""
+    commit_description: NotRequired[CommitDescriptionResult]
+    """The commit description result, if any."""
 
 
 def get_or_set_cli_context(ctx: Context, **kwargs: Any) -> CLIContext:
@@ -51,13 +54,23 @@ def get_or_set_cli_context(ctx: Context, **kwargs: Any) -> CLIContext:
             # since we use a pydantic validator to ensure this value is not actually None, this cast is safe
             target_repo = cast(Path | str, settings.target_repo)
             ctx.obj = CLIContext(settings=settings, repo=get_or_clone_repository(target_repo))
-
         return cast(CLIContext, ctx.obj)
     except ValidationError as e:
         field_names = "\n".join([f"-\t{value["loc"][0]}" for value in e.errors()])
         raise UsageError(
             f"Invalid configuration settings. The following options are required:\n\n{field_names}",
         ) from e
+
+
+def debug_echo(cli_context: CLIContext, message: str) -> None:
+    """Echo a message if debug is enabled.
+
+    Args:
+        cli_context: The CLI context.
+        message: The message to echo.
+    """
+    if cli_context["settings"].mode == "debug":
+        echo(f"<debug>: {message}", color=True)
 
 
 def global_options() -> Callable[[Callable[P, T]], Callable[P, T]]:
