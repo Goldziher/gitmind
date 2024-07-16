@@ -15,7 +15,8 @@
 - A compatible python version. It's recommended to use [pyenv](https://github.com/pyenv/pyenv) to manage
 python versions.
 - [pdm](https://github.com/pdm-project/pdm) installed.
-- [pre-commit](https://pre-commit.com/) installed.
+- [pre-commit](https://pre-commit.com) installed.
+- [hatch](https://hatch.pypa.io) installed,
 
 ### Setup
 
@@ -35,7 +36,14 @@ python versions.
 
 To lint the codebase, run:
 ```shell
-   pdm run pre-commit run --all-files
+   pdm run lint
+```
+
+### Testing
+
+To run the tests, run:
+```shell
+   pdm run test
 ```
 
 Tip: You can also run the linters configured in `pyproject.toml` inside your IDE of choice.

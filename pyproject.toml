@@ -1,8 +1,28 @@
 [project]
 name = "gitmind"
-version = "0.1.0"
+version = "0.0.1"
 description = "Default template for PDM package"
 authors = [{ name = "Na'aman Hirschfeld", email = "nhirschfeld@gmail.com" }]
+requires-python = ">=3.9.*"
+readme = "README.md"
+license = { text = "UNLICENSED" }
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development",
+    "Typing :: Typed",
+]
 dependencies = [
     "httpx>=0.27.0",
     "anyio>=4.4.0",
@@ -17,9 +37,6 @@ dependencies = [
     "pydantic-settings>=2.3.4",
     "pygit2>=1.15.1",
 ]
-requires-python = "==3.12.*"
-readme = "README.md"
-license = { text = "UNLICENSED" }
 
 [project.optional-dependencies]
 openai = [
@@ -33,6 +50,23 @@ cli = [
     "rich-click>=1.8.3",
     "rich>=13.7.1",
 ]
+
+[project.scripts]
+gitmind = "gitming.__main__:cli"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build]
+skip-excluded-dirs = true
+
+[tool.hatch.build.targets.sdist]
+only-include = ["gitmind"]
+
+[tool.hatch.build.targets.wheel]
+only-include = ["gitmind"]
+
 [tool.pdm]
 distribution = false
 
@@ -50,10 +84,14 @@ dev = [
     "types-pygit2>=1.15.0.20240714",
 ]
 
+[tool.pdm.scripts]
+lint = "pre-commit run --all-files"
+test = "pytest tests"
+
 # linters configuration below
 [tool.ruff]
 line-length = 120
-target-version = "py312"
+target-version = "py39"
 src = ["gitmind", "tests"]
 lint.select = [
     "ALL",
@@ -95,7 +133,7 @@ max-returns = 10
 
 [tool.mypy]
 packages = ["poly", "tests"]
-python_version = "3.12"
+python_version = "3.9"
 plugins = ["pydantic.mypy"]
 
 disallow_untyped_decorators = true
