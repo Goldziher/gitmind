@@ -16,10 +16,10 @@ jobs:
         cache: true
         cache-dependency-path: |
           ./pdm.lock
-    - name: Install
-      run: pdm install -v
+    - name: Install Dependencies
+      run: pdm install
     - name: Build sdist
-      run: pdm build --no-wheel -v -d dist
+      run: pdm build --no-wheel -d dist
     - name: Upload sources
       uses: actions/upload-artifact@v4
       with:
@@ -33,21 +33,16 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
     - uses: actions/checkout@v4
-    - name: Download parsers
-      uses: actions/download-artifact@v4
-      with:
-        name: language-parsers
-        path: parsers
     - uses: pdm-project/setup-pdm@v4
       with:
         python-version: '3.9'
         cache: true
         cache-dependency-path: |
           ./pdm.lock
-    - name: Install and build extensions
-      run: pdm install -v
+    - name: Install Dependencies
+      run: pdm install
     - name: Build wheels
-      run: pdm build --no-sdist -v -d dist
+      run: pdm build --no-sdist -d dist
     - uses: actions/upload-artifact@v4
       with:
         name: wheels-${{ matrix.os }}-${{ strategy.job-index }}
