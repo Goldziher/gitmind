@@ -1,12 +1,16 @@
-<!-- markdownlint-disable -->
 <p align="center">
   <!-- github-banner-start -->
   <img src="assets/logo_white_bg.svg" alt="Litestar Logo - Light" width="100%" height="auto" />
   <!-- github-banner-end -->
 </p>
-<!-- markdownlint-restore -->
 
 # Gitmind
+
+AI powered Git repository analysis and reporting.
+
+This project is currently in its infancy. The readme will be updated to include more information as the project progresses.
+
+If you find what you are seeing intriguing, go ahead and ⭐️ the repository to show your support.
 
 ## Local Development
 

@@ -69,7 +69,7 @@ only-include = ["gitmind"]
 only-include = ["gitmind"]
 
 [tool.pdm]
-distribution = false
+distribution = true
 
 [tool.pdm.dev-dependencies]
 dev = [
