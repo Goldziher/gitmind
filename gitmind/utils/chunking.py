@@ -1,13 +1,18 @@
-from collections.abc import Generator
-from typing import Literal, overload
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Literal, overload
 
 from semantic_text_splitter import CodeSplitter, MarkdownSplitter, TextSplitter
 from tree_sitter_language_pack import SupportedLanguage, get_binding
+from typing_extensions import TypeAlias
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 TextualChunkingType = Literal["text", "markdown"]
 CodeChunkingType = Literal["code"]
 
-ChunkingType = TextualChunkingType | CodeChunkingType
+ChunkingType: TypeAlias = "TextualChunkingType | CodeChunkingType"
 
 
 @overload

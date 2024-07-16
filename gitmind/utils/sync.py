@@ -1,15 +1,21 @@
 """Async/sync utils module."""
 
+from __future__ import annotations
+
 from asyncio import run as run_async
-from collections.abc import Awaitable, Callable, Coroutine
 from functools import partial, wraps
-from typing import Any, ParamSpec, TypeVar, cast
+from typing import TYPE_CHECKING, TypeVar, cast
 
 from anyio.to_thread import run_sync as anyio_run_sync
+from typing_extensions import ParamSpec
+
+if TYPE_CHECKING:
+    from collections.abc import Awaitable, Callable, Coroutine
+    from typing import Any
 
 P = ParamSpec("P")
 T = TypeVar("T")
-C = TypeVar("C", bound=Awaitable[Any] | Coroutine[None, None, Any])
+C = TypeVar("C", bound="Awaitable[Any] | Coroutine[None, None, Any]")
 
 
 async def run_sync(fn: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:

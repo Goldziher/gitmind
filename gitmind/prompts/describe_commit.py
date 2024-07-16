@@ -1,6 +1,7 @@
-from typing import Any, Final, TypedDict, override
+from typing import Any, Final, TypedDict
 
 from inflection import titleize
+from typing_extensions import override
 
 from gitmind.llm.base import MessageDefinition, ToolDefinition
 from gitmind.prompts.base import AbstractPromptHandler

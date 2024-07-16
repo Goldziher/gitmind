@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any, cast
 
 from gitmind.exceptions import EmptyContentError, LLMClientError, MissingDependencyError
@@ -37,7 +39,7 @@ class GroqClient(LLMClient):
         **kwargs: Additional client options.
     """
 
-    _client: "AsyncClient"
+    _client: AsyncClient
     """The Groq client instance."""
     _model: str
     """The model to use for generating completions."""

@@ -1,11 +1,12 @@
+from __future__ import annotations
+
 from functools import cached_property
 from pathlib import Path
 from re import Pattern
 from re import compile as compile_regex
-from typing import Annotated, Any, Final, Literal
+from typing import TYPE_CHECKING, Annotated, Any, Final, Literal
 
 from pydantic import DirectoryPath, Field, SecretStr, field_validator, model_validator
-from pydantic_core import Url
 from pydantic_settings import (
     BaseSettings,
     JsonConfigSettingsSource,
@@ -16,7 +17,10 @@ from pydantic_settings import (
     YamlConfigSettingsSource,
 )
 
-from gitmind.llm.base import LLMClient
+if TYPE_CHECKING:
+    from pydantic_core import Url
+
+    from gitmind.llm.base import LLMClient
 
 CONFIG_FILE_NAME: Final[str] = "gitmind-config"
 
@@ -145,29 +149,28 @@ class GitMindSettings(BaseGitmineSetting):
         Returns:
             The LLM client for the provider.
         """
-        match self.provider_name:
-            case "azure-openai":
-                from gitmind.llm.openai_client import OpenAIClient
+        if self.provider_name == "azure-openai":
+            from gitmind.llm.openai_client import OpenAIClient
 
-                return OpenAIClient(
-                    api_key=self.provider_api_key.get_secret_value(),
-                    model_name=self.provider_model,
-                    endpoint_url=self.provider_endpoint_url,  # type: ignore[arg-type]
-                    deployment_id=self.provider_deployment_id,
-                )
-            case "groq":
-                from gitmind.llm.groq_client import GroqClient
+            return OpenAIClient(
+                api_key=self.provider_api_key.get_secret_value(),
+                model_name=self.provider_model,
+                endpoint_url=self.provider_endpoint_url,  # type: ignore[arg-type]
+                deployment_id=self.provider_deployment_id,
+            )
+        if self.provider_name == "groq":
+            from gitmind.llm.groq_client import GroqClient
 
-                return GroqClient(
-                    api_key=self.provider_api_key.get_secret_value(),
-                    model_name=self.provider_model,
-                    endpoint_url=self.provider_endpoint_url,  # type: ignore[arg-type]
-                )
-            case "openai":
-                from gitmind.llm.openai_client import OpenAIClient
+            return GroqClient(
+                api_key=self.provider_api_key.get_secret_value(),
+                model_name=self.provider_model,
+                endpoint_url=self.provider_endpoint_url,  # type: ignore[arg-type]
+            )
 
-                return OpenAIClient(
-                    api_key=self.provider_api_key.get_secret_value(),
-                    model_name=self.provider_model,
-                    endpoint_url=self.provider_endpoint_url,  # type: ignore[arg-type]
-                )
+        from gitmind.llm.openai_client import OpenAIClient
+
+        return OpenAIClient(
+            api_key=self.provider_api_key.get_secret_value(),
+            model_name=self.provider_model,
+            endpoint_url=self.provider_endpoint_url,  # type: ignore[arg-type]
+        )

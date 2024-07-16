@@ -1,8 +1,14 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 from semantic_text_splitter import CodeSplitter, MarkdownSplitter, TextSplitter
-from tree_sitter_language_pack import SupportedLanguage
 
 from gitmind.utils.chunking import ChunkingType, chunk_content, get_chunker
+
+if TYPE_CHECKING:
+    from tree_sitter_language_pack import SupportedLanguage
 
 
 @pytest.mark.parametrize(

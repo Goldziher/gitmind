@@ -1,9 +1,15 @@
-from collections.abc import Callable
+from __future__ import annotations
+
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from pygit2 import Remote, Repository
 from pygit2 import clone_repository as pygit_clone_repository
-from pygit2.callbacks import RemoteCallbacks
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from pygit2.callbacks import RemoteCallbacks
 
 
 def clone_repository(

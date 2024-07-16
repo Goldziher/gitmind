@@ -1,12 +1,16 @@
 """Serialization related utils."""
 
-from collections.abc import Callable
+from __future__ import annotations
+
 from enum import Enum
 from inspect import isclass
-from typing import Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from msgspec.json import decode, encode
 from pydantic import BaseModel
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 T = TypeVar("T")
 

@@ -1,11 +1,15 @@
-from os import PathLike
+from __future__ import annotations
+
 from pathlib import Path as SyncPath
 from pathlib import PurePath
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 from anyio import Path as AsyncPath
 
 from gitmind.caching.base import CacheBase
+
+if TYPE_CHECKING:
+    from os import PathLike
 
 DEFAULT_FOLDER_NAME: Final[str] = ".git_critic_cache"
 

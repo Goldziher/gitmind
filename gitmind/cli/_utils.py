@@ -1,9 +1,8 @@
-from collections.abc import Callable
-from pathlib import Path
+from __future__ import annotations
+
 from typing import (  # type: ignore[attr-defined]
+    TYPE_CHECKING,
     Any,
-    NotRequired,
-    ParamSpec,
     TypedDict,
     TypeVar,
     _LiteralGenericAlias,
@@ -11,12 +10,19 @@ from typing import (  # type: ignore[attr-defined]
 )
 
 from pydantic import ValidationError
-from pygit2 import Repository
 from rich_click import Choice, Context, UsageError, echo, option
+from typing_extensions import NotRequired, ParamSpec
 
 from gitmind.config import GitMindSettings
-from gitmind.prompts.describe_commit import CommitDescriptionResult
 from gitmind.utils.repository import get_or_clone_repository
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from pathlib import Path
+
+    from pygit2 import Repository
+
+    from gitmind.prompts.describe_commit import CommitDescriptionResult
 
 T = TypeVar("T")
 P = ParamSpec("P")
@@ -52,7 +58,7 @@ def get_or_set_cli_context(ctx: Context, **kwargs: Any) -> CLIContext:
         if ctx.obj is None:
             settings = GitMindSettings(**{k: v for k, v in kwargs.items() if v is not None})
             # since we use a pydantic validator to ensure this value is not actually None, this cast is safe
-            target_repo = cast(Path | str, settings.target_repo)
+            target_repo = cast("Path | str", settings.target_repo)
             ctx.obj = CLIContext(settings=settings, repo=get_or_clone_repository(target_repo))
         return cast(CLIContext, ctx.obj)
     except ValidationError as e:

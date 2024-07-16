@@ -1,10 +1,16 @@
-from typing import Final, Literal, TypedDict, override
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Final, Literal, TypedDict
+
+from typing_extensions import override
 
 from gitmind.llm.base import MessageDefinition, ToolDefinition
 from gitmind.prompts.base import AbstractPromptHandler
 from gitmind.rules import DEFAULT_GRADING_RULES, Rule
-from gitmind.utils.commit import CommitMetadata
 from gitmind.utils.serialization import serialize
+
+if TYPE_CHECKING:
+    from gitmind.utils.commit import CommitMetadata
 
 
 class CommitGradingResult(TypedDict):

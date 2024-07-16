@@ -1,11 +1,15 @@
-from typing import TYPE_CHECKING, Any, Union, cast
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, cast
 
 from gitmind.exceptions import EmptyContentError, LLMClientError, MissingDependencyError
 from gitmind.llm.base import LLMClient, MessageDefinition, MessageRole, ToolDefinition
 
+if TYPE_CHECKING:
+    from openai.types import ChatModel
+
 try:
     from openai import NOT_GIVEN, OpenAIError
-    from openai.types import ChatModel
     from openai.types.chat import (
         ChatCompletionMessageParam,
         ChatCompletionSystemMessageParam,
@@ -39,7 +43,7 @@ class OpenAIClient(LLMClient):
         **kwargs: Additional keyword arguments.
     """
 
-    _client: Union["AsyncAzureOpenAI", "AsyncClient"]
+    _client: AsyncAzureOpenAI | AsyncClient
     """The OpenAI client instance."""
     _model: ChatModel | str
     """The model to use for generating completions."""

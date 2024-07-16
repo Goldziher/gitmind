@@ -3,7 +3,7 @@ name = "gitmind"
 version = "0.0.1"
 description = "Default template for PDM package"
 authors = [{ name = "Na'aman Hirschfeld", email = "nhirschfeld@gmail.com" }]
-requires-python = ">=3.9.*"
+requires-python = ">=3.9"
 readme = "README.md"
 license = { text = "UNLICENSED" }
 classifiers = [
@@ -36,6 +36,7 @@ dependencies = [
     "structlog>=24.2.0",
     "pydantic-settings>=2.3.4",
     "pygit2>=1.15.1",
+    "typing-extensions>=4.12.2",
 ]
 
 [project.optional-dependencies]

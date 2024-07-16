@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from logging import Logger
 from os import environ
 from pathlib import Path
@@ -40,7 +40,7 @@ async def test_describe_commit(logger: Logger, provider_name: str, provider_mode
     logger.info("Successfully described commit %s, writing results", str(test_commit.id))
 
     file = Path(__file__).parent.joinpath(
-        f".results/{provider_name}_{provider_model}_describe_{TEST_COMMIT_HASH}_{datetime.now(UTC)}.json"
+        f".results/{provider_name}_{provider_model}_describe_{TEST_COMMIT_HASH}_{datetime.now(timezone.utc)}.json"
     )
     file.write_bytes(serialize(commit_description))
     logger.info("Results written to %s", file.name)
