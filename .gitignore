@@ -15,5 +15,6 @@ __pycache__/
 __pypackages__/
 coverage.xml
 cython_debug/
+dist/
 node_modules/
 tests/e2e/.results/
