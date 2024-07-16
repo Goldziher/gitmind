@@ -1,13 +1,16 @@
 *$py.class
+*.iml
 *.log
 *.py[cod]
 .coverage
 .env
+.idea/
 .mypy_cache/
 .pdm-build/
 .pdm-python
 .pdm.toml
 .venv
+.vscode/
 __pycache__/
 __pypackages__/
 coverage.xml
