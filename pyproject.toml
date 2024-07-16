@@ -1,7 +1,7 @@
 [project]
 name = "gitmind"
 version = "0.0.1"
-description = "Default template for PDM package"
+description = "AI powered Git repository analysis and reporting"
 authors = [{ name = "Na'aman Hirschfeld", email = "nhirschfeld@gmail.com" }]
 requires-python = ">=3.9"
 readme = "README.md"
@@ -23,6 +23,8 @@ classifiers = [
     "Topic :: Software Development",
     "Typing :: Typed",
 ]
+keywords = ["git", "repository", "analysis", "reporting", "ai", "dev-tools", "linting"]
+
 dependencies = [
     "httpx>=0.27.0",
     "anyio>=4.4.0",
@@ -38,6 +40,9 @@ dependencies = [
     "pygit2>=1.15.1",
     "typing-extensions>=4.12.2",
 ]
+
+[project.urls]
+Repository = "https://github.com/Goldziher/gitmind"
 
 [project.optional-dependencies]
 openai = [

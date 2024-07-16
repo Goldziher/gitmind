@@ -1,6 +1,6 @@
 <p align="center">
   <!-- github-banner-start -->
-  <img src="assets/logo_white_bg.svg" alt="Litestar Logo - Light" width="100%" height="auto" />
+  <img src="https://github.com/Goldziher/gitmind/blob/main/assets/logo_white_bg.svg?raw=true" alt="GitMind Logo - Light" width="100%" height="auto" />
   <!-- github-banner-end -->
 </p>
 
