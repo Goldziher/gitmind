@@ -5,7 +5,7 @@
 groups = ["default", "dev", "openai", "groq", "cli"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.2"
-content_hash = "sha256:7d81a0ad37a05f953ee37441492044d121c5eac4d7ccaad3c625b178c517074f"
+content_hash = "sha256:fbe69ed0773012f18e620d5b2e0f3bf89d4c3802907aeb066fa1e77916c9bc83"
 
 [[package]]
 name = "annotated-types"
@@ -136,6 +136,17 @@ groups = ["groq", "openai"]
 files = [
     {file = "distro-1.9.0-py3-none-any.whl", hash = "sha256:7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2"},
     {file = "distro-1.9.0.tar.gz", hash = "sha256:2fa77c6fd8940f116ee1d6b94a2f90b13b5ea8d019b98bc8bafdcabcdd9bdbed"},
+]
+
+[[package]]
+name = "eval-type-backport"
+version = "0.2.0"
+requires_python = ">=3.8"
+summary = "Like `typing._eval_type`, but lets older Python versions use newer typing features."
+groups = ["default"]
+files = [
+    {file = "eval_type_backport-0.2.0-py3-none-any.whl", hash = "sha256:ac2f73d30d40c5a30a80b8739a789d6bb5e49fdffa66d7912667e2015d9c9933"},
+    {file = "eval_type_backport-0.2.0.tar.gz", hash = "sha256:68796cfbc7371ebf923f03bdf7bef415f3ec098aeced24e054b253a0e78f7b37"},
 ]
 
 [[package]]

@@ -66,7 +66,7 @@ class GradeCommitHandler(AbstractPromptHandler[dict[str, CommitGradingResult]]):
 
         commit_evaluation_prompt = (
             f"Evaluate and grade a git commit based on the following criteria:\n{evaluation_instructions}\n\n"
-            f"**Commit Message**:{metadata["message"]}\n\n"
+            f"**Commit Message**:{metadata['message']}\n\n"
             f"**Commit Diff**:\n{diff}"
         )
 

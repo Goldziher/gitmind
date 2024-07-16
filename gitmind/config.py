@@ -4,9 +4,10 @@ from functools import cached_property
 from pathlib import Path
 from re import Pattern
 from re import compile as compile_regex
-from typing import TYPE_CHECKING, Annotated, Any, Final, Literal
+from typing import Annotated, Any, Final, Literal
 
 from pydantic import DirectoryPath, Field, SecretStr, field_validator, model_validator
+from pydantic_core import Url  # noqa: TCH002
 from pydantic_settings import (
     BaseSettings,
     JsonConfigSettingsSource,
@@ -17,10 +18,7 @@ from pydantic_settings import (
     YamlConfigSettingsSource,
 )
 
-if TYPE_CHECKING:
-    from pydantic_core import Url
-
-    from gitmind.llm.base import LLMClient
+from gitmind.llm.base import LLMClient  # noqa: TCH001
 
 CONFIG_FILE_NAME: Final[str] = "gitmind-config"
 

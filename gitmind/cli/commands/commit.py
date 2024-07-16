@@ -24,7 +24,7 @@ async def handle_describe(ctx: Context, commit_hash: str) -> CommitDescriptionRe
     commit_statistics, commit_metadata, diff = extract_commit_data(repo=cli_ctx["repo"], commit_hex=commit_hash)
     debug_echo(
         cli_ctx,
-        f"Retrieved commit {commit_hash}: {commit_metadata["message"]}\n\ncommit_data: {dumps(commit_statistics, indent=2)}",
+        f"Retrieved commit {commit_hash}: {commit_metadata['message']}\n\ncommit_data: {dumps(commit_statistics, indent=2)}",
     )
     handler = DescribeCommitHandler(
         client=cli_ctx["settings"].llm_client,
@@ -55,7 +55,7 @@ async def handle_grade(ctx: Context, commit_hash: str) -> dict[str, CommitGradin
     commit_statistics, commit_metadata, diff = extract_commit_data(repo=cli_ctx["repo"], commit_hex=commit_hash)
     debug_echo(
         cli_ctx,
-        f"Retrieved commit {commit_hash}: {commit_metadata["message"]}\n\ncommit_data: {dumps(commit_statistics, indent=2)}",
+        f"Retrieved commit {commit_hash}: {commit_metadata['message']}\n\ncommit_data: {dumps(commit_statistics, indent=2)}",
     )
 
     handler = GradeCommitHandler(

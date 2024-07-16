@@ -122,9 +122,9 @@ class DescribeCommitHandler(AbstractPromptHandler[CommitDescriptionResult]):
             Commit description result.
         """
         describe_commit_prompt = (
-            f"**Commit Message**:{metadata["message"]}\n\n"
+            f"**Commit Message**:{metadata['message']}\n\n"
             f"**Commit Statistics**:\n{titleize_commit_statistics(statistics)}\n\n"
-            f"**Per file breakdown**:\n{serialize(statistics["files_changed"]).decode()}\n\n"
+            f"**Per file breakdown**:\n{serialize(statistics['files_changed']).decode()}\n\n"
             f"**Commit Diff**:\n"
         )
 
