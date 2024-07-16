@@ -13,10 +13,15 @@ from gitmind.utils.serialization import deserialize, serialize
 logger = get_logger(__name__)
 
 T = TypeVar("T")
+R = TypeVar("R")
 
 
-DEFAULT_CHUNK_SIZE: Final[int] = 128000
 MAX_TOKENS: Final[int] = 4096
+
+VALIDATION_ERROR_MESSAGE_CONTENT: Final[str] = """
+Your previous response failed validation. Here is the error:\n{e}\nHere is your previous response:\n{response}\n
+Generate a new response that fixes the validation error and completely satisfies the tool parameters.
+"""
 
 
 class AbstractPromptHandler(ABC, Generic[T]):
@@ -25,7 +30,6 @@ class AbstractPromptHandler(ABC, Generic[T]):
     Args:
             client: The LLM client to use.
             retry_config: The retry configuration to use.
-            chunk_size: The chunk size to use when chunking prompt contexts.
             max_response_tokens: The maximum number of tokens in the response.
     """
 
@@ -35,12 +39,10 @@ class AbstractPromptHandler(ABC, Generic[T]):
         self,
         client: LLMClient,
         retry_config: RetryConfig | None = None,
-        chunk_size: int | None = None,
         max_response_tokens: int | None = None,
     ) -> None:
         self._client = client
         self._retry_config = retry_config if retry_config else RetryConfig()
-        self._chunk_size = chunk_size if chunk_size else DEFAULT_CHUNK_SIZE
         self._max_response_tokens = max_response_tokens if max_response_tokens else MAX_TOKENS
 
     @abstractmethod
@@ -59,17 +61,19 @@ class AbstractPromptHandler(ABC, Generic[T]):
         self,
         *,
         messages: list[MessageDefinition],
-        properties: dict[str, Any],
-        tool: ToolDefinition | None = None,
+        response_type: type[R],
         retry_count: int = 0,
-    ) -> dict[str, Any]:
+        schema: dict[str, Any],
+        tool: ToolDefinition | None = None,
+    ) -> R:
         """Generate LLM completions.
 
         Args:
             messages: The messages to generate completions for.
-            properties: The properties to validate.
-            tool: An optional tool call.
+            response_type: The type of the response.
             retry_count: The number of retries attempted.
+            schema: The schema to use for the completions.
+            tool: An optional tool call.
 
         Raises:
             LLMClientError: If an error occurs while generating completions.
@@ -84,91 +88,43 @@ class AbstractPromptHandler(ABC, Generic[T]):
             response = await self._client.create_completions(
                 messages=messages, json_response=True, tool=tool, max_tokens=self._max_response_tokens
             )
-            logger.debug("%s: Successfully generated completions.\n\nResponse: %s", self.__class__.__name__, response)
-            return self.parse_json_response(response=response, properties=properties)
         except LLMClientError as e:
             logger.error("%s: Error occurred while generating completions: %s.", self.__class__.__name__, e)
             raise
+        try:
+            logger.debug("%s: Successfully generated completions.\n\nResponse: %s", self.__class__.__name__, response)
+            result = deserialize(response, response_type)
+            validate(instance=result, schema=schema)
+            return result
         except (DecodeError, ValidationError) as e:
             # This has to be in place because LLMs sometimes return invalid or partial JSON
+            validation_error_message = MessageDefinition(
+                role="user", content=VALIDATION_ERROR_MESSAGE_CONTENT.format(e=str(e), response=response)
+            )
+
+            if retry_count == 0:
+                messages.append(validation_error_message)
+            else:
+                messages[-1] = validation_error_message
+
             if retry_count < self._retry_config.max_retries:
                 retry_count += 1
                 logger.warning(
-                    "LLM responded with an invalid or partial JSON response, retrying (%d/%d)",
+                    "Validation failed.\nError: %s,\n\nRetrying (%d/%d)",
+                    e,
                     retry_count,
                     self._retry_config.max_retries,
                 )
                 await sleep((2**retry_count) if self._retry_config.exponential_backoff else 1)
                 return await self.generate_completions(
                     messages=messages,
-                    properties=properties,
-                    tool=tool,
+                    response_type=response_type,
                     retry_count=retry_count,
+                    schema=schema,
+                    tool=tool,
                 )
             logger.warning("LLM responded with invalid or partial JSON response, retries have been exhausted.")
             raise LLMClientError(
                 "LLM responded with invalid or partial JSON response",
                 context=str(e),
             ) from e
-
-    async def combine_results(
-        self, results: list[dict[str, Any]], tool: ToolDefinition, properties: dict[str, Any]
-    ) -> dict[str, Any]:
-        """Combine multiple chunked results into a single result.
-
-        Args:
-            results: The results to combine.
-            tool: The tool definition.
-            properties: The properties to validate.
-
-        Returns:
-            The combined results.
-        """
-        return await self.generate_completions(
-            properties=properties,
-            messages=[
-                MessageDefinition(
-                    role="system",
-                    content="You are an assistant tasked with combining the results of multiple LLM prompts into a "
-                    "single unified result. The output must be a single JSON object of the same structure as "
-                    "the objects in the provided data.",
-                ),
-                MessageDefinition(
-                    role="user", content="Combine the following results: \n\n" + serialize(results).decode()
-                ),
-            ],
-            tool=tool,
-        )
-
-    @staticmethod
-    def parse_json_response(*, response: str, properties: dict[str, Any]) -> dict[str, Any]:
-        """Validate the response from the LLM client.
-
-        Args:
-            response: The response from the LLM client.
-            properties: The properties to validate.
-
-        Raises:
-            ValidationError: If the response is invalid.
-
-        Returns:
-            The validated response.
-        """
-        try:
-            parsed_response = {k: v for k, v in deserialize(response, dict).items() if k in properties}
-
-            validate(
-                instance=parsed_response,
-                schema={
-                    "$schema": "http://json-schema.org/draft-07/schema#",
-                    "type": "object",
-                    "properties": properties,
-                    "additionalProperties": False,
-                    "required": list(properties),
-                },
-            )
-
-            return parsed_response
-        except ValidationError as e:
-            logger.warning("%s: Response validation failed: %s", AbstractPromptHandler.__name__, e)
-            raise e

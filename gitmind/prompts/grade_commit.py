@@ -1,37 +1,41 @@
-from asyncio import gather
-from typing import Any, Final, TypedDict, override
+from typing import Final, Literal, TypedDict, override
 
 from gitmind.llm.base import MessageDefinition, ToolDefinition
 from gitmind.prompts.base import AbstractPromptHandler
 from gitmind.rules import DEFAULT_GRADING_RULES, Rule
 from gitmind.utils.commit import CommitMetadata
+from gitmind.utils.serialization import serialize
 
 
 class CommitGradingResult(TypedDict):
     """DTO for grading results."""
 
-    grade: int
+    grade: int | Literal["NOT_EVALUATED"]
     """The grade for the commit."""
     reason: str
     """The reason for the grade."""
-    rule_name: str
-    """The name of the rule."""
 
 
 GRADE_COMMIT_SYSTEM_MESSAGE: Final[str] = """
 You are an assistant that grades git commits.
 
-Evaluate the provided commit data and grade the commit according to the provided evaluation guidelines the commit.
+Evaluate the provided commit data and grade the commit according to the provided evaluation guidelines.
 
-- Be precise and concise.
+Response instructions:
+
+- Be concise and factual.
 - Do not use unnecessary superlatives.
 - Do not include any code in the output.
 
-Respond by calling the provided tool 'grading_results' with a JSON object adhering to its parameter definitions.
+Respond by calling the provided tool 'grading_results' with a JSON object adhereing to the following JSON schema:
+
+```json
+{schema}
+```
 """
 
 
-class GradeCommitHandler(AbstractPromptHandler[list[CommitGradingResult]]):
+class GradeCommitHandler(AbstractPromptHandler[dict[str, CommitGradingResult]]):
     """Handler for grading a git commit."""
 
     @override
@@ -41,7 +45,7 @@ class GradeCommitHandler(AbstractPromptHandler[list[CommitGradingResult]]):
         metadata: CommitMetadata,
         diff: str,
         grading_rules: list[Rule] = DEFAULT_GRADING_RULES,
-    ) -> list[CommitGradingResult]:
+    ) -> dict[str, CommitGradingResult]:
         """Generate LLM completions for grading a git commit.
 
         Args:
@@ -52,56 +56,64 @@ class GradeCommitHandler(AbstractPromptHandler[list[CommitGradingResult]]):
         Returns:
             The grading results for the commit.
         """
-        properties, evaluation_instructions = self.create_evaluation_instructions(grading_rules)
+        evaluation_instructions = self.create_evaluation_instructions(grading_rules)
 
         commit_evaluation_prompt = (
             f"Evaluate and grade a git commit based on the following criteria:\n{evaluation_instructions}\n\n"
             f"**Commit Message**:{metadata["message"]}\n\n"
-            f"**Commit Diff**:\n"
+            f"**Commit Diff**:\n{diff}"
         )
+
+        object_type = {
+            "type": "object",
+            "properties": {
+                "grade": {
+                    "oneOf": [
+                        {"type": "integer", "minimum": 1, "maximum": 10},
+                        {"const": "NOT_EVALUATED"},
+                    ]
+                },
+                "reason": {"type": "string"},
+            },
+            "required": ["grade", "reason"],
+        }
+
+        schema = {
+            "type": "object",
+            "properties": {rule.name: object_type for rule in grading_rules},
+            "required": [rule.name for rule in grading_rules],
+        }
 
         tool = ToolDefinition(
             name="grading_results",
             description="Returns the grading results for a git commit.",
-            parameters={
-                "type": "object",
-                "properties": properties,
-            },
+            parameters=schema,
         )
 
-        chunk_size = self._chunk_size - len(commit_evaluation_prompt)
-        if len(diff) >= chunk_size:
-            chunk_responses = await gather(
-                *[
-                    self.generate_completions(
-                        properties=properties,
-                        messages=[
-                            MessageDefinition(role="system", content=GRADE_COMMIT_SYSTEM_MESSAGE),
-                            MessageDefinition(role="user", content=commit_evaluation_prompt + diff[i : i + chunk_size]),
-                        ],
-                        tool=tool,
-                    )
-                    for i in range(0, len(diff), chunk_size)
-                ]
-            )
-            final_response = await self.combine_results(results=list(chunk_responses), tool=tool, properties=properties)
-        else:
-            final_response = await self.generate_completions(
-                properties=properties,
-                messages=[
-                    MessageDefinition(role="system", content=GRADE_COMMIT_SYSTEM_MESSAGE),
-                    MessageDefinition(role="user", content=f"{commit_evaluation_prompt}{diff}"),
-                ],
-                tool=tool,
-            )
+        result = await self.generate_completions(
+            response_type=dict[str, CommitGradingResult],
+            schema=schema,
+            messages=[
+                MessageDefinition(
+                    role="system",
+                    content=GRADE_COMMIT_SYSTEM_MESSAGE.format(
+                        schema=serialize(
+                            {
+                                "$schema": "http://json-schema.org/draft-07/schema#",
+                                **schema,
+                            },
+                        ),
+                    ),
+                ),
+                MessageDefinition(role="user", content=commit_evaluation_prompt),
+            ],
+            tool=tool,
+        )
 
-        return [
-            CommitGradingResult(rule_name=key, grade=value["grade"], reason=value["reasoning"])
-            for (key, value) in final_response.items()
-        ]
+        return dict(sorted(result.items()))
 
     @staticmethod
-    def create_evaluation_instructions(grading_rules: list[Rule]) -> tuple[dict[str, Any], str]:
+    def create_evaluation_instructions(grading_rules: list[Rule]) -> str:
         """Create the evaluation instructions for the grading rules.
 
         Args:
@@ -110,8 +122,6 @@ class GradeCommitHandler(AbstractPromptHandler[list[CommitGradingResult]]):
         Returns:
             A tuple containing the properties and evaluation instructions.
         """
-        properties: dict[str, Any] = {}
-
         evaluation_instructions = ""
 
         for grading_rule in grading_rules:
@@ -121,42 +131,15 @@ class GradeCommitHandler(AbstractPromptHandler[list[CommitGradingResult]]):
                     additional_conditions += f"        - {condition}\n"
 
             description = f"""
-            ##{grading_rule.title}##
+                ##{grading_rule.title}##
 
-            ###Evaluation Guidelines###
-            {grading_rule.evaluation_guidelines}
+                ###Evaluation Guidelines###
+                {grading_rule.evaluation_guidelines}
 
-            ####Additional Evaluation Conditions####
-            {additional_conditions or "None"}
-            """
+                ####Additional Evaluation Conditions####
+                {additional_conditions or "None"}
+                """
 
-            evaluation_instructions += f"**{grading_rule.title}**\n"
             evaluation_instructions += description
 
-            properties[grading_rule.name] = {
-                "description": description,
-                "title": grading_rule.title,
-                "type": "object",
-                "properties": {
-                    "grade": {
-                        "oneOf": [
-                            {
-                                "description": "The grade for this rule. 1 is the lowest, 10 is the highest.",
-                                "maximum": 10,
-                                "minimum": 1,
-                                "type": "integer",
-                            },
-                            {
-                                "description": "The rule was not evaluated because the contents of the commit do not fit the rule's conditions.",
-                                "const": "NOT_EVALUATED",
-                            },
-                        ]
-                    },
-                    "reasoning": {
-                        "description": "The reasoning for the grade given, or if the rule is not evaluated, an explanation why.",
-                        "type": "string",
-                    },
-                },
-            }
-
-        return properties, evaluation_instructions
+        return evaluation_instructions

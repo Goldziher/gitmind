@@ -1,4 +1,3 @@
-from asyncio import gather
 from typing import Any, Final, TypedDict, override
 
 from inflection import titleize
@@ -128,48 +127,24 @@ class DescribeCommitHandler(AbstractPromptHandler[CommitDescriptionResult]):
             f"**Commit Diff**:\n"
         )
 
+        schema = {
+            "type": "object",
+            "properties": DESCRIBE_COMMIT_PROPERTIES,
+            "required": list(DESCRIBE_COMMIT_PROPERTIES.keys()),
+        }
+
         tool = ToolDefinition(
             name="describe_commit",
             description="Returns the description for a git commit.",
-            parameters={
-                "type": "object",
-                "properties": DESCRIBE_COMMIT_PROPERTIES,
-                "required": list(DESCRIBE_COMMIT_PROPERTIES.keys()),
-            },
+            parameters=schema,
         )
 
-        chunk_size = self._chunk_size - len(describe_commit_prompt)
-        if len(diff) >= chunk_size:
-            chunk_responses = await gather(
-                *[
-                    self.generate_completions(
-                        properties=DESCRIBE_COMMIT_PROPERTIES,
-                        messages=[
-                            MessageDefinition(role="system", content=DESCRIBE_COMMIT_SYSTEM_MESSAGE.strip()),
-                            MessageDefinition(role="user", content=describe_commit_prompt + diff[i : i + chunk_size]),
-                        ],
-                        tool=tool,
-                    )
-                    for i in range(0, len(diff), chunk_size)
-                ]
-            )
-            final_response = await self.combine_results(
-                results=list(chunk_responses), tool=tool, properties=DESCRIBE_COMMIT_PROPERTIES
-            )
-        else:
-            final_response = await self.generate_completions(
-                properties=DESCRIBE_COMMIT_PROPERTIES,
-                messages=[
-                    MessageDefinition(role="system", content=DESCRIBE_COMMIT_SYSTEM_MESSAGE.strip()),
-                    MessageDefinition(role="user", content=describe_commit_prompt + diff),
-                ],
-                tool=tool,
-            )
-
-        return CommitDescriptionResult(
-            summary=final_response["summary"],
-            purpose=final_response["purpose"],
-            breakdown=final_response["breakdown"],
-            programming_languages_used=final_response["programming_languages_used"],
-            additional_notes=final_response["additional_notes"],
+        return await self.generate_completions(
+            response_type=CommitDescriptionResult,
+            schema=schema,
+            messages=[
+                MessageDefinition(role="system", content=DESCRIBE_COMMIT_SYSTEM_MESSAGE.strip()),
+                MessageDefinition(role="user", content=describe_commit_prompt + diff),
+            ],
+            tool=tool,
         )

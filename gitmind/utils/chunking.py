@@ -100,5 +100,5 @@ def chunk_content(
     Yields:
         str: A chunk string
     """
-    chunker = get_chunker(chunking_type=chunking_type, model=model, chunk_size=chunk_size, language=language, trim=True)  # type: ignore[call-overload]
+    chunker = get_chunker(chunking_type=chunking_type, model=model, chunk_size=chunk_size, language=language)  # type: ignore[arg-type]
     yield from chunker.chunks(content)
