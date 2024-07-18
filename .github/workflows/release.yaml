@@ -4,63 +4,21 @@ on:
   release:
     types: [published]
 jobs:
-  build-sdist:
+  publid:
     name: Build source dist
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
     - uses: actions/checkout@v4
     - uses: pdm-project/setup-pdm@v4
       with:
-        python-version: '3.9'
+        python-version: 3.12
         cache: true
         cache-dependency-path: |
           ./pdm.lock
     - name: Install Dependencies
       run: pdm install
     - name: Build sdist
-      run: pdm build --no-wheel -d dist
-    - name: Upload sources
-      uses: actions/upload-artifact@v4
-      with:
-        name: dist-sources
-        path: dist/*.tar.gz
-  build-wheels:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-13, macos-14, windows-latest]
-    name: Build wheel on ${{matrix.os}}
-    runs-on: ${{matrix.os}}
-    steps:
-    - uses: actions/checkout@v4
-    - uses: pdm-project/setup-pdm@v4
-      with:
-        python-version: '3.9'
-        cache: true
-        cache-dependency-path: |
-          ./pdm.lock
-    - name: Install Dependencies
-      run: pdm install
-    - name: Build wheels
-      run: pdm build --no-sdist -d dist
-    - uses: actions/upload-artifact@v4
-      with:
-        name: wheels-${{ matrix.os }}-${{ strategy.job-index }}
-        path: dist/*.whl
-  publish:
-    name: Publish Python package
-    needs: [build-sdist, build-wheels]
-    runs-on: ubuntu-latest
-    environment:
-      name: pypi
-      url: https://pypi.org/project/gitmind/
-    steps:
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: dist
-        pattern: dist-*
-        merge-multiple: true
+      run: pdm build -d dist
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:

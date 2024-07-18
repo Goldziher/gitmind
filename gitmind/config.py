@@ -25,16 +25,12 @@ CONFIG_FILE_NAME: Final[str] = "gitmind-config"
 git_regex: Pattern[str] = compile_regex(r"((git|ssh|http(s)?)|(git@[\w\.-]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?")
 
 
-class BaseGitmineSetting(BaseSettings):
-    """Base settings for GitMine."""
-
-
 SupportedProviders = Literal["openai", "azure-openai", "groq"]
 Verbosity = Literal["silent", "standard", "verbose", "debug"]
 CacheType = Literal["memory", "file"]
 
 
-class GitMindSettings(BaseGitmineSetting):
+class GitMindSettings(BaseSettings):
     """Configuration for the GitMind Application."""
 
     model_config = SettingsConfigDict(
