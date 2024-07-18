@@ -5,8 +5,7 @@ on:
     types: [published]
 
 jobs:
-  publish:
-    name: Build source dist
+  release:
     runs-on: ubuntu-latest
     environment: pypi
     steps:
@@ -15,11 +14,9 @@ jobs:
       with:
         python-version: 3.12
         cache: true
-        cache-dependency-path: |
-          ./pdm.lock
-    - name: Install Dependencies
+    - name: Install
       run: pdm install
-    - name: Build sdist
-      run: pdm build -d dist
-    - name: Publish to PyPI
+    - name: Build
+      run: pdm build
+    - name: Publish
       uses: pypa/gh-action-pypi-publish@release/v1

@@ -17,8 +17,6 @@ jobs:
       with:
         python-version: '3.9'
         cache: true
-        cache-dependency-path: |
-          ./pdm.lock
     - name: Install Dependencies
       run: pdm install
     - name: Load Cached Pre-Commit Dependencies
@@ -27,7 +25,7 @@ jobs:
       with:
         path: ~/.cache/pre-commit/
         key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
-    - name: Execute Pre-Commit
+    - name: Lint
       run: pdm run pre-commit run --show-diff-on-failure --color=always --all-files
   test:
     runs-on: ubuntu-latest
@@ -37,9 +35,7 @@ jobs:
       with:
         python-version: '3.9'
         cache: true
-        cache-dependency-path: |
-          ./pdm.lock
-    - name: Install Dependencies
+    - name: Install
       run: pdm install
-    - name: Run Tests
+    - name: Test
       run: pdm run test

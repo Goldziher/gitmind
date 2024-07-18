@@ -9,7 +9,7 @@
 .pdm-build/
 .pdm-python
 .pdm.toml
-.venv
+.venv/
 .vscode/
 __pycache__/
 __pypackages__/
