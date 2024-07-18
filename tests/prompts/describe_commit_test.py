@@ -1,13 +1,19 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 
 from gitmind.exceptions import LLMClientError
 from gitmind.llm.base import RetryConfig
 from gitmind.prompts import DescribeCommitHandler
 from gitmind.prompts.describe_commit import CommitDescriptionResult
-from gitmind.utils.commit import CommitMetadata, CommitStatistics
 from gitmind.utils.serialization import deserialize
 from tests.data_fixtures import describe_commit_response
 from tests.helpers import create_mock_client
+
+if TYPE_CHECKING:
+    from gitmind.utils.commit import CommitMetadata, CommitStatistics
 
 
 async def test_describe_commit_contents_success_path(commit_data: tuple[CommitStatistics, CommitMetadata, str]) -> None:

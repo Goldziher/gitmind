@@ -8,7 +8,8 @@
 
 AI powered Git repository analysis and reporting.
 
-This project is currently in its infancy. The readme will be updated to include more information as the project progresses.
+This project is currently in its infancy. The readme will be updated to include more information as the project
+progresses.
 
 If you find what you are seeing intriguing, go ahead and ⭐️ the repository to show your support.
 
@@ -17,7 +18,7 @@ If you find what you are seeing intriguing, go ahead and ⭐️ the repository t
 ### Prerequisites
 
 - A compatible python version. It's recommended to use [pyenv](https://github.com/pyenv/pyenv) to manage
-python versions.
+  python versions.
 - [pdm](https://github.com/pdm-project/pdm) installed.
 - [pre-commit](https://pre-commit.com) installed.
 - [hatch](https://hatch.pypa.io) installed,
@@ -39,15 +40,25 @@ python versions.
 ### Linting
 
 To lint the codebase, run:
+
 ```shell
    pdm run lint
 ```
 
+Tip: You can also run the linters configured in `pyproject.toml` inside your IDE of choice.
+
 ### Testing
 
 To run the tests, run:
+
 ```shell
    pdm run test
 ```
 
-Tip: You can also run the linters configured in `pyproject.toml` inside your IDE of choice.
+#### Tox
+
+To run the tests with `tox`, run:
+
+```shell
+   pdm run tox
+```

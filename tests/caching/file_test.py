@@ -95,10 +95,10 @@ def test_get_or_create_cache_dir_with_non_existing_cache_dir(non_existing_cache_
     assert non_existing_cache_dir.exists()
 
 
-def test_get_or_create_cache_dir_with_none(default_cache_dir: SyncPath) -> None:
+async def test_get_or_create_cache_dir_with_none(default_cache_dir: SyncPath) -> None:
     path = get_or_create_cache_dir(None)
     assert path == default_cache_dir
-    assert path.exists()
+    assert await path.exists()
 
 
 def test_is_idempotent() -> None:

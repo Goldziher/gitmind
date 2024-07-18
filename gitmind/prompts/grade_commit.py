@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Final, Literal, TypedDict
+from typing import TYPE_CHECKING, Final, Literal, TypedDict, Union
 
 from typing_extensions import override
 
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 class CommitGradingResult(TypedDict):
     """DTO for grading results."""
 
-    grade: int | Literal["NOT_EVALUATED"]
+    grade: Union[int, Literal["NOT_EVALUATED"]]  # noqa: UP007
     """The grade for the commit."""
     reason: str
     """The reason for the grade."""

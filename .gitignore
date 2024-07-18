@@ -9,6 +9,7 @@
 .pdm-build/
 .pdm-python
 .pdm.toml
+.tox/
 .venv/
 .vscode/
 __pycache__/

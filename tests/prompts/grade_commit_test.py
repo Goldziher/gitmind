@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 
 from gitmind.exceptions import LLMClientError
@@ -5,9 +9,11 @@ from gitmind.llm.base import RetryConfig
 from gitmind.prompts import GradeCommitHandler
 from gitmind.prompts.grade_commit import CommitGradingResult
 from gitmind.rules import DEFAULT_GRADING_RULES
-from gitmind.utils.commit import CommitMetadata, CommitStatistics
 from tests.data_fixtures import grade_commit_response
 from tests.helpers import create_mock_client
+
+if TYPE_CHECKING:
+    from gitmind.utils.commit import CommitMetadata, CommitStatistics
 
 
 async def test_grade_commit_success_path(commit_data: tuple[CommitStatistics, CommitMetadata, str]) -> None:
