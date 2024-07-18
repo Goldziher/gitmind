@@ -45,15 +45,18 @@ def get_commit(*, repo: Repository, commit_hex: str) -> Commit:
         commit_hex: The SHA hex of the commit to retrieve.
 
     Raises:
-        ValueError: If the object with the given SHA is not a commit.
+        ValueError: If the object with the given SHA is not a commit or if the commit is not found.
 
     Returns:
         The commit object.
     """
-    git_object = repo.revparse_single(commit_hex)
-    if isinstance(git_object, Commit):
-        return git_object
-    raise ValueError(f"GIT object with SHA hex {commit_hex} is not a commit.")
+    try:
+        git_object = repo.revparse_single(commit_hex)
+        if isinstance(git_object, Commit):
+            return git_object
+        raise ValueError(f"GIT object with SHA hex {commit_hex} is not a commit.")
+    except KeyError as e:
+        raise ValueError(f"Commit with SHA hex {commit_hex} not found.") from e
 
 
 def extract_commit_data(*, repo: Repository, commit_hex: str) -> tuple[CommitStatistics, CommitMetadata, str]:
