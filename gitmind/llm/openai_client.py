@@ -60,10 +60,7 @@ class OpenAIClient(LLMClient):
         endpoint_url: str | None = None,
         **kwargs: Any,
     ) -> None:
-        if (
-            deployment_id := kwargs.pop("deployment_id", None)
-            and endpoint_url is not None
-        ):
+        if deployment_id := kwargs.pop("deployment_id", None) and endpoint_url is not None:
             from openai.lib.azure import AsyncAzureOpenAI
 
             self._client = AsyncAzureOpenAI(
@@ -105,14 +102,10 @@ class OpenAIClient(LLMClient):
             result = await self._client.chat.completions.create(
                 model=self._model,
                 messages=[
-                    _openai_message_mapping[message.role](
-                        role=message.role, content=message.content
-                    )
+                    _openai_message_mapping[message.role](role=message.role, content=message.content)
                     for message in messages
                 ],
-                response_format=ResponseFormat(
-                    type="json_object" if json_response else "text"
-                ),  # type: ignore[operator]
+                response_format=ResponseFormat(type="json_object" if json_response else "text"),  # type: ignore[operator]
                 stream=False,
                 tools=[
                     ChatCompletionToolParam(
@@ -135,6 +128,4 @@ class OpenAIClient(LLMClient):
         if content := result.choices[0].message.tool_calls[0].function.arguments:
             return cast("str", content)
 
-        raise EmptyContentError(
-            "LLM client returned empty content", context=result.model_dump_json()
-        )
+        raise EmptyContentError("LLM client returned empty content", context=result.model_dump_json())

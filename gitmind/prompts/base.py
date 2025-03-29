@@ -45,9 +45,7 @@ class AbstractPromptHandler(ABC, Generic[T]):
     ) -> None:
         self._client = client
         self._retry_config = retry_config if retry_config else RetryConfig()
-        self._max_response_tokens = (
-            max_response_tokens if max_response_tokens else MAX_TOKENS
-        )
+        self._max_response_tokens = max_response_tokens if max_response_tokens else MAX_TOKENS
 
     @abstractmethod
     async def __call__(self, **kwargs: Any) -> T:
@@ -117,9 +115,7 @@ class AbstractPromptHandler(ABC, Generic[T]):
             # This has to be in place because LLMs sometimes return invalid or partial JSON ~keep
             validation_error_message = MessageDefinition(
                 role="user",
-                content=VALIDATION_ERROR_MESSAGE_CONTENT.format(
-                    e=str(e), response=response
-                ),
+                content=VALIDATION_ERROR_MESSAGE_CONTENT.format(e=str(e), response=response),
             )
 
             if retry_count == 0:
@@ -135,9 +131,7 @@ class AbstractPromptHandler(ABC, Generic[T]):
                     retry_count,
                     self._retry_config.max_retries,
                 )
-                await sleep(
-                    (2**retry_count) if self._retry_config.exponential_backoff else 1
-                )
+                await sleep((2**retry_count) if self._retry_config.exponential_backoff else 1)
                 return await self.generate_completions(
                     messages=messages,
                     response_type=response_type,
@@ -145,9 +139,7 @@ class AbstractPromptHandler(ABC, Generic[T]):
                     schema=schema,
                     tool=tool,
                 )
-            logger.warning(
-                "LLM responded with invalid or partial JSON response, retries have been exhausted."
-            )
+            logger.warning("LLM responded with invalid or partial JSON response, retries have been exhausted.")
             raise LLMClientError(
                 "LLM responded with invalid or partial JSON response",
                 context=str(e),
