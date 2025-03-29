@@ -26,7 +26,7 @@ def get_logger(name: str) -> FilteringBoundLogger:
         from structlog.dev import ConsoleRenderer
         from structlog.processors import JSONRenderer, TimeStamper, add_log_level, format_exc_info
 
-        configure_once(  # will raise an error if called more than once
+        configure_once(
             cache_logger_on_first_use=True,
             wrapper_class=make_filtering_bound_logger(
                 logging.DEBUG if get_env("DEBUG", raise_on_missing=False) else logging.INFO
@@ -36,7 +36,7 @@ def get_logger(name: str) -> FilteringBoundLogger:
                 add_log_level,
                 format_exc_info,
                 TimeStamper(fmt="iso", utc=True),
-                ConsoleRenderer(colors=True) if stdout.isatty() else JSONRenderer(serializer=serialize),  # type: ignore[list-item]
+                ConsoleRenderer(colors=True) if stdout.isatty() else JSONRenderer(serializer=serialize),
             ],
             logger_factory=PrintLoggerFactory() if stdout.isatty() else BytesLoggerFactory(),
         )
@@ -45,4 +45,4 @@ def get_logger(name: str) -> FilteringBoundLogger:
 
     from structlog import get_logger as get_structlog_logger
 
-    return cast(FilteringBoundLogger, get_structlog_logger(name))
+    return cast("FilteringBoundLogger", get_structlog_logger(name))

@@ -34,7 +34,7 @@ async def run_sync(fn: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
         The return value of the function.
     """
     bound_func = partial(fn, *args, **kwargs)
-    return cast(T, (await anyio_run_sync(bound_func)))
+    return cast("T", (await anyio_run_sync(bound_func)))
 
 
 def run_as_sync(async_fn: Callable[P, Coroutine[None, None, T]]) -> Callable[P, T]:

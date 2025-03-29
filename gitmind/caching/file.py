@@ -11,7 +11,7 @@ from gitmind.caching.base import CacheBase
 if TYPE_CHECKING:
     from os import PathLike
 
-DEFAULT_FOLDER_NAME: Final[str] = ".git_critic_cache"
+DEFAULT_FOLDER_NAME: Final[str] = ".gitmind"
 
 
 def get_or_create_cache_dir(cache_dir: str | PathLike[str] | SyncPath | None = None) -> AsyncPath:

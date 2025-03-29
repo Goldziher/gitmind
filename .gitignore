@@ -1,15 +1,16 @@
 *$py.class
+*.egg-info
 *.iml
 *.log
 *.py[cod]
 .coverage
 .env
+.gitmind/
 .idea/
 .mypy_cache/
-.pdm-build/
-.pdm-python
-.pdm.toml
+.ruff_cache/
 .python-version
+.windsurfrules
 .tox/
 .venv/
 .vscode/
@@ -19,4 +20,4 @@ coverage.xml
 cython_debug/
 dist/
 node_modules/
-tests/e2e/.results/
+tests/e2e/.results

@@ -1,161 +1,157 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+
+requires = [ "setuptools>=78.1" ]
+
 [project]
 name = "gitmind"
 version = "0.0.1"
 description = "AI powered Git repository analysis and reporting"
-authors = [{ name = "Na'aman Hirschfeld", email = "nhirschfeld@gmail.com" }]
-requires-python = ">=3.9"
 readme = "README.md"
-license = { text = "BUSL-1.1" }
+keywords = [ "ai", "analysis", "dev-tools", "git", "linting", "reporting", "repository" ]
+
+license-files = [ "LICENSE" ]
+authors = [ { name = "Na'aman Hirschfeld", email = "nhirschfeld@gmail.com" } ]
+requires-python = ">=3.9"
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Information Technology",
-    "Intended Audience :: System Administrators",
-    "Natural Language :: English",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python",
-    "Topic :: Software Development :: Libraries :: Python Modules",
-    "Topic :: Software Development :: Libraries",
-    "Topic :: Software Development",
-    "Typing :: Typed",
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
+  "Intended Audience :: System Administrators",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Typing :: Typed",
 ]
-keywords = ["git", "repository", "analysis", "reporting", "ai", "dev-tools", "linting"]
-
 dependencies = [
-    "httpx>=0.27.0",
-    "anyio>=4.4.0",
-    "msgspec>=0.18.6",
-    "python-magic>=0.4.27",
-    "jsonschema>=4.22.0",
-    "inflection>=0.5.1",
-    "structlog>=24.2.0",
-    "pydantic-settings>=2.3.4",
-    "pygit2>=1.15.1",
-    "typing-extensions>=4.12.2",
-    "eval-type-backport>=0.2.0",
+  "anyio>=4.4.0",
+  "eval-type-backport>=0.2.0",
+  "httpx>=0.27.0",
+  "inflection>=0.5.1",
+  "jsonschema>=4.22.0",
+  "msgspec>=0.18.6",
+  "pydantic-settings>=2.3.4",
+  "pygit2>=1.15.1",
+  "python-magic>=0.4.27",
+  "structlog>=24.2.0",
+  "typing-extensions>=4.12.2",
 ]
 
-[project.urls]
-Repository = "https://github.com/Goldziher/gitmind"
-
-[project.optional-dependencies]
-openai = [
-    "openai>=1.35.11",
-]
-groq = [
-    "groq>=0.9.0",
-]
-cli = [
-    "click>=8.1.7",
-    "rich-click>=1.8.3",
-    "rich>=13.7.1",
+optional-dependencies.cli = [
+  "click>=8.1.8",
+  "rich>=13.9.4",
+  "rich-click>=1.8.8",
 ]
 
-[project.scripts]
-gitmind = "gitming.__main__:cli"
+optional-dependencies.groq = [ "groq>=0.20.0" ]
+optional-dependencies.openai = [
+  "openai>=1.69.0",
+]
+urls.Repository = "https://github.com/Goldziher/gitmind"
+scripts.gitmind = "gitmind.__main__:cli"
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.hatch.build]
-skip-excluded-dirs = true
-
-[tool.hatch.build.targets.sdist]
-only-include = ["gitmind"]
-
-[tool.hatch.build.targets.wheel]
-only-include = ["gitmind"]
-
-[tool.pdm]
-distribution = true
-
-[tool.pdm.dev-dependencies]
+[dependency-groups]
 dev = [
-    "mypy>=1.10.0",
-    "ruff>=0.4.7",
-    "pre-commit>=3.7.1",
-    "pytest>=8.2.2",
-    "pytest-asyncio>=0.23.7",
-    "python-dotenv>=1.0.1",
-    "types-jsonschema>=4.22.0.20240501",
-    "polyfactory>=2.16.0",
-    "pytest-logger>=1.1.1",
-    "types-pygit2>=1.15.0.20240714",
-    "tox>=4.16.0",
-    "covdefaults>=2.3.0",
-    "pytest-cov>=5.0.0",
+  "covdefaults>=2.3.0",
+  "mypy>=1.15.0",
+  "polyfactory>=2.16.0",
+  "pre-commit>=4.2.0",
+  "pytest>=8.3.5",
+  "pytest-asyncio>=0.23.7",
+  "pytest-cov>=6.0.0",
+  "pytest-logger>=1.1.1",
+  "pytest-mock>=3.14.0",
+  "pytest-timeout>=2.3.1",
+  "python-dotenv>=1.0.1",
+  "ruff>=0.11.2",
+  "types-jsonschema>=4.22.0.20240501",
+  "types-pygit2>=1.15.0.20240714",
+  "uv-bump",
 ]
 
-[tool.pdm.scripts]
-lint = "pre-commit run --all-files"
-test = "pytest tests"
-coverage = "pytest --cov"
+[tool.setuptools.packages.find]
+include = [ "gitmind" ]
 
-# linters configuration below
+[tool.setuptools.package-data]
+gitmind = [ "py.typed" ]
+
 [tool.ruff]
-line-length = 120
 target-version = "py39"
-src = ["gitmind", "tests"]
-lint.select = [
-    "ALL",
-]
+line-length = 120
+src = [ "gitmind", "tests" ]
+format.docstring-code-line-length = 120
+format.docstring-code-format = true
+lint.select = [ "ALL" ]
 lint.ignore = [
-    "ANN401", # dynamically typed ANY
-    "COM812", # Conflicts with formatter
-    "D100", # # pydocstyle - missing docstring in public module
-    "D104", # pydocstyle - missing docstring in public package
-    "D107", # pydocstyle - missing docstring in __init__
-    "D205", # pydocstyle - 1 blank line required between summary line and description
-    "E501", # pycodestyle line too long, handled by ruff format
-    "EM", # Exception messages,
-    "FBT", # Boolean values
-    "FIX", # we allow todo and fixme comments
-    "ISC001", # Conflicts with formatter
-    "TD", # we allow todo and fixme comments
-    "TRY", # Try except block, rules are too strict
+  "ANN401", # Dynamically typed ANY for kwargs
+  "COM812", # Conflicts with formatter
+  "D100",   # Missing docstring in public module
+  "D104",   # Missing docstring in public package
+  "D107",   # Missing docstring in __init__
+  "D205",   # 1 blank line required between summary line and description
+  "E501",   # Line too long, handled by ruff format
+  "EM",     # Exception messages,
+  "FBT",    # Boolean-typed positional argument in function definition
+  "FIX",    # We allow todo and fixme comments
+  "ISC001", # Conflicts with formatter
+  "TD",     # We allow todo and fixme comments
+  "TRY",    # Try except block, rules are too strict
 ]
-
-[tool.ruff.lint.per-file-ignores]
-"tests/**/*.*" = [
-    "PT", "PLR", "S", "D", "ARG", "PGH", "SLF",
+lint.per-file-ignores."tests/**/*.*" = [
+  "ARG001",
+  "D",
+  "N815",
+  "PD",
+  "PGH003",
+  "PLR0915",
+  "PLR2004",
+  "PT006",
+  "PT007",
+  "PT011",
+  "PT013",
+  "RUF012",
+  "S",
+  "SLF001",
 ]
+lint.isort.known-first-party = [ "gitmind", "tests" ]
+lint.mccabe.max-complexity = 15
+lint.pydocstyle.convention = "google"
+lint.pylint.max-args = 10
+lint.pylint.max-branches = 15
+lint.pylint.max-returns = 10
 
-[tool.ruff.format]
-docstring-code-format = true
-docstring-code-line-length = 120
+[tool.pyproject-fmt]
+keep_full_version = true
+max_supported_python = "3.13"
 
-[tool.ruff.lint.pydocstyle]
-convention = "google"
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
 
-[tool.ruff.lint.isort]
-known-first-party = ["gitmind", "tests"]
+[tool.coverage.run]
+omit = [ "tests/*" ]
+plugins = [ "covdefaults" ]
+source = [ "gitmind" ]
 
-[tool.ruff.lint.pylint]
-max-args = 10
-max-returns = 10
+[tool.coverage.report]
+exclude_lines = [ 'if TYPE_CHECKING:', "except ImportError:" ]
+fail_under = 100
 
 [tool.mypy]
-packages = ["poly", "tests"]
+packages = [ "gitmind", "tests" ]
 python_version = "3.9"
-plugins = ["pydantic.mypy"]
-
-disallow_untyped_decorators = true
-disallow_any_unimported = true
-untyped_calls_exclude = []
-
+disable_error_code = 'import-untyped'
+implicit_reexport = false
 show_error_codes = true
 strict = true
-warn_unreachable = true
-
-[tool.pydantic-mypy]
-init_forbid_extra = true
-init_typed = true
-warn_required_dynamic_aliases = true
 
 [[tool.mypy.overrides]]
 module = "tests.*"
@@ -163,14 +159,10 @@ disallow_untyped_decorators = false
 disallow_any_unimported = false
 disable_error_code = "method-assign"
 
-[tool.coverage.run]
-omit = ["*/tests/*"]
-plugins = ["covdefaults"]
-source = ["gitmind"]
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
 
-[tool.coverage.report]
-exclude_lines = ['if TYPE_CHECKING:', 'except ImportError as e:', 'except ImportError:', '@abstractmethod']
-fail_under = 100
-
-[tool.pytest.ini_options]
-asyncio_mode = "auto"
+[tool.uv.sources]
+uv-bump = { git = "https://github.com/Goldziher/uv-bump" }

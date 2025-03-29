@@ -13,10 +13,10 @@ rich_click.SHOW_METAVARS_COLUMN = True
 rich_click.APPEND_METAVARS_HELP = True
 
 
-@group()  # type: ignore[arg-type]
+@group()
 @global_options()
-@pass_context
-def cli(ctx: Context, **kwargs: Any) -> None:
+@pass_context  # type: ignore[arg-type]
+def cli(*, ctx: Context, **kwargs: Any) -> None:
     """GitMind CLI."""
     cli_ctx = get_or_set_cli_context(ctx, **kwargs)
     if cli_ctx["settings"].mode == "debug":

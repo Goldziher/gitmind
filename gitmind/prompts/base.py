@@ -35,7 +35,7 @@ class AbstractPromptHandler(ABC, Generic[T]):
             max_response_tokens: The maximum number of tokens in the response.
     """
 
-    __slots__ = ("_client", "_retry_config", "_chunk_size", "_max_response_tokens")
+    __slots__ = ("_chunk_size", "_client", "_max_response_tokens", "_retry_config")
 
     def __init__(
         self,
@@ -45,7 +45,9 @@ class AbstractPromptHandler(ABC, Generic[T]):
     ) -> None:
         self._client = client
         self._retry_config = retry_config if retry_config else RetryConfig()
-        self._max_response_tokens = max_response_tokens if max_response_tokens else MAX_TOKENS
+        self._max_response_tokens = (
+            max_response_tokens if max_response_tokens else MAX_TOKENS
+        )
 
     @abstractmethod
     async def __call__(self, **kwargs: Any) -> T:
@@ -85,23 +87,39 @@ class AbstractPromptHandler(ABC, Generic[T]):
         """
         try:
             logger.debug(
-                "%s: Generating completions.\n\nPrompt: %s", self.__class__.__name__, serialize(messages).decode()
+                "%s: Generating completions.\n\nPrompt: %s",
+                self.__class__.__name__,
+                serialize(messages).decode(),
             )
             response = await self._client.create_completions(
-                messages=messages, json_response=True, tool=tool, max_tokens=self._max_response_tokens
+                messages=messages,
+                json_response=True,
+                tool=tool,
+                max_tokens=self._max_response_tokens,
             )
         except LLMClientError as e:
-            logger.error("%s: Error occurred while generating completions: %s.", self.__class__.__name__, e)
+            logger.error(
+                "%s: Error occurred while generating completions: %s.",
+                self.__class__.__name__,
+                e,
+            )
             raise
         try:
-            logger.debug("%s: Successfully generated completions.\n\nResponse: %s", self.__class__.__name__, response)
+            logger.debug(
+                "%s: Successfully generated completions.\n\nResponse: %s",
+                self.__class__.__name__,
+                response,
+            )
             result = deserialize(response, response_type)
             validate(instance=result, schema=schema)
             return result
         except (DecodeError, ValidationError) as e:
-            # This has to be in place because LLMs sometimes return invalid or partial JSON
+            # This has to be in place because LLMs sometimes return invalid or partial JSON ~keep
             validation_error_message = MessageDefinition(
-                role="user", content=VALIDATION_ERROR_MESSAGE_CONTENT.format(e=str(e), response=response)
+                role="user",
+                content=VALIDATION_ERROR_MESSAGE_CONTENT.format(
+                    e=str(e), response=response
+                ),
             )
 
             if retry_count == 0:
@@ -117,7 +135,9 @@ class AbstractPromptHandler(ABC, Generic[T]):
                     retry_count,
                     self._retry_config.max_retries,
                 )
-                await sleep((2**retry_count) if self._retry_config.exponential_backoff else 1)
+                await sleep(
+                    (2**retry_count) if self._retry_config.exponential_backoff else 1
+                )
                 return await self.generate_completions(
                     messages=messages,
                     response_type=response_type,
@@ -125,7 +145,9 @@ class AbstractPromptHandler(ABC, Generic[T]):
                     schema=schema,
                     tool=tool,
                 )
-            logger.warning("LLM responded with invalid or partial JSON response, retries have been exhausted.")
+            logger.warning(
+                "LLM responded with invalid or partial JSON response, retries have been exhausted."
+            )
             raise LLMClientError(
                 "LLM responded with invalid or partial JSON response",
                 context=str(e),

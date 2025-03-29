@@ -8,7 +8,7 @@ from structlog._native import BoundLoggerFilteringAtDebug, BoundLoggerFilteringA
 from gitmind.utils.logger import configured_ref, get_logger
 
 
-@pytest.fixture()
+@pytest.fixture
 def reset_configured_ref() -> Generator[None, None, None]:
     configured_ref.value = None
     yield

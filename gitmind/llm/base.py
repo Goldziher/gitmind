@@ -7,10 +7,10 @@ from typing import Any, Literal
 
 from pydantic import BaseModel
 
-__all__ = ["LLMClient", "MessageDefinition", "MessageRole", "ToolDefinition", "RetryConfig"]
+__all__ = ["LLMClient", "MessageDefinition", "MessageRole", "RetryConfig", "ToolDefinition"]
 
 
-MessageRole = Literal["system", "user"]
+MessageRole = Literal["system", "user", "tool"]
 
 
 class MessageDefinition(BaseModel):

@@ -1,7 +1,4 @@
-from magic import Magic
-
 text_mime_types = {"text", "application/json", "application/xml", "application/javascript"}
-mime = Magic(mime=True)
 
 
 def is_supported_mime_type(mime_type: str) -> bool:

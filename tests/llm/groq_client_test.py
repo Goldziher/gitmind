@@ -13,7 +13,7 @@ from gitmind.llm.base import MessageDefinition
 from gitmind.llm.groq_client import GroqClient
 
 
-@pytest.fixture()
+@pytest.fixture
 def groq_config() -> GitMindSettings:
     return GitMindSettings(
         provider_api_key="fake_token",  # type: ignore[arg-type]
@@ -23,7 +23,7 @@ def groq_config() -> GitMindSettings:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 async def groq_client(groq_config: GitMindSettings) -> GroqClient:
     return GroqClient(
         api_key=groq_config.provider_api_key.get_secret_value(),
@@ -32,7 +32,7 @@ async def groq_client(groq_config: GitMindSettings) -> GroqClient:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def describe_commit_chat_completion() -> ChatCompletion:
     return ChatCompletion(
         id="chatcmpl-9e5AtvzgX3wpNKavzubGkSDSw67Ef",
@@ -101,7 +101,6 @@ async def test_create_completions_empty_content(
 async def test_create_completions_failure(
     groq_client: GroqClient, describe_commit_message_definitions: list[MessageDefinition]
 ) -> None:
-    # Simulate an API error scenario
     groq_client._client.chat.completions.create = AsyncMock(side_effect=GroqError("API error"))
     with pytest.raises(LLMClientError):
         await groq_client.create_completions(messages=describe_commit_message_definitions, json_response=True)

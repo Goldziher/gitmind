@@ -4,7 +4,7 @@ from anyio import create_task_group
 from gitmind.caching import InMemoryCache
 
 
-@pytest.fixture()
+@pytest.fixture
 async def in_memory_cache() -> InMemoryCache:
     return InMemoryCache()
 

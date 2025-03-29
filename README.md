@@ -13,52 +13,18 @@ progresses.
 
 If you find what you are seeing intriguing, go ahead and ⭐️ the repository to show your support.
 
-## Local Development
+## Contribution
 
-### Prerequisites
+This library is open to contribution. Feel free to open issues or submit PRs. It's better to discuss issues before submitting PRs to avoid disappointment.
 
-- A compatible python version. It's recommended to use [pyenv](https://github.com/pyenv/pyenv) to manage
-  python versions.
-- [pdm](https://github.com/pdm-project/pdm) installed.
-- [pre-commit](https://pre-commit.com) installed.
-- [hatch](https://hatch.pypa.io) installed,
+### Local Development
 
-### Setup
+1. Clone the repo
+1. Install the system dependencies
+1. Install the full dependencies with `uv sync --all-extras --all-groups`
+1. Install the pre-commit hooks with: `pre-commit install && pre-commit install --hook-type commit-msg`
+1. Make your changes and submit a PR
 
-1. Clone the repository
-3. Inside the repository, install the dependencies with:
-   ```shell
-      pdm install
-   ```
-   This will create a virtual env under the git ignored `.venv` folder and install all the dependencies.
-3. Install the pre-commit hooks:
-   ```shell
-      pre-commit install && pre-commit install --hook-type commit-msg
-   ```
-   This will install the pre-commit hooks that will run before every commit. This includes linters and formatters.
+## License
 
-### Linting
-
-To lint the codebase, run:
-
-```shell
-   pdm run lint
-```
-
-Tip: You can also run the linters configured in `pyproject.toml` inside your IDE of choice.
-
-### Testing
-
-To run the tests, run:
-
-```shell
-   pdm run test
-```
-
-#### Tox
-
-To run the tests with `tox`, run:
-
-```shell
-   pdm run tox
-```
+This library is released under the [BSL license](https://github.com/Goldziher/gitmind/blob/main/LICENSE).

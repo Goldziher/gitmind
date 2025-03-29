@@ -13,7 +13,7 @@ from gitmind.llm.base import MessageDefinition
 from gitmind.llm.openai_client import OpenAIClient
 
 
-@pytest.fixture()
+@pytest.fixture
 def openai_config() -> GitMindSettings:
     return GitMindSettings(
         provider_api_key="fake_token",  # type: ignore[arg-type]
@@ -24,7 +24,7 @@ def openai_config() -> GitMindSettings:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def azure_openai_config() -> GitMindSettings:
     return GitMindSettings(
         provider_endpoint_url="https://example.com/api",  # type: ignore[arg-type]
@@ -36,7 +36,7 @@ def azure_openai_config() -> GitMindSettings:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 async def openai_client(openai_config: GitMindSettings) -> OpenAIClient:
     return OpenAIClient(
         api_key=openai_config.provider_api_key.get_secret_value(),
@@ -45,7 +45,7 @@ async def openai_client(openai_config: GitMindSettings) -> OpenAIClient:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 async def azure_client(azure_openai_config: GitMindSettings) -> OpenAIClient:
     return OpenAIClient(
         api_key=azure_openai_config.provider_api_key.get_secret_value(),
@@ -55,7 +55,7 @@ async def azure_client(azure_openai_config: GitMindSettings) -> OpenAIClient:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def describe_commit_chat_completion() -> ChatCompletion:
     return ChatCompletion(
         id="chatcmpl-9e5AtvzgX3wpNKavzubGkSDSw67Ef",
@@ -135,7 +135,6 @@ async def test_create_completions_empty_content(
 async def test_create_completions_failure(
     openai_client: OpenAIClient, describe_commit_message_definitions: list[MessageDefinition]
 ) -> None:
-    # Simulate an API error scenario
     openai_client._client.chat.completions.create = AsyncMock(side_effect=OpenAIError("API error"))  # type: ignore
     with pytest.raises(LLMClientError):
         await openai_client.create_completions(messages=describe_commit_message_definitions, json_response=True)

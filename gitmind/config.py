@@ -2,12 +2,10 @@ from __future__ import annotations
 
 from functools import cached_property
 from pathlib import Path
-from re import Pattern
-from re import compile as compile_regex
 from typing import Annotated, Any, Final, Literal
 
 from pydantic import DirectoryPath, Field, SecretStr, field_validator, model_validator
-from pydantic_core import Url  # noqa: TCH002
+from pydantic_core import Url  # noqa: TC002
 from pydantic_settings import (
     BaseSettings,
     JsonConfigSettingsSource,
@@ -18,11 +16,9 @@ from pydantic_settings import (
     YamlConfigSettingsSource,
 )
 
-from gitmind.llm.base import LLMClient  # noqa: TCH001
+from gitmind.llm.base import LLMClient  # noqa: TC001
 
 CONFIG_FILE_NAME: Final[str] = "gitmind-config"
-
-git_regex: Pattern[str] = compile_regex(r"((git|ssh|http(s)?)|(git@[\w\.-]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?")
 
 
 SupportedProviders = Literal["openai", "azure-openai", "groq"]
@@ -47,7 +43,7 @@ class GitMindSettings(BaseSettings):
 
     cache_type: Annotated[CacheType, Field(description="The cache type to use.")] = "memory"
     target_repo: Annotated[
-        DirectoryPath | Annotated[str, Field(pattern=git_regex)] | None,
+        DirectoryPath | str | None,
         Field(description="The target repository. The value can be either a URL or a directory path."),
     ] = None
     mode: Annotated[
@@ -118,7 +114,7 @@ class GitMindSettings(BaseSettings):
             values_dict: The values dictionary.
 
         Raises:
-            ValidationError: If the values are invalid.
+            ValueError: If the values are invalid.
 
         Returns:
             The validated values dictionary.
