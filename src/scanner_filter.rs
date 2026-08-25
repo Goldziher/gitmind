@@ -99,14 +99,23 @@ impl Filters {
         })
     }
 
-    pub(crate) fn allows(&self, rel: &str) -> bool {
+    /// True when `rel` is dropped by the exclude globs or a skipped submodule root — the shared
+    /// gate behind both [`Filters::allows`] (files) and [`Filters::allows_dir`] (directories).
+    fn excluded(&self, rel: &str) -> bool {
         if self.exclude.is_match(rel) {
-            return false;
+            return true;
         }
         for (root, prefix) in self.submodule_roots.iter().zip(self.submodule_prefixes.iter()) {
             if rel == root || rel.starts_with(prefix.as_str()) {
-                return false;
+                return true;
             }
+        }
+        false
+    }
+
+    pub(crate) fn allows(&self, rel: &str) -> bool {
+        if self.excluded(rel) {
+            return false;
         }
         self.include.is_match(rel)
     }
@@ -117,15 +126,7 @@ impl Filters {
     /// pruning apply. Used by the watcher to decide which directories to register an inotify
     /// watch on, so permission-denied or excluded trees are never handed to inotify.
     pub(crate) fn allows_dir(&self, rel: &str) -> bool {
-        if self.exclude.is_match(rel) {
-            return false;
-        }
-        for (root, prefix) in self.submodule_roots.iter().zip(self.submodule_prefixes.iter()) {
-            if rel == root || rel.starts_with(prefix.as_str()) {
-                return false;
-            }
-        }
-        true
+        !self.excluded(rel)
     }
 }
 
