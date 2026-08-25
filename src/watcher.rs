@@ -79,9 +79,43 @@ pub fn watch_paths(
         NoCache::new(),
         NotifyConfig::default(),
     )?;
-    debouncer.watch(root, RecursiveMode::Recursive)?;
 
     let filter = crate::scanner_filter::IndexFilter::new(root, config)?;
+    let filters = filter.filters();
+
+    // Register inotify watches directory-by-directory, pruning by the same gitignore +
+    // exclude-glob filters a full scan uses. This keeps the OS-level watcher from trying to
+    // register a watch on a directory we cannot read (permission denied) or that the [scan]
+    // exclude globs / .gitignore already drop — the root cause of the
+    // "notify error: Permission denied (os error 13)" crash on unreadable trees.
+    debouncer.watch(root, RecursiveMode::NonRecursive)?;
+    let walker = crate::scanner_filter::ignore_walk_builder(
+        root,
+        config.scan.respect_gitignore,
+        config.scan.follow_symlinks,
+    )
+        .build();
+    for dent in walker {
+        // An unreadable directory (e.g. permission denied) surfaces as an iterator error;
+        // skip it so inotify never tries to register a watch on it.
+        let Ok(entry) = dent else {
+            continue;
+        };
+        if entry.path() == root {
+            continue; // root already registered above
+        }
+        if !entry.file_type().map(|t| t.is_dir()).unwrap_or(false) {
+            continue;
+        }
+        let Some(rel) = entry.path().strip_prefix(root).ok() else {
+            continue;
+        };
+        let rel_str = rel.to_string_lossy().replace('\\', "/");
+        if !filters.allows_dir(&rel_str) {
+            continue;
+        }
+        debouncer.watch(entry.path(), RecursiveMode::NonRecursive)?;
+    }
 
     loop {
         if !matches!(
